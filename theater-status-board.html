@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Theater Status Board | The Frequency Framework</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#0a0a0f;--surface:#111118;--surface2:#18181f;--surface3:#1f1f28;
+--border:#2a2a35;--border-glow:#3a3a4a;
+--text:#e8e8f0;--text-dim:#8888a0;--text-muted:#555568;
+--accent:#00e5ff;--accent2:#7b2ff7;--accent3:#ff2d6b;
+--green:#00ff88;--yellow:#ffd600;--orange:#ff8a00;--red:#ff2d4a;
+--gradient:linear-gradient(135deg,#00e5ff 0%,#7b2ff7 50%,#ff2d6b 100%);
+--critical:#ff2d4a;--high:#ff8a00;--elevated:#ffd600;--guarded:#00e5ff;--low:#00ff88;
+}
+body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:
+  linear-gradient(90deg,rgba(255,45,74,.02) 1px,transparent 1px),
+  linear-gradient(rgba(255,45,74,.02) 1px,transparent 1px);
+  background-size:60px 60px;pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(255,45,74,.06) 0%,transparent 60%);pointer-events:none;z-index:0}
+
+.container{max-width:1000px;margin:0 auto;padding:20px;position:relative;z-index:1}
+
+/* Header */
+.header{text-align:center;padding:40px 0 24px;position:relative}
+.header::after{content:'';display:block;width:200px;height:2px;background:var(--gradient);margin:20px auto 0;border-radius:1px}
+.logo-icon{font-size:48px;margin-bottom:8px;display:block;filter:drop-shadow(0 0 20px rgba(255,45,74,.4))}
+.header h1{font-family:'Orbitron',sans-serif;font-size:clamp(22px,4.5vw,32px);font-weight:800;letter-spacing:3px;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-transform:uppercase}
+.header .subtitle{font-size:14px;color:var(--text-dim);letter-spacing:4px;text-transform:uppercase;margin-top:8px;font-weight:300}
+.header .oneliner{font-size:13px;color:var(--text-muted);margin-top:14px;letter-spacing:1px;font-weight:300}
+
+/* Global threat bar */
+.global-threat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin:20px 0;display:flex;align-items:center;gap:20px;position:relative;overflow:hidden}
+.global-threat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.gt-indicator{width:16px;height:16px;border-radius:50%;flex-shrink:0;animation:pulse-dot 2s ease infinite}
+@keyframes pulse-dot{0%,100%{box-shadow:0 0 5px currentColor}50%{box-shadow:0 0 20px currentColor,0 0 40px currentColor}}
+.gt-level{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;letter-spacing:2px;text-transform:uppercase}
+.gt-desc{font-size:13px;color:var(--text-dim);flex:1}
+.gt-time{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted);text-align:right;flex-shrink:0}
+.gt-time div:first-child{font-size:14px;color:var(--text-dim)}
+
+/* Theater filter tabs */
+.filter-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+.filter-tab{padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:1px;cursor:pointer;transition:all .3s;text-transform:uppercase}
+.filter-tab:hover{border-color:var(--border-glow);color:var(--text-dim)}
+.filter-tab.active{border-color:var(--accent);color:var(--accent);background:rgba(0,229,255,.05)}
+.filter-tab .tab-count{font-family:'JetBrains Mono',monospace;margin-left:6px;opacity:.6}
+
+/* Theater cards */
+.theaters-grid{display:flex;flex-direction:column;gap:12px;margin:16px 0}
+
+.theater-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:all .4s ease;cursor:pointer}
+.theater-card:hover{border-color:var(--border-glow);transform:translateY(-2px)}
+.theater-card.expanded{border-color:var(--border-glow)}
+
+.tc-header{display:flex;align-items:center;gap:14px;padding:16px 20px;position:relative}
+.tc-header::before{content:'';position:absolute;top:0;left:0;bottom:0;width:4px}
+.tc-status-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.tc-status-dot.active{animation:pulse-dot 2s ease infinite}
+.tc-region{font-size:22px;flex-shrink:0}
+.tc-info{flex:1}
+.tc-name{font-family:'Orbitron',sans-serif;font-size:15px;font-weight:700;letter-spacing:1px}
+.tc-sub{font-size:12px;color:var(--text-muted);margin-top:2px}
+.tc-threat{font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:1px;padding:4px 12px;border-radius:6px;border:1px solid;text-transform:uppercase;flex-shrink:0}
+.tc-expand{width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .3s;flex-shrink:0}
+.theater-card.expanded .tc-expand{transform:rotate(180deg);border-color:var(--accent)}
+
+/* Expanded content */
+.tc-body{display:none;padding:0 20px 20px;border-top:1px solid var(--border);margin-top:0}
+.theater-card.expanded .tc-body{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+.tc-section{margin-top:16px}
+.tc-section-title{font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:2px;color:var(--text-muted);text-transform:uppercase;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid rgba(42,42,53,.5)}
+
+/* Key metrics row */
+.tc-metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:12px}
+.tc-metric{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;text-align:center}
+.tc-metric-val{font-family:'Orbitron',sans-serif;font-size:20px;font-weight:800}
+.tc-metric-label{font-size:10px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+
+/* Updates list */
+.tc-updates{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.tc-update{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid rgba(42,42,53,.3);font-size:13px;color:var(--text-dim);line-height:1.4}
+.tc-update:last-child{border-bottom:none}
+.tc-update-time{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);flex-shrink:0;min-width:50px}
+.tc-update-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:6px}
+
+/* Connections */
+.tc-connections{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.tc-conn{padding:4px 10px;border-radius:12px;font-size:11px;font-family:'JetBrains Mono',monospace;border:1px solid var(--border);color:var(--text-dim);background:var(--surface3);letter-spacing:.5px}
+.tc-conn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* Six-step position */
+.tc-step-bar{display:flex;gap:2px;margin-top:8px;height:8px}
+.tc-step-seg{flex:1;border-radius:2px;background:var(--surface3);transition:all .3s}
+.tc-step-seg.active{opacity:1}
+
+/* Add theater section */
+.add-theater{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin:20px 0;position:relative;overflow:hidden}
+.add-theater::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--gradient);opacity:.6}
+.add-theater h2{font-family:'Orbitron',sans-serif;font-size:14px;letter-spacing:2px;color:var(--accent);margin-bottom:16px;text-transform:uppercase}
+.add-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.input-group{margin-bottom:0}
+.input-group label{display:block;font-size:11px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;font-weight:500}
+.input-group input,.input-group select,.input-group textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:10px 12px;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:14px;outline:none;transition:border-color .3s}
+.input-group input:focus,.input-group select:focus,.input-group textarea:focus{border-color:var(--accent)}
+.input-group select option{background:var(--surface2)}
+.input-group textarea{min-height:60px;resize:vertical}
+.add-full{grid-column:1/-1}
+.add-btn{width:100%;padding:12px;border-radius:8px;border:1px solid var(--green);background:transparent;color:var(--green);font-family:'Orbitron',sans-serif;font-size:13px;letter-spacing:2px;cursor:pointer;transition:all .3s;text-transform:uppercase;grid-column:1/-1;margin-top:4px}
+.add-btn:hover{background:var(--green);color:var(--bg)}
+
+/* Summary bar */
+.summary-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:20px 0}
+.summary-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;position:relative;overflow:hidden}
+.summary-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.sc-num{font-family:'Orbitron',sans-serif;font-size:32px;font-weight:900}
+.sc-label{font-size:11px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-top:4px}
+
+/* Footer */
+.footer{text-align:center;padding:30px 0;border-top:1px solid var(--border);margin-top:40px}
+.footer p{font-size:12px;color:var(--text-muted);letter-spacing:1px}
+.footer a{color:var(--accent);text-decoration:none}
+
+@media(max-width:600px){
+  .container{padding:12px}
+  .global-threat{flex-wrap:wrap;gap:10px}
+  .tc-header{flex-wrap:wrap;gap:10px}
+  .tc-metrics{grid-template-columns:repeat(2,1fr)}
+  .add-grid{grid-template-columns:1fr}
+  .summary-bar{grid-template-columns:repeat(2,1fr)}
+  .filter-tabs{gap:6px}
+  .filter-tab{padding:6px 10px;font-size:10px}
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <span class="logo-icon">🎯</span>
+    <h1>Theater Status Board</h1>
+    <div class="subtitle">Multi-Theater Operations Monitor</div>
+    <div class="oneliner">Track every active theater. See the full board. Understand the interconnections.</div>
+  </div>
+
+  <div class="global-threat" id="globalThreat">
+    <div class="gt-indicator" id="gtDot"></div>
+    <div>
+      <div class="gt-level" id="gtLevel">—</div>
+    </div>
+    <div class="gt-desc" id="gtDesc">—</div>
+    <div class="gt-time">
+      <div id="gtClock"></div>
+      <div id="gtDate"></div>
+    </div>
+  </div>
+
+  <div class="summary-bar" id="summaryBar">
+    <div class="summary-card"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--critical)"></div><div class="sc-num" style="color:var(--critical)" id="scActive">0</div><div class="sc-label">Active Theaters</div></div>
+    <div class="summary-card"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--high)"></div><div class="sc-num" style="color:var(--high)" id="scCritical">0</div><div class="sc-label">Critical Level</div></div>
+    <div class="summary-card"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent)"></div><div class="sc-num" style="color:var(--accent)" id="scConnections">0</div><div class="sc-label">Connections</div></div>
+    <div class="summary-card"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent2)"></div><div class="sc-num" style="color:var(--accent2)" id="scDomains">0</div><div class="sc-label">Domains</div></div>
+  </div>
+
+  <div class="filter-tabs" id="filterTabs">
+    <div class="filter-tab active" onclick="filterTheaters('all',this)">All<span class="tab-count" id="countAll"></span></div>
+    <div class="filter-tab" onclick="filterTheaters('critical',this)">Critical</div>
+    <div class="filter-tab" onclick="filterTheaters('high',this)">High</div>
+    <div class="filter-tab" onclick="filterTheaters('elevated',this)">Elevated</div>
+    <div class="filter-tab" onclick="filterTheaters('military',this)">Military</div>
+    <div class="filter-tab" onclick="filterTheaters('financial',this)">Financial</div>
+    <div class="filter-tab" onclick="filterTheaters('domestic',this)">Domestic</div>
+  </div>
+
+  <div class="theaters-grid" id="theatersGrid"></div>
+
+  <div class="add-theater">
+    <h2>➕ Add Theater</h2>
+    <div class="add-grid">
+      <div class="input-group">
+        <label>Theater Name</label>
+        <input type="text" id="addName" placeholder="e.g. South China Sea">
+      </div>
+      <div class="input-group">
+        <label>Region Emoji</label>
+        <input type="text" id="addEmoji" placeholder="e.g. 🌊" maxlength="4">
+      </div>
+      <div class="input-group">
+        <label>Threat Level</label>
+        <select id="addLevel">
+          <option value="critical">Critical</option>
+          <option value="high">High</option>
+          <option value="elevated" selected>Elevated</option>
+          <option value="guarded">Guarded</option>
+          <option value="low">Low</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Domain</label>
+        <select id="addDomain">
+          <option value="military">Military</option>
+          <option value="financial">Financial</option>
+          <option value="domestic">Domestic</option>
+          <option value="diplomatic">Diplomatic</option>
+          <option value="energy">Energy</option>
+          <option value="information">Information</option>
+        </select>
+      </div>
+      <div class="input-group add-full">
+        <label>Status / Description</label>
+        <textarea id="addDesc" placeholder="Current situation and key developments..."></textarea>
+      </div>
+      <button class="add-btn" onclick="addTheater()">▶ Add Theater to Board</button>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>THEATER STATUS BOARD — <a href="https://frequencyframework.org" target="_blank">THE FREQUENCY FRAMEWORK</a></p>
+    <p style="margin-top:6px;font-size:11px;color:var(--text-muted)">Every theater is connected. The board reveals the architecture.<br>Multi-theater simultaneity is a primary coordination signature.</p>
+  </div>
+</div>
+
+<script>
+const threatColors={critical:'var(--critical)',high:'var(--high)',elevated:'var(--elevated)',guarded:'var(--guarded)',low:'var(--low)'};
+const threatLabels={critical:'CRITICAL',high:'HIGH',elevated:'ELEVATED',guarded:'GUARDED',low:'LOW'};
+const stepColors=['#00e5ff','#7b2ff7','#ff8a00','#ff2d6b','#ffd600','#00ff88'];
+
+let theaters=[
+  {
+    id:'iran',name:'Iran — Operation Epic Fury',emoji:'🇮🇷',level:'critical',domain:'military',
+    sub:'Day 6 — US/Israel joint strikes, Iranian retaliation across Gulf',
+    metrics:[{val:'1,230+',label:'Killed in Iran'},{val:'6',label:'US KIA'},{val:'128',label:'Attack Waves'},{val:'20+',label:'Ships Destroyed'}],
+    updates:[
+      {time:'Day 6',text:'Death toll rises to 1,230+. Israel launches 10th wave. IAF: 4,000 munitions in 1,600 sorties.',dot:'var(--critical)'},
+      {time:'Day 5',text:'Katz confirms operation pre-planned for mid-2026, accelerated to February.',dot:'var(--high)'},
+      {time:'Day 5',text:'USS submarine torpedoes IRIS Dena off Sri Lanka — first torpedo kill since WWII.',dot:'var(--critical)'},
+      {time:'Day 5',text:'Senate war powers vote fails 47-53. Constitutional check dead.',dot:'var(--high)'},
+      {time:'Day 4',text:'Iran military loses control of several units — operating on old general instructions.',dot:'var(--critical)'}
+    ],
+    connections:['Hormuz','Lebanon','Turkey/NATO','Gulf States','DHS Shutdown','Energy Markets','Domestic Threat'],
+    steps:[1,1,1,1,1,0]
+  },
+  {
+    id:'hormuz',name:'Strait of Hormuz — Energy Chokepoint',emoji:'⛽',level:'critical',domain:'energy',
+    sub:'Effectively closed — 20% global oil supply disrupted',
+    metrics:[{val:'4/day',label:'Transits (avg 24)'},{val:'150+',label:'Ships Stranded'},{val:'+14%',label:'Brent This Week'},{val:'$424K',label:'Tanker Rate/Day'}],
+    updates:[
+      {time:'Day 6',text:'IRGC claims strike on US oil tanker in Persian Gulf.',dot:'var(--critical)'},
+      {time:'Day 5',text:'Maersk suspends ALL Gulf cargo — UAE, Saudi, Bahrain, Kuwait, Oman, Qatar, Iraq.',dot:'var(--critical)'},
+      {time:'Day 5',text:'Trump pledges DFC insurance + Navy escorts. Navy says no availability.',dot:'var(--high)'},
+      {time:'Day 4',text:'Qatar shuts down LNG production after drone strikes. 20% global LNG offline.',dot:'var(--critical)'},
+      {time:'Day 3',text:'IRGC declares strait closed. Zero civilian transits.',dot:'var(--critical)'}
+    ],
+    connections:['Iran','Energy Markets','Gulf States','Mediterranean','Global Trade'],
+    steps:[1,1,1,0,0,0]
+  },
+  {
+    id:'lebanon',name:'Lebanon — Third Front',emoji:'🇱🇧',level:'high',domain:'military',
+    sub:'Israel ground incursion + Hezbollah expanding attacks to Tel Aviv',
+    metrics:[{val:'50+',label:'Killed'},{val:'62',label:'Hezb. Attacks'},{val:'91st Div',label:'IDF Ground'},{val:'2',label:'Tel Aviv Strikes'}],
+    updates:[
+      {time:'Day 6',text:'Israel 91st Division ground incursion into southern Lebanon.',dot:'var(--critical)'},
+      {time:'Day 5',text:'Hezbollah coordinates simultaneous barrage with Iran — saturation doctrine.',dot:'var(--high)'},
+      {time:'Day 5',text:'Lebanese gov bans Hezbollah military activity. Hezbollah ignores.',dot:'var(--elevated)'},
+      {time:'Day 4',text:'Drone from Lebanon hits UK RAF base in Cyprus.',dot:'var(--high)'}
+    ],
+    connections:['Iran','Turkey/NATO','Cyprus','Israel'],
+    steps:[1,1,1,0,0,0]
+  },
+  {
+    id:'turkey',name:'Turkey / NATO — Escalation Tripwire',emoji:'🇹🇷',level:'high',domain:'diplomatic',
+    sub:'Iranian missile intercepted in Turkish airspace — Article 5 threshold',
+    metrics:[{val:'1',label:'Missile Intercept'},{val:'$2T',label:'Economic Damage'},{val:'86M',label:'Population'},{val:'2nd',label:'NATO Army'}],
+    updates:[
+      {time:'Day 5',text:'NATO air defense destroys Iranian ballistic missile heading into Turkish airspace.',dot:'var(--critical)'},
+      {time:'Day 5',text:'Erdogan breaks silence — calls operation "banditry," positions as mediator.',dot:'var(--high)'},
+      {time:'Day 5',text:'Hegseth: doesn\'t expect Article 5 invocation. Not his call — it\'s Erdogan\'s.',dot:'var(--elevated)'}
+    ],
+    connections:['Iran','NATO/EU','Hormuz','Azerbaijan'],
+    steps:[1,1,0,0,0,0]
+  },
+  {
+    id:'gulf',name:'Gulf States — UAE / Qatar / Kuwait / Saudi',emoji:'🏜️',level:'critical',domain:'military',
+    sub:'Absorbing heaviest Iranian retaliation — 1,100+ attacks on UAE alone',
+    metrics:[{val:'1,100+',label:'UAE Attacks'},{val:'189',label:'UAE Missiles'},{val:'941',label:'UAE Drones'},{val:'3',label:'Embassies Closed'}],
+    updates:[
+      {time:'Day 6',text:'Azerbaijan airport struck by drones — war expanding beyond Middle East.',dot:'var(--critical)'},
+      {time:'Day 5',text:'UAE: "We do not believe military solutions can deliver lasting stability."',dot:'var(--high)'},
+      {time:'Day 5',text:'Qatar arrests 10 suspected IRGC spies. Airspace remains closed.',dot:'var(--high)'},
+      {time:'Day 4',text:'US embassies in Saudi, Kuwait, Lebanon closed after strikes.',dot:'var(--critical)'}
+    ],
+    connections:['Iran','Hormuz','Energy Markets','US Bases'],
+    steps:[1,1,1,1,0,0]
+  },
+  {
+    id:'venezuela',name:'Venezuela — Resource Extraction',emoji:'🇻🇪',level:'elevated',domain:'financial',
+    sub:'Mining law reform with US Interior Secretary — Six-Step Monetization',
+    metrics:[{val:'Jan 3',label:'Maduro Captured'},{val:'24',label:'Mining Companies'},{val:'Step 5',label:'Six-Step Position'},{val:'$T+',label:'Mineral Reserves'}],
+    updates:[
+      {time:'Mar 4',text:'Interim President Rodriguez meets US Interior Sec. Burgum — mining law reform.',dot:'var(--high)'},
+      {time:'Mar 4',text:'"Cut the red tape" for capital investment. Two dozen mining companies present.',dot:'var(--high)'},
+      {time:'Jan 3',text:'US military captures President Maduro — Operation completed.',dot:'var(--critical)'}
+    ],
+    connections:['Ecuador','Cuba','Greenland','Western Hemisphere'],
+    steps:[1,1,1,1,1,0]
+  },
+  {
+    id:'ecuador',name:'Ecuador — Cartel Operations',emoji:'🇪🇨',level:'elevated',domain:'military',
+    sub:'First US land operation against cartels under this administration',
+    metrics:[{val:'Mar 3',label:'Op. Launched'},{val:'16',label:'Arrested'},{val:'6 tons',label:'Cocaine Seized'},{val:'151',label:'Boat Strike Deaths'}],
+    updates:[
+      {time:'Mar 3',text:'SOUTHCOM announces first land operation. US advisors provided planning/intel.',dot:'var(--high)'},
+      {time:'Mar 3',text:'Not mentioned at Pentagon briefing — Iran consumed all attention.',dot:'var(--elevated)'}
+    ],
+    connections:['Venezuela','Cuba','Western Hemisphere'],
+    steps:[1,1,1,0,0,0]
+  },
+  {
+    id:'cuba',name:'Cuba — Energy Collapse',emoji:'🇨🇺',level:'elevated',domain:'energy',
+    sub:'Nationwide blackout from US oil chokehold',
+    metrics:[{val:'Mar 4',label:'Blackout'},{val:'11M',label:'Population'},{val:'0',label:'Oil Lifeline'},{val:'100%',label:'Grid Down'}],
+    updates:[
+      {time:'Mar 4',text:'Reuters: "Blackout hits most of Cuba amid US oil chokehold."',dot:'var(--high)'},
+      {time:'Jan 3',text:'Venezuela oil lifeline severed when Maduro captured.',dot:'var(--elevated)'}
+    ],
+    connections:['Venezuela','Energy Markets','Western Hemisphere'],
+    steps:[1,1,1,1,0,0]
+  },
+  {
+    id:'greenland',name:'Greenland — Staged',emoji:'🧊',level:'guarded',domain:'diplomatic',
+    sub:'JSOC plans exist, European deterrent consumed by Middle East',
+    metrics:[{val:'Jan 21',label:'Davos Climbdown'},{val:'$2.5T',label:'Est. Value'},{val:'56K',label:'Population'},{val:'1',label:'US Base'}],
+    updates:[
+      {time:'Feb 22',text:'Hospital ship announcement — both ships in drydock, Pentagon received no orders.',dot:'var(--elevated)'},
+      {time:'Feb 22',text:'US submarine operating 7 miles off Nuuk — unexplained.',dot:'var(--elevated)'},
+      {time:'Jan',text:'JSOC invasion plans drawn up, Joint Chiefs pushed back.',dot:'var(--high)'}
+    ],
+    connections:['NATO/EU','Western Hemisphere','Energy Markets'],
+    steps:[1,1,0,0,0,0]
+  },
+  {
+    id:'mediterranean',name:'Mediterranean — Second Energy Front',emoji:'🌊',level:'high',domain:'energy',
+    sub:'Russian LNG tanker sunk by Ukrainian drones — first LNG attack in history',
+    metrics:[{val:'61K tons',label:'LNG Lost'},{val:'2nd',label:'Tanker Attack (3mo)'},{val:'+76%',label:'EU Gas Week'},{val:'30%',label:'EU Jet Fuel Risk'}],
+    updates:[
+      {time:'Mar 3',text:'Arctic Metagaz sunk between Libya and Malta. Ukrainian sea drones from Libya coast.',dot:'var(--critical)'},
+      {time:'Mar 4',text:'Zelensky calls Bahrain/Kuwait leaders — positioning Ukraine as Gulf partner.',dot:'var(--elevated)'}
+    ],
+    connections:['Iran','Hormuz','Energy Markets','Ukraine/Russia','NATO/EU'],
+    steps:[1,1,1,0,0,0]
+  },
+  {
+    id:'domestic',name:'US Domestic — Threat & Shutdown',emoji:'🇺🇸',level:'high',domain:'domestic',
+    sub:'DHS shutdown Week 3, counterterrorism on war footing, fatwa issued',
+    metrics:[{val:'20',label:'Shutdown Days'},{val:'40%',label:'CISA Staffing'},{val:'50K+',label:'Unpaid Workers'},{val:'+26¢',label:'Gas 3-Day Rise'}],
+    updates:[
+      {time:'Mar 4',text:'Grand Ayatollah issues fatwa: violence against Trump/Zionists "obligatory."',dot:'var(--critical)'},
+      {time:'Mar 4',text:'Austin TX: Iran-motivated shooting at bar kills multiple Americans.',dot:'var(--critical)'},
+      {time:'Mar 4',text:'CISA at 40% staffing while DHS/FBI warn of cyber attacks on financial/water systems.',dot:'var(--high)'},
+      {time:'Mar 4',text:'ICE confirms measles outbreak at largest detention facility. Closed to attorneys.',dot:'var(--elevated)'},
+      {time:'Mar 4',text:'Mace subpoenas AG Bondi over Epstein files. Buried under war coverage.',dot:'var(--elevated)'}
+    ],
+    connections:['Iran','DHS Shutdown','Energy Markets','Information Ecosystem'],
+    steps:[1,1,1,1,0,0]
+  },
+  {
+    id:'markets',name:'Global Markets — War Economy',emoji:'📈',level:'high',domain:'financial',
+    sub:'Defense surging, energy spiking, Asian markets volatile, prediction markets frozen',
+    metrics:[{val:'$82',label:'Brent/barrel'},{val:'$5,180',label:'Gold/oz'},{val:'-12%',label:'KOSPI Day'},{val:'$54M',label:'Kalshi Frozen'}],
+    updates:[
+      {time:'Mar 5',text:'KOSPI rebounds 9.6% after record crash. Asian markets recovering.',dot:'var(--elevated)'},
+      {time:'Mar 4',text:'Kalshi freezes $54M in Khamenei death bets. Insider trading signal.',dot:'var(--high)'},
+      {time:'Mar 4',text:'Tech giants sign energy pledges at White House. Gates nuclear approved.',dot:'var(--elevated)'},
+      {time:'Mar 4',text:'Musk launches X Money — 9.3M views. Alternative financial infrastructure.',dot:'var(--elevated)'}
+    ],
+    connections:['Iran','Hormuz','Energy Markets','Domestic','Information Ecosystem'],
+    steps:[1,1,1,1,1,0]
+  }
+];
+
+function renderTheaters(filter='all'){
+  const grid=document.getElementById('theatersGrid');
+  grid.innerHTML='';
+
+  let filtered=theaters;
+  if(filter==='critical')filtered=theaters.filter(t=>t.level==='critical');
+  else if(filter==='high')filtered=theaters.filter(t=>t.level==='high');
+  else if(filter==='elevated')filtered=theaters.filter(t=>t.level==='elevated'||t.level==='guarded'||t.level==='low');
+  else if(filter==='military')filtered=theaters.filter(t=>t.domain==='military');
+  else if(filter==='financial')filtered=theaters.filter(t=>t.domain==='financial'||t.domain==='energy');
+  else if(filter==='domestic')filtered=theaters.filter(t=>t.domain==='domestic');
+
+  filtered.forEach(t=>{
+    const card=document.createElement('div');
+    card.className='theater-card';
+    card.dataset.id=t.id;
+
+    const color=threatColors[t.level];
+    const label=threatLabels[t.level];
+
+    card.innerHTML=`
+      <div class="tc-header" onclick="toggleTheater('${t.id}')" style="cursor:pointer">
+        <div style="position:absolute;top:0;left:0;bottom:0;width:4px;background:${color}"></div>
+        <div class="tc-status-dot${t.level==='critical'?' active':''}" style="background:${color};color:${color}"></div>
+        <div class="tc-region">${t.emoji}</div>
+        <div class="tc-info">
+          <div class="tc-name">${t.name}</div>
+          <div class="tc-sub">${t.sub}</div>
+        </div>
+        <div class="tc-threat" style="color:${color};border-color:${color}">${label}</div>
+        <div class="tc-expand">▼</div>
+      </div>
+      <div class="tc-body">
+        <div class="tc-section">
+          <div class="tc-section-title">Key Metrics</div>
+          <div class="tc-metrics">
+            ${t.metrics.map(m=>`<div class="tc-metric"><div class="tc-metric-val" style="color:${color}">${m.val}</div><div class="tc-metric-label">${m.label}</div></div>`).join('')}
+          </div>
+        </div>
+        <div class="tc-section">
+          <div class="tc-section-title">Latest Updates</div>
+          <div class="tc-updates">
+            ${t.updates.map(u=>`<div class="tc-update"><div class="tc-update-time">${u.time}</div><div class="tc-update-dot" style="background:${u.dot}"></div><div>${u.text}</div></div>`).join('')}
+          </div>
+        </div>
+        <div class="tc-section">
+          <div class="tc-section-title">Six-Step Position</div>
+          <div class="tc-step-bar">
+            ${t.steps.map((s,i)=>`<div class="tc-step-seg${s?' active':''}" style="${s?'background:'+stepColors[i]:''}"></div>`).join('')}
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:4px">
+            <span style="font-size:9px;color:var(--text-muted)">1-Relate</span>
+            <span style="font-size:9px;color:var(--text-muted)">6-Defend</span>
+          </div>
+        </div>
+        <div class="tc-section">
+          <div class="tc-section-title">Connected Theaters</div>
+          <div class="tc-connections">
+            ${t.connections.map(c=>`<div class="tc-conn">${c}</div>`).join('')}
+          </div>
+        </div>
+      </div>`;
+
+    grid.appendChild(card);
+  });
+
+  updateStats();
+}
+
+function toggleTheater(id){
+  const cards=document.querySelectorAll('.theater-card');
+  cards.forEach(c=>{
+    if(c.dataset.id===id)c.classList.toggle('expanded');
+    else c.classList.remove('expanded');
+  });
+}
+
+function filterTheaters(filter,tab){
+  document.querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active'));
+  tab.classList.add('active');
+  renderTheaters(filter);
+}
+
+function updateStats(){
+  const active=theaters.length;
+  const critical=theaters.filter(t=>t.level==='critical').length;
+  const connections=new Set();
+  theaters.forEach(t=>t.connections.forEach(c=>connections.add(c)));
+  const domains=new Set(theaters.map(t=>t.domain));
+
+  document.getElementById('scActive').textContent=active;
+  document.getElementById('scCritical').textContent=critical;
+  document.getElementById('scConnections').textContent=connections.size;
+  document.getElementById('scDomains').textContent=domains.size;
+  document.getElementById('countAll').textContent=`(${active})`;
+
+  // Global threat
+  const gtBar=document.getElementById('globalThreat');
+  const gtDot=document.getElementById('gtDot');
+  const gtLevel=document.getElementById('gtLevel');
+  const gtDesc=document.getElementById('gtDesc');
+
+  let globalLevel,globalColor,globalDesc;
+  if(critical>=3){
+    globalLevel='CRITICAL';globalColor='var(--critical)';
+    globalDesc=`${critical} theaters at critical level. ${active} total active. Multi-theater coordination signatures detected across ${domains.size} domains.`;
+  }else if(critical>=1){
+    globalLevel='HIGH';globalColor='var(--high)';
+    globalDesc=`${critical} critical theater(s). ${active} total active across ${domains.size} domains.`;
+  }else{
+    globalLevel='ELEVATED';globalColor='var(--elevated)';
+    globalDesc=`${active} theaters active. Monitoring for escalation.`;
+  }
+
+  gtBar.style.setProperty('--gt-color',globalColor);
+  gtBar.querySelector('::before');
+  gtDot.style.background=globalColor;
+  gtDot.style.color=globalColor;
+  gtLevel.textContent=globalLevel;
+  gtLevel.style.color=globalColor;
+  gtDesc.textContent=globalDesc;
+  document.querySelector('.global-threat').style.borderColor=globalColor.replace('var(','').replace(')','');
+
+  // Set border top color
+  gtBar.style.borderTopColor=globalColor;
+}
+
+function addTheater(){
+  const name=document.getElementById('addName').value;
+  const emoji=document.getElementById('addEmoji').value||'📍';
+  const level=document.getElementById('addLevel').value;
+  const domain=document.getElementById('addDomain').value;
+  const desc=document.getElementById('addDesc').value;
+  if(!name){alert('Please enter a theater name.');return}
+
+  theaters.push({
+    id:'custom_'+Date.now(),name:name,emoji:emoji,level:level,domain:domain,
+    sub:desc||'Custom theater added by analyst',
+    metrics:[{val:'—',label:'TBD'},{val:'—',label:'TBD'},{val:'—',label:'TBD'},{val:'—',label:'TBD'}],
+    updates:[{time:'Now',text:desc||'Theater added to monitoring board.',dot:threatColors[level]}],
+    connections:[],
+    steps:[0,0,0,0,0,0]
+  });
+
+  renderTheaters();
+  document.getElementById('addName').value='';
+  document.getElementById('addDesc').value='';
+
+  const btn=document.querySelector('.add-btn');
+  btn.textContent='✓ Theater Added';
+  btn.style.background='var(--green)';btn.style.color='var(--bg)';
+  setTimeout(()=>{btn.textContent='▶ Add Theater to Board';btn.style.background='transparent';btn.style.color='var(--green)'},1500);
+}
+
+// Clock
+function updateClock(){
+  const now=new Date();
+  document.getElementById('gtClock').textContent=now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  document.getElementById('gtDate').textContent=now.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+}
+setInterval(updateClock,1000);
+updateClock();
+
+// Initialize
+renderTheaters();
+</script>
+</body>
+</html>
