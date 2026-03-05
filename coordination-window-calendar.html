@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coordination Window Calendar | The Frequency Framework</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#0a0a0f;--surface:#111118;--surface2:#18181f;--surface3:#1f1f28;
+--border:#2a2a35;--border-glow:#3a3a4a;
+--text:#e8e8f0;--text-dim:#8888a0;--text-muted:#555568;
+--accent:#00e5ff;--accent2:#7b2ff7;--accent3:#ff2d6b;
+--green:#00ff88;--yellow:#ffd600;--orange:#ff8a00;--red:#ff2d4a;
+--gradient:linear-gradient(135deg,#00e5ff 0%,#7b2ff7 50%,#ff2d6b 100%);
+--holiday:#ff2d6b;--recess:#7b2ff7;--event:#ffd600;--window:#00e5ff;--military:#ff8a00;
+}
+body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:
+  linear-gradient(90deg,rgba(0,229,255,.02) 1px,transparent 1px),
+  linear-gradient(rgba(0,229,255,.02) 1px,transparent 1px);
+  background-size:60px 60px;pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 30% 0%,rgba(0,229,255,.06) 0%,transparent 50%),radial-gradient(ellipse at 70% 100%,rgba(123,47,247,.06) 0%,transparent 50%);pointer-events:none;z-index:0}
+
+.container{max-width:1000px;margin:0 auto;padding:20px;position:relative;z-index:1}
+
+/* Header */
+.header{text-align:center;padding:40px 0 30px;position:relative}
+.header::after{content:'';display:block;width:200px;height:2px;background:var(--gradient);margin:20px auto 0;border-radius:1px}
+.logo-icon{font-size:48px;margin-bottom:8px;display:block;filter:drop-shadow(0 0 20px rgba(0,229,255,.4))}
+.header h1{font-family:'Orbitron',sans-serif;font-size:clamp(20px,4.5vw,30px);font-weight:800;letter-spacing:3px;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-transform:uppercase}
+.header .subtitle{font-size:14px;color:var(--text-dim);letter-spacing:4px;text-transform:uppercase;margin-top:8px;font-weight:300}
+.header .tagline{font-size:13px;color:var(--text-muted);margin-top:4px;font-style:italic}
+.header .oneliner{font-size:13px;color:var(--text-muted);margin-top:14px;letter-spacing:1px;font-weight:300}
+
+/* Legend */
+.legend{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin:20px 0}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-dim);letter-spacing:.5px}
+.legend-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+
+/* Calendar Controls */
+.cal-controls{display:flex;align-items:center;justify-content:space-between;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:2px;border-bottom-left-radius:0;border-bottom-right-radius:0}
+.cal-nav{display:flex;align-items:center;gap:12px}
+.cal-nav button{width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center}
+.cal-nav button:hover{border-color:var(--accent);color:var(--accent)}
+.cal-month{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:700;letter-spacing:2px;min-width:200px;text-align:center}
+.cal-today-btn{padding:8px 16px;border-radius:8px;border:1px solid var(--accent);background:transparent;color:var(--accent);font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:2px;cursor:pointer;transition:all .3s;text-transform:uppercase}
+.cal-today-btn:hover{background:var(--accent);color:var(--bg)}
+
+/* Calendar Grid */
+.cal-grid{background:var(--surface);border:1px solid var(--border);border-radius:10px;border-top-left-radius:0;border-top-right-radius:0;overflow:hidden}
+.cal-header-row{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--border)}
+.cal-header-cell{padding:10px;text-align:center;font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:2px;color:var(--text-muted);text-transform:uppercase}
+.cal-body{display:grid;grid-template-columns:repeat(7,1fr)}
+.cal-cell{min-height:90px;border:1px solid rgba(42,42,53,.3);padding:6px;position:relative;transition:all .3s;cursor:pointer}
+.cal-cell:hover{background:rgba(255,255,255,.02);border-color:var(--border-glow)}
+.cal-cell.other-month{opacity:.25}
+.cal-cell.today{background:rgba(0,229,255,.05);border-color:rgba(0,229,255,.3)}
+.cal-cell.today .cal-day{color:var(--accent);font-weight:700}
+.cal-day{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-dim);margin-bottom:4px}
+
+/* Event dots */
+.cal-events{display:flex;flex-direction:column;gap:2px}
+.cal-event{font-size:9px;padding:2px 5px;border-radius:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;letter-spacing:.3px;cursor:pointer;transition:all .2s}
+.cal-event:hover{transform:scale(1.02);filter:brightness(1.2)}
+.cal-event.holiday{background:rgba(255,45,107,.2);color:var(--holiday);border-left:2px solid var(--holiday)}
+.cal-event.recess{background:rgba(123,47,247,.2);color:var(--recess);border-left:2px solid var(--recess)}
+.cal-event.event{background:rgba(255,214,0,.15);color:var(--event);border-left:2px solid var(--event)}
+.cal-event.window{background:rgba(0,229,255,.15);color:var(--window);border-left:2px solid var(--window)}
+.cal-event.military{background:rgba(255,138,0,.15);color:var(--military);border-left:2px solid var(--military)}
+.cal-event.custom{background:rgba(0,255,136,.15);color:var(--green);border-left:2px solid var(--green)}
+
+/* Window highlight */
+.cal-cell.in-window{background:rgba(0,229,255,.03)}
+.cal-cell.in-window::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);opacity:.4}
+.cal-cell.window-start{border-left:2px solid var(--accent)}
+.cal-cell.window-end{border-right:2px solid var(--accent)}
+
+/* Detail Panel */
+.detail-panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin:20px 0;display:none;animation:fadeUp .4s ease;position:relative;overflow:hidden}
+.detail-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--gradient);opacity:.6}
+.detail-panel.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.detail-date{font-family:'Orbitron',sans-serif;font-size:16px;font-weight:700;letter-spacing:2px;margin-bottom:4px}
+.detail-sub{font-size:13px;color:var(--text-muted);margin-bottom:16px}
+.detail-events{display:flex;flex-direction:column;gap:10px}
+.detail-event{padding:12px 16px;border-radius:8px;border-left:3px solid;background:var(--surface2)}
+.detail-event .de-type{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.detail-event .de-title{font-size:15px;font-weight:600;margin-bottom:4px}
+.detail-event .de-desc{font-size:13px;color:var(--text-dim);line-height:1.5}
+.detail-close{position:absolute;top:16px;right:16px;width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s}
+.detail-close:hover{border-color:var(--accent3);color:var(--accent3)}
+
+/* Dutch Clause callout */
+.dutch-clause{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin:20px 0;position:relative;overflow:hidden}
+.dutch-clause::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--holiday)}
+.dutch-clause h3{font-family:'Orbitron',sans-serif;font-size:13px;letter-spacing:2px;color:var(--holiday);text-transform:uppercase;margin-bottom:10px}
+.dutch-clause p{font-size:14px;color:var(--text-dim);line-height:1.6}
+.dutch-clause strong{color:var(--text)}
+
+/* Add Event Section */
+.add-section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin:20px 0;position:relative;overflow:hidden}
+.add-section::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--gradient);opacity:.6}
+.add-section h2{font-family:'Orbitron',sans-serif;font-size:14px;letter-spacing:2px;color:var(--accent);margin-bottom:16px;text-transform:uppercase}
+.add-row{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end}
+.add-row .input-group{margin-bottom:0}
+.input-group label{display:block;font-size:11px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;font-weight:500}
+.input-group input,.input-group select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:10px 12px;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:14px;outline:none;transition:border-color .3s}
+.input-group input:focus,.input-group select:focus{border-color:var(--accent)}
+.input-group select option{background:var(--surface2)}
+.add-btn{padding:10px 20px;border-radius:6px;border:1px solid var(--green);background:transparent;color:var(--green);font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:1px;cursor:pointer;transition:all .3s;text-transform:uppercase;white-space:nowrap;height:42px}
+.add-btn:hover{background:var(--green);color:var(--bg)}
+
+/* Stats bar */
+.stats-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:20px 0}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.stat-num{font-family:'Orbitron',sans-serif;font-size:28px;font-weight:800}
+.stat-label{font-size:11px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-top:4px}
+
+/* Footer */
+.footer{text-align:center;padding:30px 0;border-top:1px solid var(--border);margin-top:40px}
+.footer p{font-size:12px;color:var(--text-muted);letter-spacing:1px}
+.footer a{color:var(--accent);text-decoration:none}
+
+/* Responsive */
+@media(max-width:700px){
+  .cal-cell{min-height:60px;padding:4px}
+  .cal-event{font-size:7px;padding:1px 3px}
+  .cal-day{font-size:11px}
+  .cal-header-cell{font-size:9px;padding:6px 2px}
+  .add-row{grid-template-columns:1fr 1fr;gap:8px}
+  .stats-bar{grid-template-columns:repeat(2,1fr)}
+  .legend{gap:10px}
+  .legend-item{font-size:10px}
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <span class="logo-icon">📅</span>
+    <h1>Coordination Window Calendar</h1>
+    <div class="subtitle">The Dutch Clause Mapping System</div>
+    <div class="tagline">The Frequency Framework — When They Move Matters as Much as What They Move</div>
+    <div class="oneliner">Federal holidays. Congressional recesses. Maximum distraction. Minimum oversight.</div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--holiday)"></div>Federal Holiday</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--recess)"></div>Congressional Recess</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--event)"></div>Major Event</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--window)"></div>Coordination Window</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--military)"></div>Military / Operation</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Custom Marker</div>
+  </div>
+
+  <div class="stats-bar" id="statsBar">
+    <div class="stat-card" style="--c:var(--holiday)"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--holiday)"></div><div class="stat-num" style="color:var(--holiday)" id="statHolidays">0</div><div class="stat-label">Holidays This Month</div></div>
+    <div class="stat-card" style="--c:var(--recess)"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--recess)"></div><div class="stat-num" style="color:var(--recess)" id="statRecess">0</div><div class="stat-label">Recess Days</div></div>
+    <div class="stat-card" style="--c:var(--window)"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--window)"></div><div class="stat-num" style="color:var(--window)" id="statWindows">0</div><div class="stat-label">Active Windows</div></div>
+    <div class="stat-card" style="--c:var(--accent3)"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent3)"></div><div class="stat-num" style="color:var(--accent3)" id="statOverlap">0</div><div class="stat-label">Overlap Days</div></div>
+  </div>
+
+  <div class="cal-controls">
+    <div class="cal-nav">
+      <button onclick="changeMonth(-1)">◀</button>
+      <div class="cal-month" id="calMonth"></div>
+      <button onclick="changeMonth(1)">▶</button>
+    </div>
+    <button class="cal-today-btn" onclick="goToday()">Today</button>
+  </div>
+
+  <div class="cal-grid">
+    <div class="cal-header-row">
+      <div class="cal-header-cell">Sun</div>
+      <div class="cal-header-cell">Mon</div>
+      <div class="cal-header-cell">Tue</div>
+      <div class="cal-header-cell">Wed</div>
+      <div class="cal-header-cell">Thu</div>
+      <div class="cal-header-cell">Fri</div>
+      <div class="cal-header-cell">Sat</div>
+    </div>
+    <div class="cal-body" id="calBody"></div>
+  </div>
+
+  <div class="detail-panel" id="detailPanel">
+    <button class="detail-close" onclick="closeDetail()">✕</button>
+    <div class="detail-date" id="detailDate"></div>
+    <div class="detail-sub" id="detailSub"></div>
+    <div class="detail-events" id="detailEvents"></div>
+  </div>
+
+  <div class="dutch-clause">
+    <h3>🃏 The Dutch Clause</h3>
+    <p><strong>Federal holidays and congressional recesses are not just days off.</strong> They are coordination infrastructure. When oversight is absent, when media coverage is thin, when public attention is directed elsewhere — that's when the most consequential moves happen. The Iraq War launched the night before March Madness. Venezuela's Maduro was captured on a holiday weekend. Operation Epic Fury began during the DHS shutdown. The pattern is consistent, documented, and predictable. This calendar makes it visible.</p>
+  </div>
+
+  <div class="add-section">
+    <h2>➕ Add Custom Marker</h2>
+    <div class="add-row">
+      <div class="input-group">
+        <label>Date</label>
+        <input type="date" id="addDate">
+      </div>
+      <div class="input-group">
+        <label>Label</label>
+        <input type="text" id="addLabel" placeholder="Event name...">
+      </div>
+      <div class="input-group">
+        <label>Type</label>
+        <select id="addType">
+          <option value="custom">Custom Marker</option>
+          <option value="window">Coordination Window</option>
+          <option value="military">Military / Operation</option>
+          <option value="event">Major Event</option>
+        </select>
+      </div>
+      <button class="add-btn" onclick="addCustomEvent()">+ Add</button>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>COORDINATION WINDOW CALENDAR — <a href="https://frequencyframework.org" target="_blank">THE FREQUENCY FRAMEWORK</a></p>
+    <p style="margin-top:6px;font-size:11px;color:var(--text-muted)">The Dutch Clause: Federal holidays as coordination infrastructure.<br>When they move matters as much as what they move.</p>
+  </div>
+</div>
+
+<script>
+let currentYear=2026;
+let currentMonth=2; // March (0-indexed)
+
+// Event database
+const events={};
+
+function addEvent(dateStr,type,title,desc=''){
+  if(!events[dateStr])events[dateStr]=[];
+  events[dateStr].push({type,title,desc});
+}
+
+// 2026 Federal Holidays
+addEvent('2026-01-01','holiday',"New Year's Day",'Federal holiday — reduced oversight');
+addEvent('2026-01-19','holiday','MLK Jr. Day','Federal holiday — markets closed');
+addEvent('2026-02-16','holiday',"Presidents' Day",'Federal holiday — USS Ford ordered to Gulf this weekend');
+addEvent('2026-05-25','holiday','Memorial Day','Federal holiday');
+addEvent('2026-07-03','holiday','Independence Day (Observed)','Federal holiday');
+addEvent('2026-07-04','holiday','Independence Day','Federal holiday');
+addEvent('2026-09-07','holiday','Labor Day','Federal holiday');
+addEvent('2026-10-12','holiday','Columbus Day','Federal holiday');
+addEvent('2026-11-11','holiday','Veterans Day','Federal holiday');
+addEvent('2026-11-26','holiday','Thanksgiving','Federal holiday');
+addEvent('2026-12-25','holiday','Christmas Day','Federal holiday');
+
+// Congressional Recesses 2026 (approximate)
+const recessPeriods=[
+  {start:'2026-01-03',end:'2026-01-19',label:'Pre-Session'},
+  {start:'2026-02-14',end:'2026-02-22',label:"Presidents' Day Recess"},
+  {start:'2026-03-28',end:'2026-04-12',label:'Easter/Spring Recess'},
+  {start:'2026-05-23',end:'2026-06-01',label:'Memorial Day Recess'},
+  {start:'2026-07-03',end:'2026-07-19',label:'Independence Day Recess'},
+  {start:'2026-08-07',end:'2026-09-08',label:'August Recess'},
+  {start:'2026-10-10',end:'2026-10-18',label:'Fall Recess'},
+  {start:'2026-11-13',end:'2026-11-29',label:'Thanksgiving Recess'},
+  {start:'2026-12-18',end:'2026-12-31',label:'Holiday Recess'},
+];
+
+recessPeriods.forEach(r=>{
+  let d=new Date(r.start);
+  const end=new Date(r.end);
+  while(d<=end){
+    const ds=d.toISOString().split('T')[0];
+    addEvent(ds,'recess',r.label,'Congressional recess — reduced oversight');
+    d.setDate(d.getDate()+1);
+  }
+});
+
+// Major Events 2026
+addEvent('2026-02-06','event','Winter Olympics Open','Milan-Cortina 2026 Opening Ceremony');
+addEvent('2026-02-08','event','Super Bowl LX','Maximum domestic attention capture');
+addEvent('2026-02-22','event','Olympics Closing','Milan-Cortina 2026 Closing Ceremony');
+addEvent('2026-02-24','event','SOTU Address','State of the Union — Trump accuses Iran');
+addEvent('2026-03-01','event','Ramadan Begins','Islamic holy month — theological dimension');
+addEvent('2026-11-03','event','Midterm Elections','2026 Midterms');
+
+// Iran Coordination Window
+for(let d=1;d<=22;d++){
+  const ds=`2026-02-${String(d).padStart(2,'0')}`;
+  addEvent(ds,'window','Iran Window Day '+d,'Framework coordination window tracker — 100% prediction accuracy');
+}
+
+// Military / Operations
+addEvent('2026-01-03','military','Venezuela: Maduro Captured','US military captures President Maduro');
+addEvent('2026-02-28','military','Op. Epic Fury Begins','US-Israel strikes on Iran commence');
+addEvent('2026-03-01','military','Iran Retaliation','IRGC launches counterstrikes across Gulf');
+addEvent('2026-03-02','military','Hormuz Effectively Closed','Zero civilian tanker transits');
+addEvent('2026-03-03','military','Ecuador Land Ops','First US land operation against cartels');
+addEvent('2026-03-04','military','IRIS Dena Torpedoed','First US torpedo kill since WWII');
+addEvent('2026-03-04','military','War Powers Vote Fails','Senate 47-53 blocks resolution');
+
+// DHS Shutdown
+addEvent('2026-02-14','event','DHS Shutdown Begins','Department of Homeland Security unfunded');
+
+const monthNames=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const dayNames=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+function renderCalendar(){
+  const body=document.getElementById('calBody');
+  body.innerHTML='';
+
+  document.getElementById('calMonth').textContent=`${monthNames[currentMonth]} ${currentYear}`;
+
+  const firstDay=new Date(currentYear,currentMonth,1).getDay();
+  const daysInMonth=new Date(currentYear,currentMonth+1,0).getDate();
+  const daysInPrev=new Date(currentYear,currentMonth,0).getDate();
+
+  const today=new Date();
+  const todayStr=today.toISOString().split('T')[0];
+
+  let statsHolidays=0,statsRecess=0,statsWindows=0,statsOverlap=0;
+
+  // Previous month fill
+  for(let i=firstDay-1;i>=0;i--){
+    const day=daysInPrev-i;
+    const m=currentMonth===0?11:currentMonth-1;
+    const y=currentMonth===0?currentYear-1:currentYear;
+    const ds=`${y}-${String(m+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    body.appendChild(createCell(day,ds,true));
+  }
+
+  // Current month
+  for(let day=1;day<=daysInMonth;day++){
+    const ds=`${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    const cell=createCell(day,ds,false);
+
+    if(ds===todayStr)cell.classList.add('today');
+
+    // Check for windows
+    const dayEvents=events[ds]||[];
+    const hasHoliday=dayEvents.some(e=>e.type==='holiday');
+    const hasRecess=dayEvents.some(e=>e.type==='recess');
+    const hasWindow=dayEvents.some(e=>e.type==='window');
+    const hasMilitary=dayEvents.some(e=>e.type==='military');
+
+    if(hasWindow){cell.classList.add('in-window')}
+    if(hasHoliday)statsHolidays++;
+    if(hasRecess)statsRecess++;
+    if(hasWindow)statsWindows++;
+    if((hasHoliday||hasRecess)&&(hasMilitary||hasWindow))statsOverlap++;
+
+    body.appendChild(cell);
+  }
+
+  // Next month fill
+  const totalCells=body.children.length;
+  const remaining=42-totalCells;
+  for(let day=1;day<=remaining;day++){
+    const m=currentMonth===11?0:currentMonth+1;
+    const y=currentMonth===11?currentYear+1:currentYear;
+    const ds=`${y}-${String(m+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    body.appendChild(createCell(day,ds,true));
+  }
+
+  document.getElementById('statHolidays').textContent=statsHolidays;
+  document.getElementById('statRecess').textContent=statsRecess;
+  document.getElementById('statWindows').textContent=statsWindows;
+  document.getElementById('statOverlap').textContent=statsOverlap;
+}
+
+function createCell(day,dateStr,otherMonth){
+  const cell=document.createElement('div');
+  cell.className='cal-cell'+(otherMonth?' other-month':'');
+  cell.onclick=()=>showDetail(dateStr);
+
+  const dayEl=document.createElement('div');
+  dayEl.className='cal-day';
+  dayEl.textContent=day;
+  cell.appendChild(dayEl);
+
+  const evContainer=document.createElement('div');
+  evContainer.className='cal-events';
+
+  const dayEvents=events[dateStr]||[];
+  // Show max 3 events in cell, prioritize by type
+  const priority=['military','window','holiday','recess','event','custom'];
+  const sorted=[...dayEvents].sort((a,b)=>priority.indexOf(a.type)-priority.indexOf(b.type));
+  const shown=sorted.slice(0,3);
+
+  shown.forEach(ev=>{
+    const tag=document.createElement('div');
+    tag.className='cal-event '+ev.type;
+    tag.textContent=ev.title;
+    evContainer.appendChild(tag);
+  });
+
+  if(dayEvents.length>3){
+    const more=document.createElement('div');
+    more.style.cssText='font-size:9px;color:var(--text-muted);padding-left:4px';
+    more.textContent=`+${dayEvents.length-3} more`;
+    evContainer.appendChild(more);
+  }
+
+  cell.appendChild(evContainer);
+  return cell;
+}
+
+function showDetail(dateStr){
+  const panel=document.getElementById('detailPanel');
+  const dayEvents=events[dateStr]||[];
+
+  const d=new Date(dateStr+'T12:00:00');
+  document.getElementById('detailDate').textContent=`${dayNames[d.getDay()]}, ${monthNames[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+
+  // Assess the day
+  const types=dayEvents.map(e=>e.type);
+  let assessment='No tracked events on this date.';
+  if(types.includes('holiday')&&types.includes('military'))assessment='⚠️ HIGH ALERT: Military operation during federal holiday — peak coordination signature.';
+  else if(types.includes('recess')&&types.includes('military'))assessment='⚠️ ELEVATED: Military operation during congressional recess — reduced oversight.';
+  else if(types.includes('window'))assessment='📡 Active coordination window — heightened monitoring.';
+  else if(types.includes('holiday'))assessment='Federal holiday — Dutch Clause applies. Monitor for low-visibility moves.';
+  else if(types.includes('recess'))assessment='Congressional recess — reduced oversight. Watch for executive actions.';
+  else if(dayEvents.length>0)assessment=`${dayEvents.length} tracked event${dayEvents.length>1?'s':''} on this date.`;
+
+  document.getElementById('detailSub').textContent=assessment;
+
+  const evDiv=document.getElementById('detailEvents');
+  evDiv.innerHTML='';
+
+  if(dayEvents.length===0){
+    evDiv.innerHTML='<p style="color:var(--text-muted);font-size:14px">No events tracked for this date. Use the custom marker tool below to add observations.</p>';
+  }else{
+    const typeColors={holiday:'var(--holiday)',recess:'var(--recess)',event:'var(--event)',window:'var(--window)',military:'var(--military)',custom:'var(--green)'};
+    const typeLabels={holiday:'Federal Holiday',recess:'Congressional Recess',event:'Major Event',window:'Coordination Window',military:'Military / Operation',custom:'Custom Marker'};
+
+    dayEvents.forEach(ev=>{
+      evDiv.innerHTML+=`
+        <div class="detail-event" style="border-left-color:${typeColors[ev.type]}">
+          <div class="de-type" style="color:${typeColors[ev.type]}">${typeLabels[ev.type]}</div>
+          <div class="de-title">${ev.title}</div>
+          ${ev.desc?`<div class="de-desc">${ev.desc}</div>`:''}
+        </div>`;
+    });
+  }
+
+  panel.classList.add('active');
+  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function closeDetail(){
+  document.getElementById('detailPanel').classList.remove('active');
+}
+
+function changeMonth(dir){
+  currentMonth+=dir;
+  if(currentMonth>11){currentMonth=0;currentYear++}
+  if(currentMonth<0){currentMonth=11;currentYear--}
+  renderCalendar();
+  closeDetail();
+}
+
+function goToday(){
+  const today=new Date();
+  currentYear=today.getFullYear();
+  currentMonth=today.getMonth();
+  renderCalendar();
+}
+
+function addCustomEvent(){
+  const date=document.getElementById('addDate').value;
+  const label=document.getElementById('addLabel').value;
+  const type=document.getElementById('addType').value;
+  if(!date||!label){alert('Please enter a date and label.');return}
+  addEvent(date,type,label,'Custom marker added by user');
+  renderCalendar();
+  document.getElementById('addLabel').value='';
+  // Flash feedback
+  const btn=document.querySelector('.add-btn');
+  btn.textContent='✓ Added';
+  btn.style.background='var(--green)';
+  btn.style.color='var(--bg)';
+  setTimeout(()=>{btn.textContent='+ Add';btn.style.background='transparent';btn.style.color='var(--green)'},1500);
+}
+
+// Initialize
+document.getElementById('addDate').valueAsDate=new Date();
+renderCalendar();
+</script>
+</body>
+</html>
