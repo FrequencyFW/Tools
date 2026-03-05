@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Publication Risk Assessment | The Frequency Framework</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#0a0a0f;--surface:#111118;--surface2:#18181f;--surface3:#1f1f28;
+--border:#2a2a35;--border-glow:#3a3a4a;
+--text:#e8e8f0;--text-dim:#8888a0;--text-muted:#555568;
+--accent:#00e5ff;--accent2:#7b2ff7;--accent3:#ff2d6b;
+--green:#00ff88;--yellow:#ffd600;--orange:#ff8a00;--red:#ff2d4a;
+--gradient:linear-gradient(135deg,#00e5ff 0%,#7b2ff7 50%,#ff2d6b 100%);
+}
+body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:
+  linear-gradient(90deg,rgba(255,214,0,.02) 1px,transparent 1px),
+  linear-gradient(rgba(255,214,0,.02) 1px,transparent 1px);
+  background-size:60px 60px;pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 50% 100%,rgba(255,214,0,.05) 0%,transparent 60%);pointer-events:none;z-index:0}
+
+.container{max-width:920px;margin:0 auto;padding:20px;position:relative;z-index:1}
+
+.header{text-align:center;padding:40px 0 24px;position:relative}
+.header::after{content:'';display:block;width:200px;height:2px;background:var(--gradient);margin:20px auto 0;border-radius:1px}
+.logo-icon{font-size:48px;margin-bottom:8px;display:block;filter:drop-shadow(0 0 20px rgba(255,214,0,.4))}
+.header h1{font-family:'Orbitron',sans-serif;font-size:clamp(20px,4.5vw,30px);font-weight:800;letter-spacing:3px;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-transform:uppercase}
+.header .subtitle{font-size:14px;color:var(--text-dim);letter-spacing:4px;text-transform:uppercase;margin-top:8px;font-weight:300}
+.header .oneliner{font-size:13px;color:var(--text-muted);margin-top:14px;letter-spacing:1px;font-weight:300}
+
+/* Sections */
+.section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin:20px 0;position:relative;overflow:hidden}
+.section::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--gradient);opacity:.6}
+.section h2{font-family:'Orbitron',sans-serif;font-size:14px;letter-spacing:2px;color:var(--yellow);text-transform:uppercase;margin-bottom:16px}
+
+.input-group{margin-bottom:16px}
+.input-group label{display:block;font-size:12px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;font-weight:500}
+.input-group input,.input-group textarea,.input-group select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:15px;outline:none;transition:border-color .3s}
+.input-group input:focus,.input-group textarea:focus,.input-group select:focus{border-color:var(--yellow)}
+.input-group textarea{min-height:80px;resize:vertical}
+.input-group select option{background:var(--surface2)}
+.input-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* Risk checkboxes */
+.risk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;margin:12px 0}
+.risk-item{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;cursor:pointer;transition:all .3s;user-select:none;position:relative;overflow:hidden}
+.risk-item:hover{border-color:var(--border-glow)}
+.risk-item.checked{border-color:var(--orange);background:rgba(255,138,0,.04)}
+.risk-item.checked::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--orange)}
+.risk-item.severe{border-color:var(--red);background:rgba(255,45,74,.04)}
+.risk-item.severe::before{background:var(--red)}
+.ri-header{display:flex;align-items:center;gap:10px}
+.ri-check{width:20px;height:20px;border-radius:4px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;transition:all .3s;font-size:12px;flex-shrink:0}
+.risk-item.checked .ri-check{border-color:var(--orange);background:var(--orange);color:var(--bg)}
+.risk-item.severe .ri-check{border-color:var(--red);background:var(--red);color:var(--bg)}
+.ri-label{font-size:14px;font-weight:600;flex:1}
+.ri-weight{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted)}
+.ri-desc{font-size:12px;color:var(--text-muted);margin-top:6px;line-height:1.4}
+
+/* Category dividers */
+.cat-header{font-family:'Orbitron',sans-serif;font-size:12px;letter-spacing:2px;color:var(--text-muted);text-transform:uppercase;margin:20px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+
+/* Analyze button */
+.assess-btn{width:100%;padding:16px;background:transparent;border:2px solid var(--yellow);border-radius:10px;color:var(--yellow);font-family:'Orbitron',sans-serif;font-size:16px;font-weight:700;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:all .4s;margin-top:20px}
+.assess-btn:hover{background:var(--yellow);color:var(--bg);box-shadow:0 0 30px rgba(255,214,0,.2)}
+
+/* Results */
+.results{display:none;margin:24px 0;animation:fadeUp .6s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* Risk Gauge */
+.gauge-container{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:36px;text-align:center;position:relative;overflow:hidden}
+.gauge-container::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.gauge-label{font-family:'Orbitron',sans-serif;font-size:12px;letter-spacing:3px;color:var(--text-muted);text-transform:uppercase;margin-bottom:16px}
+
+.gauge-bar{height:24px;background:var(--surface3);border-radius:12px;overflow:hidden;position:relative;max-width:500px;margin:0 auto}
+.gauge-fill{height:100%;border-radius:12px;transition:width 1.5s cubic-bezier(.34,1.56,.64,1);position:relative}
+.gauge-fill::after{content:'';position:absolute;right:0;top:0;bottom:0;width:3px;background:rgba(255,255,255,.6);border-radius:2px}
+.gauge-labels{display:flex;justify-content:space-between;max-width:500px;margin:8px auto 0}
+.gauge-labels span{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted)}
+
+.gauge-score{font-family:'Orbitron',sans-serif;font-size:56px;font-weight:900;margin-top:16px}
+.gauge-verdict{font-size:18px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-top:4px}
+
+/* Risk level cards */
+.level-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:500px;margin:20px auto 0}
+.level-card{padding:10px 8px;border-radius:8px;text-align:center;border:1px solid var(--border);transition:all .3s;opacity:.4}
+.level-card.active{opacity:1;transform:scale(1.05)}
+.level-card .lc-dot{width:8px;height:8px;border-radius:50%;margin:0 auto 6px}
+.level-card .lc-name{font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:1px;text-transform:uppercase}
+
+/* Report sections */
+.report-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-top:16px;position:relative;overflow:hidden}
+.report-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.report-card h3{font-family:'Orbitron',sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
+
+.report-item{display:flex;gap:10px;padding:8px 0;font-size:14px;color:var(--text-dim);line-height:1.5;border-bottom:1px solid rgba(42,42,53,.3)}
+.report-item:last-child{border-bottom:none}
+.report-item::before{content:'▸';font-weight:bold;flex-shrink:0}
+
+/* Evidence tier reference */
+.tier-ref{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}
+.tier-card{border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;position:relative;overflow:hidden}
+.tier-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.tier-num{font-family:'Orbitron',sans-serif;font-size:24px;font-weight:800;margin-bottom:4px}
+.tier-name{font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
+.tier-desc{font-size:12px;color:var(--text-muted);line-height:1.4}
+.tier-risk{font-family:'JetBrains Mono',monospace;font-size:11px;margin-top:8px;padding:4px 10px;border-radius:4px;display:inline-block}
+
+/* Checklist */
+.checklist{margin-top:14px}
+.check-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid rgba(42,42,53,.3);cursor:pointer;transition:opacity .3s;user-select:none}
+.check-item:last-child{border-bottom:none}
+.check-box{width:22px;height:22px;border-radius:4px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;transition:all .3s}
+.check-item.done .check-box{border-color:var(--green);background:var(--green);color:var(--bg)}
+.check-item.done{opacity:.5}
+.check-text{font-size:14px;color:var(--text-dim);line-height:1.5}
+
+/* Scanning */
+.scanning-overlay{display:none;position:fixed;inset:0;background:rgba(10,10,15,.85);z-index:100;align-items:center;justify-content:center;flex-direction:column}
+.scanning-overlay.active{display:flex}
+.scan-shield{width:80px;height:90px;position:relative}
+.scan-shield svg{width:100%;height:100%;animation:pulse-shield 1.5s ease infinite}
+@keyframes pulse-shield{0%,100%{filter:drop-shadow(0 0 5px rgba(255,214,0,.3))}50%{filter:drop-shadow(0 0 20px rgba(255,214,0,.6))}}
+.scan-text{font-family:'Orbitron',sans-serif;font-size:13px;letter-spacing:3px;color:var(--yellow);margin-top:20px;text-transform:uppercase;animation:blink 1s ease infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+.footer{text-align:center;padding:30px 0;border-top:1px solid var(--border);margin-top:40px}
+.footer p{font-size:12px;color:var(--text-muted);letter-spacing:1px}
+.footer a{color:var(--yellow);text-decoration:none}
+.timestamp{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);text-align:right;margin-top:12px}
+
+@media(max-width:600px){
+  .container{padding:12px}
+  .risk-grid{grid-template-columns:1fr}
+  .input-row{grid-template-columns:1fr}
+  .tier-ref{grid-template-columns:1fr}
+  .level-cards{grid-template-columns:repeat(2,1fr)}
+  .gauge-score{font-size:42px}
+}
+</style>
+</head>
+<body>
+
+<div class="scanning-overlay" id="scanOverlay">
+  <div class="scan-shield">
+    <svg viewBox="0 0 80 90" fill="none">
+      <path d="M40 5 L75 20 V55 C75 70 60 82 40 88 C20 82 5 70 5 55 V20 Z" stroke="#ffd600" stroke-width="2" fill="rgba(255,214,0,0.05)"/>
+      <text x="40" y="52" text-anchor="middle" font-family="Orbitron" font-size="20" font-weight="800" fill="#ffd600">⚖</text>
+    </svg>
+  </div>
+  <div class="scan-text">Assessing Publication Risk...</div>
+</div>
+
+<div class="container">
+  <div class="header">
+    <span class="logo-icon">🛡️</span>
+    <h1>Publication Risk Assessment</h1>
+    <div class="subtitle">Pre-Publication Legal & Reputational Review</div>
+    <div class="oneliner">Before you publish, know the risk. Protect your work. Protect yourself.</div>
+  </div>
+
+  <!-- Evidence Tier Reference -->
+  <div class="section">
+    <h2>📐 Evidence Tier Reference</h2>
+    <div class="tier-ref">
+      <div class="tier-card">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--green)"></div>
+        <div class="tier-num" style="color:var(--green)">T1</div>
+        <div class="tier-name" style="color:var(--green)">Verified Facts</div>
+        <div class="tier-desc">Government documents, official statements, court records, timestamped public records, FOIA releases</div>
+        <div class="tier-risk" style="background:rgba(0,255,136,.1);color:var(--green)">LOW RISK</div>
+      </div>
+      <div class="tier-card">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--yellow)"></div>
+        <div class="tier-num" style="color:var(--yellow)">T2</div>
+        <div class="tier-name" style="color:var(--yellow)">Framework Analysis</div>
+        <div class="tier-desc">Pattern recognition applied to verified facts. Six-Step mapping. Thermodynamic assessment. Clearly labeled as analysis</div>
+        <div class="tier-risk" style="background:rgba(255,214,0,.1);color:var(--yellow)">MODERATE RISK</div>
+      </div>
+      <div class="tier-card">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--red)"></div>
+        <div class="tier-num" style="color:var(--red)">T3</div>
+        <div class="tier-name" style="color:var(--red)">Predictions / Speculation</div>
+        <div class="tier-desc">Future projections, speculative connections, unverified allegations. Must be clearly labeled as such</div>
+        <div class="tier-risk" style="background:rgba(255,45,74,.1);color:var(--red)">HIGH RISK</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content Input -->
+  <div class="section">
+    <h2>📝 Content Under Review</h2>
+    <div class="input-group">
+      <label>Content Title / Subject</label>
+      <input type="text" id="contentTitle" placeholder="e.g. Operation Epic Fury — Day 5 Analysis">
+    </div>
+    <div class="input-group">
+      <label>Content Summary</label>
+      <textarea id="contentSummary" placeholder="Briefly describe what this content covers, what claims it makes, and who it references..."></textarea>
+    </div>
+    <div class="input-row">
+      <div class="input-group">
+        <label>Primary Evidence Tier</label>
+        <select id="contentTier">
+          <option value="1">Tier 1 — Verified Facts Only</option>
+          <option value="2" selected>Tier 2 — Framework Analysis</option>
+          <option value="3">Tier 3 — Predictions / Speculation</option>
+          <option value="mixed">Mixed Tiers</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Publication Platform</label>
+        <select id="contentPlatform">
+          <option value="website">Website (frequencyframework.org)</option>
+          <option value="twitter">X / Twitter</option>
+          <option value="patreon">Patreon</option>
+          <option value="bluesky">Bluesky</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Risk Factors -->
+  <div class="section">
+    <h2>⚠️ Risk Factor Assessment</h2>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px">Check all risk factors present in your content. Each adds to the overall risk score.</p>
+
+    <div class="cat-header">👤 People & Organizations</div>
+    <div class="risk-grid">
+      <div class="risk-item" data-weight="15" data-severity="high" onclick="toggleRisk(this)">
+        <div class="ri-header"><div class="ri-check">✓</div><div class="ri-label">Names Specific Officials</div><div class="ri-weight">+15</div></div>
+        <div class="ri-desc">Content identifies specific individuals by name in connection with alleged coordination</div>
+      </div>
+      <div class="risk-item" data-weight="12" data-severity="high" onclick="toggleRisk(this)">
+        <div class="ri-header"><div class="ri-check">✓</div><div class="ri-label">Alleges Criminal Activity</div><div class="ri-weight">+12</div></div>
+        <div class="ri-desc">Content implies or states individuals committed crimes without conviction</div>
+      </div>
+      <div class="risk-item" data-weight="10" data-severity="medium" onclick="toggleRisk(this)">
+        <div class="ri-header"><div class="ri-check">✓</div><div class="ri-label">References Intelligence Agencies</div><div class="ri-weight">+10</div></div>
+        <div class="ri-desc">Content discusses CIA, Mossad, IRGC, or other intelligence operations</div>
+      </div>
+      <div class="risk-item" data-weight="8" data-severity="medium" onclick="toggleRisk(this)">
+        <div class="ri-header"><div class="ri-check">✓</div><div class="ri-label">Names Corporations / PACs</div><div class="ri-weight">+8</div></div>
+        <div class="ri-desc">Content identifies specific organizations as part of coordination infrastructure</div>
+      </div>
+    </div>
+
+    <div class="cat-header">📄 Claims & Evidence</div>
+    <div class="risk-grid">
+      <div class="risk-item" data-weight="14" data-severity="high" onclick="toggleRisk(this)">
+        <div class="ri-header"><div class="ri-check">✓</div><div class="ri-label">Alleges Coordination / Conspiracy</div><div class="ri-weight">+14</div></div>
+        <div class="ri-desc">Content states or implies deliberate coordination between parties</div>
+      </div>
+      <div class="risk-item" data-weight="10" data-severity="medium" onclick="toggleRisk(this)">
+        <div class="ri-header"><div class="ri-check">✓</div><div class="ri-label">Makes Predictions</div><div class="ri-weight">+10</div></div>
+        <div class="ri-desc">Content projects future events or outcomes based on pattern analysis</div>
+      </div>
+      <div class="risk-item" data-weight="6" data-severity="low" onclick="toggleRisk(this)">
+        <div class="ri-header"><div class="ri-check">✓</div><div class="ri-label">Uses Unverified Sources</div><div class="ri-weight">+6</div></div>
+        <div class="ri-desc">Some claims rely on social media, anonymous sources, or unconfirmed reports</div>
+      </div>
+      <div class="risk-item" data-weight="4" data-severity="low" onclick="toggleRisk(this)">
+        <div class="ri-header"><div class="ri-check">✓</div><div class="ri-label">Contains Opinion / Commentary</div><div class="ri-weight">+4</div></div>
+        <div class="ri-desc">Content includes subjective analysis clearly framed as opinion</div>
+      </div>
+    </div>
+
+    <div class="cat-header">🌐 Geopolitical Sensitivity</div>
+    <div class="risk-grid">
+      <div class="risk-item" data-weight="12" data-severity="high" onclick="toggleRisk(this)">
+        <div class="ri-header"><div class="ri-check">✓</div><div class="ri-label">Israel / AIPAC Content</div><div class="ri-weight">+12</div></div>
+        <div class="ri-desc">Content discusses Israeli government, lobby organizations, or US-Israel coordination</div>
+      </div>
+      <div class="risk-item" data-weight="10" data-severity="medium" onclick="toggleRisk(this)">
+        <div class="ri-header"><div class="ri-check">✓</div><div class="ri-label">Active War / Conflict Zone</div><div class="ri-weight">+10</div></div>
+        <div class="ri-desc">Content discusses ongoing military operations during active conflict</div>
+      </div>
+      <div class="risk-item" data-weight="8" data-severity="medium" onclick="toggleRisk(this)">
+        <div class="ri-header"><div class="ri-check">✓</div><div class="ri-label">Classified Information Adjacent</div><div class="ri-weight">+8</div></div>
+        <div class="ri-desc">Content discusses military capabilities, intelligence methods, or sensitive operations</div>
+      </div>
+    </div>
+
+    <div class="cat-header">🔒 Personal / Operational</div>
+    <div class="risk-grid">
+      <div class="risk-item" data-weight="8" data-severity="medium" onclick="toggleRisk(this)">
+        <div class="ri-header"><div class="ri-check">✓</div><div class="ri-label">Could Identify Author</div><div class="ri-weight">+8</div></div>
+        <div class="ri-desc">Content contains details that could compromise anonymous identity</div>
+      </div>
+      <div class="risk-item" data-weight="6" data-severity="low" onclick="toggleRisk(this)">
+        <div class="ri-header"><div class="ri-check">✓</div><div class="ri-label">Platform TOS Risk</div><div class="ri-weight">+6</div></div>
+        <div class="ri-desc">Content may trigger platform moderation or terms of service violations</div>
+      </div>
+      <div class="risk-item" data-weight="10" data-severity="high" onclick="toggleRisk(this)">
+        <div class="ri-header"><div class="ri-check">✓</div><div class="ri-label">No Legal Review</div><div class="ri-weight">+10</div></div>
+        <div class="ri-desc">Content has not been reviewed by legal counsel (Randazza or equivalent)</div>
+      </div>
+    </div>
+
+    <button class="assess-btn" onclick="assess()">🛡️ ASSESS PUBLICATION RISK</button>
+  </div>
+
+  <!-- Results -->
+  <div class="results" id="results">
+    <div class="gauge-container" id="gaugeContainer">
+      <div class="gauge-label">Publication Risk Level</div>
+      <div class="gauge-bar">
+        <div class="gauge-fill" id="gaugeFill"></div>
+      </div>
+      <div class="gauge-labels">
+        <span>SAFE</span>
+        <span>CAUTION</span>
+        <span>REVIEW</span>
+        <span>HOLD</span>
+      </div>
+      <div class="gauge-score" id="gaugeScore">0</div>
+      <div class="gauge-verdict" id="gaugeVerdict">—</div>
+      <div class="level-cards">
+        <div class="level-card" id="lvlSafe"><div class="lc-dot" style="background:var(--green)"></div><div class="lc-name" style="color:var(--green)">Safe</div></div>
+        <div class="level-card" id="lvlCaution"><div class="lc-dot" style="background:var(--yellow)"></div><div class="lc-name" style="color:var(--yellow)">Caution</div></div>
+        <div class="level-card" id="lvlReview"><div class="lc-dot" style="background:var(--orange)"></div><div class="lc-name" style="color:var(--orange)">Needs Review</div></div>
+        <div class="level-card" id="lvlHold"><div class="lc-dot" style="background:var(--red)"></div><div class="lc-name" style="color:var(--red)">Hold</div></div>
+      </div>
+    </div>
+
+    <div class="report-card" id="verdictCard">
+      <h3 id="verdictTitle">📋 Assessment</h3>
+      <div id="verdictText" style="font-size:15px;color:var(--text-dim);line-height:1.7"></div>
+    </div>
+
+    <div class="report-card">
+      <h3 style="color:var(--yellow)">🔧 Recommended Mitigations</h3>
+      <div id="mitigations"></div>
+    </div>
+
+    <div class="report-card">
+      <h3 style="color:var(--accent)">✅ Pre-Publication Checklist</h3>
+      <div class="checklist" id="checklist"></div>
+    </div>
+
+    <div class="timestamp" id="assessTimestamp"></div>
+  </div>
+
+  <div class="footer">
+    <p>PUBLICATION RISK ASSESSMENT — <a href="https://frequencyframework.org" target="_blank">THE FREQUENCY FRAMEWORK</a></p>
+    <p style="margin-top:6px;font-size:11px;color:var(--text-muted)">Responsible publication protects the work. Protect the work, protect the mission.<br>When in doubt, hold. Truth doesn't expire.</p>
+  </div>
+</div>
+
+<script>
+function toggleRisk(el){
+  el.classList.toggle('checked');
+  const sev=el.dataset.severity;
+  if(el.classList.contains('checked')&&sev==='high')el.classList.add('severe');
+  else el.classList.remove('severe');
+}
+
+function assess(){
+  const title=document.getElementById('contentTitle').value||'This content';
+  const overlay=document.getElementById('scanOverlay');
+  overlay.classList.add('active');
+
+  setTimeout(()=>{
+    overlay.classList.remove('active');
+    generateAssessment(title);
+  },1800);
+}
+
+function generateAssessment(title){
+  const checked=document.querySelectorAll('.risk-item.checked');
+  let score=0;
+  let highCount=0,medCount=0,lowCount=0;
+
+  checked.forEach(item=>{
+    const w=parseInt(item.dataset.weight);
+    const s=item.dataset.severity;
+    score+=w;
+    if(s==='high')highCount++;
+    else if(s==='medium')medCount++;
+    else lowCount++;
+  });
+
+  // Add tier risk
+  const tier=document.getElementById('contentTier').value;
+  if(tier==='3')score+=10;
+  else if(tier==='mixed')score+=8;
+  else if(tier==='2')score+=4;
+
+  const maxScore=153;
+  const pct=Math.min(100,Math.round((score/maxScore)*100));
+
+  let level,color,verdict;
+  if(pct<=20){
+    level='SAFE TO PUBLISH';color='var(--green)';
+    verdict=`<strong>${title}</strong> presents minimal publication risk. Content is primarily factual, does not name individuals in connection with allegations, and stays within established First Amendment protections for analytical journalism. Proceed with standard publication practices.`;
+  }else if(pct<=45){
+    level='PUBLISH WITH CAUTION';color='var(--yellow)';
+    verdict=`<strong>${title}</strong> presents moderate publication risk. Some risk factors are present but manageable with proper mitigation. Ensure all claims are properly sourced, opinion is clearly labeled, and evidence tiers are distinguished. Consider having a trusted peer review before publishing.`;
+  }else if(pct<=70){
+    level='LEGAL REVIEW RECOMMENDED';color='var(--orange)';
+    verdict=`<strong>${title}</strong> presents elevated publication risk. Multiple risk factors are active, including ${highCount>0?highCount+' high-severity indicator'+(highCount>1?'s':''):''} that warrant professional legal review before publication. Content should be held until counsel can assess specific liability exposure.`;
+  }else{
+    level='HOLD — DO NOT PUBLISH';color='var(--red)';
+    verdict=`<strong>${title}</strong> presents significant publication risk and should NOT be published without legal counsel review. ${highCount} high-severity risk factors detected. This content requires Randazza-level First Amendment review before any form of public release. Hold in private archive until legal clearance is obtained.`;
+  }
+
+  // Show results
+  const results=document.getElementById('results');
+  results.style.display='block';
+  results.scrollIntoView({behavior:'smooth'});
+
+  // Gauge
+  const fill=document.getElementById('gaugeFill');
+  fill.style.width=pct+'%';
+  if(pct<=20)fill.style.background='var(--green)';
+  else if(pct<=45)fill.style.background='linear-gradient(90deg,var(--green),var(--yellow))';
+  else if(pct<=70)fill.style.background='linear-gradient(90deg,var(--yellow),var(--orange))';
+  else fill.style.background='linear-gradient(90deg,var(--orange),var(--red))';
+
+  document.getElementById('gaugeContainer').style.borderTopColor=color;
+  document.querySelector('#gaugeContainer::before');
+
+  // Animate score
+  const scoreEl=document.getElementById('gaugeScore');
+  scoreEl.style.color=color;
+  let c=0;
+  const inc=Math.ceil(pct/35);
+  const timer=setInterval(()=>{c+=inc;if(c>=pct){c=pct;clearInterval(timer)}scoreEl.textContent=c;},30);
+
+  document.getElementById('gaugeVerdict').textContent=level;
+  document.getElementById('gaugeVerdict').style.color=color;
+
+  // Level cards
+  ['Safe','Caution','Review','Hold'].forEach(l=>document.getElementById('lvl'+l).classList.remove('active'));
+  if(pct<=20)document.getElementById('lvlSafe').classList.add('active');
+  else if(pct<=45)document.getElementById('lvlCaution').classList.add('active');
+  else if(pct<=70)document.getElementById('lvlReview').classList.add('active');
+  else document.getElementById('lvlHold').classList.add('active');
+
+  // Verdict
+  const vCard=document.getElementById('verdictCard');
+  vCard.style.borderColor=color;
+  document.getElementById('verdictTitle').style.color=color;
+  document.getElementById('verdictText').innerHTML=verdict;
+
+  // Mitigations
+  const mitDiv=document.getElementById('mitigations');
+  mitDiv.innerHTML='';
+  const mits=[];
+
+  if(highCount>0)mits.push({color:'var(--red)',text:'High-severity risk factors present. Prioritize legal review before publication.'});
+  if(checked.length>0){
+    const hasNames=document.querySelector('.risk-item[data-weight="15"].checked');
+    const hasCriminal=document.querySelector('.risk-item[data-weight="12"][data-severity="high"].checked');
+    const hasIsrael=document.querySelector('.risk-item[data-weight="12"][data-severity="high"]:nth-child(1)');
+    const hasNoLegal=document.querySelector('.risk-item[data-weight="10"][data-severity="high"]:last-child.checked');
+
+    if(hasNames)mits.push({color:'var(--orange)',text:'Consider removing specific names or replacing with role descriptions ("a senior official") until legal review.'});
+    if(hasCriminal)mits.push({color:'var(--orange)',text:'Reframe allegations as questions or documented patterns rather than accusations. "The pattern suggests" not "they did."'});
+    if(hasNoLegal)mits.push({color:'var(--red)',text:'Schedule Randazza consultation before publishing this content. First Amendment review is essential.'});
+    mits.push({color:'var(--yellow)',text:'Ensure all evidence tiers are clearly labeled throughout the content.'});
+    mits.push({color:'var(--yellow)',text:'Add disclaimers distinguishing factual reporting from analytical opinion.'});
+    if(tier==='3'||tier==='mixed')mits.push({color:'var(--orange)',text:'Tier 3 content should be clearly marked as speculation/prediction, not presented as fact.'});
+  }
+  if(mits.length===0)mits.push({color:'var(--green)',text:'No specific mitigations needed. Standard publication practices apply.'});
+
+  mits.forEach(m=>{mitDiv.innerHTML+=`<div class="report-item" style="color:${m.color}">${m.text}</div>`});
+
+  // Checklist
+  const checkDiv=document.getElementById('checklist');
+  checkDiv.innerHTML='';
+  const checks=[
+    'All claims sourced to primary documents or official records',
+    'Evidence tiers (T1/T2/T3) clearly labeled throughout',
+    'Opinion and analysis distinguished from factual reporting',
+    'No unverified allegations presented as fact',
+    'Prediction statements clearly labeled as projections',
+    'Content reviewed for identifying personal information',
+    'Platform terms of service reviewed for compliance',
+    'Screenshots/archives saved of all referenced sources',
+    'Timestamp documentation in place for all predictions',
+    'Legal review completed (if risk score above 45)'
+  ];
+
+  checks.forEach((ch,i)=>{
+    checkDiv.innerHTML+=`
+      <div class="check-item" onclick="this.classList.toggle('done')">
+        <div class="check-box">✓</div>
+        <div class="check-text">${ch}</div>
+      </div>`;
+  });
+
+  document.getElementById('assessTimestamp').textContent=`Assessment generated: ${new Date().toLocaleString()} | Subject: ${title} | The Frequency Framework`;
+}
+</script>
+</body>
+</html>
