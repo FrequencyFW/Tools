@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prediction Tracker | The Frequency Framework</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#0a0a0f;--surface:#111118;--surface2:#18181f;--surface3:#1f1f28;
+--border:#2a2a35;--border-glow:#3a3a4a;
+--text:#e8e8f0;--text-dim:#8888a0;--text-muted:#555568;
+--accent:#00e5ff;--accent2:#7b2ff7;--accent3:#ff2d6b;
+--green:#00ff88;--yellow:#ffd600;--orange:#ff8a00;--red:#ff2d4a;
+--gradient:linear-gradient(135deg,#00e5ff 0%,#7b2ff7 50%,#ff2d6b 100%);
+}
+body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:
+  linear-gradient(90deg,rgba(0,255,136,.02) 1px,transparent 1px),
+  linear-gradient(rgba(0,255,136,.02) 1px,transparent 1px);
+  background-size:60px 60px;pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(0,255,136,.06) 0%,transparent 60%);pointer-events:none;z-index:0}
+
+.container{max-width:960px;margin:0 auto;padding:20px;position:relative;z-index:1}
+
+.header{text-align:center;padding:40px 0 24px;position:relative}
+.header::after{content:'';display:block;width:200px;height:2px;background:var(--gradient);margin:20px auto 0;border-radius:1px}
+.logo-icon{font-size:48px;margin-bottom:8px;display:block;filter:drop-shadow(0 0 20px rgba(0,255,136,.4))}
+.header h1{font-family:'Orbitron',sans-serif;font-size:clamp(22px,4.5vw,32px);font-weight:800;letter-spacing:3px;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-transform:uppercase}
+.header .subtitle{font-size:14px;color:var(--text-dim);letter-spacing:4px;text-transform:uppercase;margin-top:8px;font-weight:300}
+.header .oneliner{font-size:13px;color:var(--text-muted);margin-top:14px;letter-spacing:1px;font-weight:300}
+
+/* Accuracy Hero */
+.hero{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:36px;text-align:center;margin:24px 0;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--gradient)}
+.hero-label{font-family:'Orbitron',sans-serif;font-size:12px;letter-spacing:3px;color:var(--text-muted);text-transform:uppercase;margin-bottom:8px}
+.hero-score{font-family:'Orbitron',sans-serif;font-size:clamp(64px,12vw,96px);font-weight:900;color:var(--green);line-height:1;text-shadow:0 0 40px rgba(0,255,136,.3)}
+.hero-sub{font-size:16px;color:var(--text-dim);margin-top:8px;letter-spacing:1px}
+.hero-detail{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-muted);margin-top:12px}
+
+/* Track Record Cards */
+.track-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:20px 0}
+.track-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;text-align:center;position:relative;overflow:hidden;transition:all .3s}
+.track-card:hover{border-color:var(--border-glow);transform:translateY(-2px)}
+.track-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.tc-name{font-family:'Orbitron',sans-serif;font-size:12px;letter-spacing:1px;color:var(--text-dim);text-transform:uppercase;margin-bottom:8px}
+.tc-score{font-family:'Orbitron',sans-serif;font-size:32px;font-weight:800}
+.tc-detail{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);margin-top:4px}
+.tc-date{font-size:11px;color:var(--text-muted);margin-top:6px}
+.tc-bar{height:4px;background:var(--surface3);border-radius:2px;margin-top:10px;overflow:hidden}
+.tc-bar-fill{height:100%;border-radius:2px;transition:width 1s ease}
+
+/* Prediction Windows */
+.windows-section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin:20px 0;position:relative;overflow:hidden}
+.windows-section::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--gradient);opacity:.6}
+.windows-section h2{font-family:'Orbitron',sans-serif;font-size:14px;letter-spacing:2px;color:var(--green);text-transform:uppercase;margin-bottom:16px}
+
+.window-item{border:1px solid var(--border);border-radius:10px;margin-bottom:12px;overflow:hidden;transition:all .3s}
+.window-item:hover{border-color:var(--border-glow)}
+.wi-header{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer;transition:background .3s}
+.wi-header:hover{background:rgba(255,255,255,.02)}
+.wi-status{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.wi-name{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:600;letter-spacing:1px;flex:1}
+.wi-score{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700}
+.wi-toggle{color:var(--text-muted);font-size:12px;transition:transform .3s}
+
+.wi-body{display:none;padding:0 18px 16px;border-top:1px solid var(--border)}
+.window-item.expanded .wi-body{display:block;animation:fadeIn .3s ease}
+.window-item.expanded .wi-toggle{transform:rotate(180deg)}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+.pred-row{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid rgba(42,42,53,.3);align-items:flex-start}
+.pred-row:last-child{border-bottom:none}
+.pred-status{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;margin-top:2px}
+.pred-status.validated{background:rgba(0,255,136,.15);color:var(--green)}
+.pred-status.tracking{background:rgba(0,229,255,.15);color:var(--accent)}
+.pred-status.failed{background:rgba(255,45,74,.15);color:var(--red)}
+.pred-status.pending{background:rgba(255,214,0,.15);color:var(--yellow)}
+.pred-content{flex:1}
+.pred-text{font-size:14px;color:var(--text-dim);line-height:1.5}
+.pred-meta{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);margin-top:4px}
+
+/* Add Prediction */
+.add-section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin:20px 0;position:relative;overflow:hidden}
+.add-section::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--gradient);opacity:.6}
+.add-section h2{font-family:'Orbitron',sans-serif;font-size:14px;letter-spacing:2px;color:var(--green);text-transform:uppercase;margin-bottom:16px}
+
+.add-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.add-full{grid-column:1/-1}
+.input-group{margin-bottom:0}
+.input-group label{display:block;font-size:11px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;font-weight:500}
+.input-group input,.input-group select,.input-group textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:10px 12px;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:14px;outline:none;transition:border-color .3s}
+.input-group input:focus,.input-group select:focus,.input-group textarea:focus{border-color:var(--green)}
+.input-group select option{background:var(--surface2)}
+.input-group textarea{min-height:70px;resize:vertical}
+
+.add-btn{width:100%;padding:14px;border-radius:8px;border:1px solid var(--green);background:transparent;color:var(--green);font-family:'Orbitron',sans-serif;font-size:14px;font-weight:700;letter-spacing:2px;cursor:pointer;transition:all .3s;text-transform:uppercase;grid-column:1/-1;margin-top:4px}
+.add-btn:hover{background:var(--green);color:var(--bg);box-shadow:0 0 20px rgba(0,255,136,.2)}
+
+/* User predictions */
+.user-preds{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin:20px 0;position:relative;overflow:hidden}
+.user-preds::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--gradient);opacity:.6}
+.user-preds h2{font-family:'Orbitron',sans-serif;font-size:14px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:16px}
+
+.up-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:10px;position:relative}
+.up-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.up-status{padding:3px 10px;border-radius:12px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase}
+.up-window{font-family:'Orbitron',sans-serif;font-size:12px;color:var(--text-dim);letter-spacing:1px}
+.up-date{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);margin-left:auto}
+.up-text{font-size:14px;color:var(--text-dim);line-height:1.5}
+.up-actions{display:flex;gap:8px;margin-top:10px}
+.up-action{padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:var(--surface3);font-family:'JetBrains Mono',monospace;font-size:11px;cursor:pointer;transition:all .3s}
+.up-action.validate:hover{border-color:var(--green);color:var(--green)}
+.up-action.fail:hover{border-color:var(--red);color:var(--red)}
+.up-action.delete:hover{border-color:var(--accent3);color:var(--accent3)}
+.up-share{border-color:var(--accent)!important;color:var(--accent)}
+.up-share:hover{background:var(--accent)!important;color:var(--bg)!important}
+.up-share.copied{background:var(--green)!important;border-color:var(--green)!important;color:var(--bg)!important}
+
+/* Methodology note */
+.method-note{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin:20px 0;position:relative;overflow:hidden}
+.method-note::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--green)}
+.method-note h3{font-family:'Orbitron',sans-serif;font-size:13px;letter-spacing:2px;color:var(--green);text-transform:uppercase;margin-bottom:10px}
+.method-note p{font-size:14px;color:var(--text-dim);line-height:1.6}
+.method-note strong{color:var(--text)}
+
+/* Footer */
+.footer{text-align:center;padding:30px 0;border-top:1px solid var(--border);margin-top:40px}
+.footer p{font-size:12px;color:var(--text-muted);letter-spacing:1px}
+.footer a{color:var(--green);text-decoration:none}
+
+@media(max-width:600px){
+  .container{padding:12px}
+  .track-grid{grid-template-columns:repeat(2,1fr)}
+  .add-grid{grid-template-columns:1fr}
+  .hero-score{font-size:64px}
+  .wi-header{flex-wrap:wrap;gap:8px}
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <span class="logo-icon">📊</span>
+    <h1>Prediction Tracker</h1>
+    <div class="subtitle">Timestamped Validation Engine</div>
+    <div class="oneliner">Predictions locked. Timestamps immutable. Results public. That's credibility.</div>
+  </div>
+
+  <!-- Hero accuracy -->
+  <div class="hero">
+    <div class="hero-label">Framework Composite Accuracy</div>
+    <div class="hero-score" id="heroScore">0%</div>
+    <div class="hero-sub">Across All Documented Prediction Windows</div>
+    <div class="hero-detail" id="heroDetail">Loading...</div>
+  </div>
+
+  <!-- Track Record -->
+  <div class="track-grid" id="trackGrid"></div>
+
+  <!-- Prediction Windows Detail -->
+  <div class="windows-section">
+    <h2>📋 Prediction Windows — Detailed Record</h2>
+    <div id="windowsList"></div>
+  </div>
+
+  <!-- Add Prediction -->
+  <div class="add-section">
+    <h2>🔒 Lock a New Prediction</h2>
+    <div class="add-grid">
+      <div class="input-group">
+        <label>Prediction Window Name</label>
+        <input type="text" id="addWindow" placeholder="e.g. March 2026 Escalation Window">
+      </div>
+      <div class="input-group">
+        <label>Evidence Tier</label>
+        <select id="addTier">
+          <option value="tier1">Tier 1 — Based on Verified Facts</option>
+          <option value="tier2" selected>Tier 2 — Framework Analysis</option>
+          <option value="tier3">Tier 3 — Speculative Prediction</option>
+        </select>
+      </div>
+      <div class="input-group add-full">
+        <label>Prediction Statement</label>
+        <textarea id="addPrediction" placeholder="State your prediction clearly and specifically. The more precise, the more validatable."></textarea>
+      </div>
+      <div class="input-group">
+        <label>Validation Deadline</label>
+        <input type="date" id="addDeadline">
+      </div>
+      <div class="input-group">
+        <label>Confidence Level</label>
+        <select id="addConfidence">
+          <option value="high">High (70-90%)</option>
+          <option value="medium" selected>Medium (40-69%)</option>
+          <option value="low">Low (10-39%)</option>
+        </select>
+      </div>
+      <button class="add-btn" onclick="addPrediction()">🔒 Lock Prediction with Timestamp</button>
+    </div>
+  </div>
+
+  <!-- User predictions -->
+  <div class="user-preds" id="userPreds">
+    <h2>🎯 Your Predictions</h2>
+    <div id="userPredsList">
+      <p style="color:var(--text-muted);font-size:14px;text-align:center;padding:20px">No predictions locked yet. Use the form above to timestamp your first prediction.</p>
+    </div>
+  </div>
+
+  <!-- Methodology -->
+  <div class="method-note">
+    <h3>📐 Prediction Methodology</h3>
+    <p><strong>Pattern recognition, not prophecy.</strong> The Framework doesn't predict the future — it identifies coordination infrastructure and maps probable trajectories based on documented patterns. Every prediction is grounded in the Six-Step Formula, the Dutch Clause timing analysis, and thermodynamic principles. Predictions are locked with timestamps BEFORE events unfold, creating an immutable validation record. A 100% accuracy rate doesn't mean perfection — it means the methodology identifies real patterns with real predictive power. When the Framework is wrong, it's documented just as clearly. That's what separates methodology from speculation.</p>
+  </div>
+
+  <div class="footer">
+    <p>PREDICTION TRACKER — <a href="https://frequencyframework.org" target="_blank">THE FREQUENCY FRAMEWORK</a></p>
+    <p style="margin-top:6px;font-size:11px;color:var(--text-muted)">Timestamps don't lie. Track records don't lie.<br>Pattern recognition, not prophecy.</p>
+  </div>
+</div>
+
+<script>
+// Framework track record data
+const trackRecord=[
+  {
+    name:'Iran Coordination Window',date:'Feb 1-22, 2026',
+    correct:5,total:5,pct:100,color:'var(--green)',
+    predictions:[
+      {status:'validated',text:'Iran talks would coincide with Olympics opening ceremony',meta:'Predicted Jan 31 → Oman talks Feb 6, Olympics opened Feb 6'},
+      {status:'validated',text:'Multiple simultaneous operations during Super Bowl weekend',meta:'Predicted Jan 31 → Cuba, Venezuela, Iran, DHS all active Super Bowl weekend'},
+      {status:'validated',text:'DHS funding crisis would overlap with diplomatic windows',meta:'Predicted Jan 31 → Shutdown Day 3 + Geneva talks converged'},
+      {status:'validated',text:'Epstein releases would accelerate during attention-capture events',meta:'Predicted Jan 31 → DOJ search tracking exposed during DHS shutdown week'},
+      {status:'validated',text:'Military positioning would escalate during holiday/recess windows',meta:'Predicted Jan 31 → USS Ford ordered to Gulf on Presidents\' Day weekend'}
+    ]
+  },
+  {
+    name:'Venezuela Timeline',date:'Dec 2025 - Jan 2026',
+    correct:5,total:5,pct:100,color:'var(--green)',
+    predictions:[
+      {status:'validated',text:'Military intervention would follow sanctions escalation pattern',meta:'Documented Dec 2025 → Maduro captured Jan 3, 2026'},
+      {status:'validated',text:'Operation would occur during holiday/attention gap',meta:'New Year\'s weekend timing confirmed'},
+      {status:'validated',text:'Resource extraction phase would follow regime change',meta:'Mining reform with US Interior Secretary by March 4'},
+      {status:'validated',text:'Congressional war powers challenge would fail',meta:'Venezuela war powers resolution defeated'},
+      {status:'validated',text:'Media framing would shift from "democracy" to "narco-terrorism"',meta:'Narco-terrorism designation became primary justification'}
+    ]
+  },
+  {
+    name:'Christmas 2025 Window',date:'Dec 20-31, 2025',
+    correct:9,total:10,pct:90,color:'var(--green)',
+    predictions:[
+      {status:'validated',text:'Major policy moves during Christmas recess',meta:'Multiple executive actions documented Dec 24-28'},
+      {status:'validated',text:'Defense stock positioning before announcements',meta:'Defense stocks surged 2-4% on Dec 11-12, events followed Dec 14'},
+      {status:'validated',text:'Media consolidation acceleration',meta:'Warner Bros Discovery battle escalated Dec 5-8'},
+      {status:'validated',text:'International coordination during attention gap',meta:'Validated across multiple theaters'},
+      {status:'validated',text:'Financial market pre-positioning visible',meta:'$280B week documented'},
+      {status:'validated',text:'Immigration enforcement escalation',meta:'Confirmed'},
+      {status:'validated',text:'Middle East diplomatic activity increase',meta:'Confirmed'},
+      {status:'validated',text:'Technology/surveillance expansion',meta:'Confirmed'},
+      {status:'validated',text:'Judicial appointment acceleration',meta:'Confirmed'},
+      {status:'failed',text:'Specific crypto regulatory action',meta:'Did not materialize within window'}
+    ]
+  },
+  {
+    name:'MLK Weekend 2026',date:'Jan 17-20, 2026',
+    correct:3,total:3,pct:100,color:'var(--green)',
+    predictions:[
+      {status:'validated',text:'Greenland pressure would escalate during holiday weekend',meta:'Military option rhetoric peaked MLK weekend'},
+      {status:'validated',text:'Venezuela follow-up actions during attention gap',meta:'Post-Maduro operations continued'},
+      {status:'validated',text:'DHS/immigration enforcement acceleration',meta:'Confirmed'}
+    ]
+  }
+];
+
+function renderTrackRecord(){
+  const grid=document.getElementById('trackGrid');
+  grid.innerHTML='';
+
+  let totalCorrect=0,totalPreds=0;
+
+  trackRecord.forEach(r=>{
+    totalCorrect+=r.correct;
+    totalPreds+=r.total;
+
+    const card=document.createElement('div');
+    card.className='track-card';
+    card.innerHTML=`
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:${r.color}"></div>
+      <div class="tc-name">${r.name}</div>
+      <div class="tc-score" style="color:${r.color}">${r.pct}%</div>
+      <div class="tc-detail">${r.correct}/${r.total} Validated</div>
+      <div class="tc-date">${r.date}</div>
+      <div class="tc-bar"><div class="tc-bar-fill" style="width:${r.pct}%;background:${r.color}"></div></div>`;
+    grid.appendChild(card);
+  });
+
+  // Hero
+  const compositePct=Math.round((totalCorrect/totalPreds)*100);
+  const heroEl=document.getElementById('heroScore');
+  let current=0;
+  const increment=Math.ceil(compositePct/50);
+  const counter=setInterval(()=>{
+    current+=increment;
+    if(current>=compositePct){current=compositePct;clearInterval(counter)}
+    heroEl.textContent=current+'%';
+  },25);
+
+  document.getElementById('heroDetail').textContent=`${totalCorrect} of ${totalPreds} predictions validated across ${trackRecord.length} documented windows`;
+}
+
+function renderWindows(){
+  const list=document.getElementById('windowsList');
+  list.innerHTML='';
+
+  trackRecord.forEach((r,idx)=>{
+    const item=document.createElement('div');
+    item.className='window-item';
+    item.dataset.idx=idx;
+
+    const statusColor=r.pct===100?'var(--green)':r.pct>=80?'var(--yellow)':'var(--orange)';
+
+    item.innerHTML=`
+      <div class="wi-header" onclick="toggleWindow(${idx})">
+        <div class="wi-status" style="background:${statusColor}"></div>
+        <div class="wi-name">${r.name}</div>
+        <div style="font-size:12px;color:var(--text-muted)">${r.date}</div>
+        <div class="wi-score" style="color:${statusColor}">${r.correct}/${r.total}</div>
+        <div class="wi-toggle">▼</div>
+      </div>
+      <div class="wi-body">
+        ${r.predictions.map(p=>`
+          <div class="pred-row">
+            <div class="pred-status ${p.status}">${p.status==='validated'?'✓':p.status==='failed'?'✗':p.status==='tracking'?'◉':'○'}</div>
+            <div class="pred-content">
+              <div class="pred-text">${p.text}</div>
+              <div class="pred-meta">${p.meta}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>`;
+
+    list.appendChild(item);
+  });
+}
+
+function toggleWindow(idx){
+  const items=document.querySelectorAll('.window-item');
+  items.forEach((item,i)=>{
+    if(parseInt(item.dataset.idx)===idx)item.classList.toggle('expanded');
+    else item.classList.remove('expanded');
+  });
+}
+
+// User predictions
+let userPredictions=[];
+
+function addPrediction(){
+  const window=document.getElementById('addWindow').value;
+  const prediction=document.getElementById('addPrediction').value;
+  const deadline=document.getElementById('addDeadline').value;
+  const tier=document.getElementById('addTier').value;
+  const confidence=document.getElementById('addConfidence').value;
+
+  if(!prediction){alert('Please enter a prediction statement.');return}
+
+  const now=new Date();
+  const pred={
+    id:Date.now(),
+    window:window||'Unassigned',
+    text:prediction,
+    deadline:deadline,
+    tier:tier,
+    confidence:confidence,
+    timestamp:now.toISOString(),
+    timestampDisplay:now.toLocaleString(),
+    status:'pending'
+  };
+
+  userPredictions.push(pred);
+  renderUserPredictions();
+
+  // Clear form
+  document.getElementById('addPrediction').value='';
+  document.getElementById('addWindow').value='';
+
+  // Flash
+  const btn=document.querySelector('.add-btn');
+  btn.textContent='🔒 Prediction Locked!';
+  btn.style.background='var(--green)';btn.style.color='var(--bg)';
+  setTimeout(()=>{btn.textContent='🔒 Lock Prediction with Timestamp';btn.style.background='transparent';btn.style.color='var(--green)'},2000);
+}
+
+function renderUserPredictions(){
+  const list=document.getElementById('userPredsList');
+
+  if(userPredictions.length===0){
+    list.innerHTML='<p style="color:var(--text-muted);font-size:14px;text-align:center;padding:20px">No predictions locked yet. Use the form above to timestamp your first prediction.</p>';
+    return;
+  }
+
+  list.innerHTML='';
+  const tierColors={tier1:'var(--green)',tier2:'var(--accent)',tier3:'var(--yellow)'};
+  const tierLabels={tier1:'Tier 1',tier2:'Tier 2',tier3:'Tier 3'};
+  const statusColors={pending:'var(--yellow)',validated:'var(--green)',failed:'var(--red)',tracking:'var(--accent)'};
+  const statusLabels={pending:'Pending',validated:'Validated',failed:'Not Validated',tracking:'Tracking'};
+  const confLabels={high:'High Confidence',medium:'Medium Confidence',low:'Low Confidence'};
+
+  userPredictions.slice().reverse().forEach(p=>{
+    const card=document.createElement('div');
+    card.className='up-card';
+    card.innerHTML=`
+      <div class="up-header">
+        <div class="up-status" style="background:rgba(${p.status==='validated'?'0,255,136':p.status==='failed'?'255,45,74':'255,214,0'},.15);color:${statusColors[p.status]}">${statusLabels[p.status]}</div>
+        <div class="up-status" style="background:rgba(0,229,255,.1);color:${tierColors[p.tier]}">${tierLabels[p.tier]}</div>
+        <div class="up-window">${p.window}</div>
+        <div class="up-date">🔒 ${p.timestampDisplay}</div>
+      </div>
+      <div class="up-text">${p.text}</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);margin-top:6px">
+        ${confLabels[p.confidence]}${p.deadline?' · Deadline: '+new Date(p.deadline).toLocaleDateString():''}
+      </div>
+      <div class="up-actions">
+        <button class="up-action validate" onclick="updatePredStatus(${p.id},'validated')">✓ Validate</button>
+        <button class="up-action fail" onclick="updatePredStatus(${p.id},'failed')">✗ Not Validated</button>
+        <button class="up-action" onclick="updatePredStatus(${p.id},'tracking')" style="color:var(--accent)">◉ Tracking</button>
+        <button class="up-action up-share" onclick="copyPrediction(${p.id},this)">📋 Copy</button>
+        <button class="up-action up-share" onclick="sharePrediction(${p.id})" style="border-color:#1DA1F2;color:#1DA1F2">𝕏 Share</button>
+        <button class="up-action delete" onclick="deletePred(${p.id})">🗑 Delete</button>
+      </div>`;
+    list.appendChild(card);
+  });
+}
+
+function updatePredStatus(id,status){
+  const pred=userPredictions.find(p=>p.id===id);
+  if(pred){pred.status=status;renderUserPredictions()}
+}
+
+function deletePred(id){
+  userPredictions=userPredictions.filter(p=>p.id!==id);
+  renderUserPredictions();
+}
+
+function buildPredShareText(pred){
+  const statusLabels={pending:'⏳ PENDING',validated:'✅ VALIDATED',failed:'❌ NOT VALIDATED',tracking:'🔍 TRACKING'};
+  const confLabels={high:'High Confidence',medium:'Medium Confidence',low:'Low Confidence'};
+  return `📊 PREDICTION LOCKED
+━━━━━━━━━━━━━━━━━━━
+🔒 ${pred.timestampDisplay}
+
+"${pred.text}"
+
+Status: ${statusLabels[pred.status]}
+Window: ${pred.window}
+${confLabels[pred.confidence]}${pred.deadline?' · Deadline: '+new Date(pred.deadline).toLocaleDateString():''}
+
+Locked via frequencyframework.org/tools
+Pattern recognition, not prophecy.`;
+}
+
+function copyPrediction(id,btn){
+  const pred=userPredictions.find(p=>p.id===id);
+  if(!pred)return;
+  const text=buildPredShareText(pred);
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.classList.add('copied');btn.innerHTML='✓ Copied!';
+    setTimeout(()=>{btn.classList.remove('copied');btn.innerHTML='📋 Copy'},2000);
+  }).catch(()=>{
+    const ta=document.createElement('textarea');
+    ta.value=text;document.body.appendChild(ta);ta.select();
+    document.execCommand('copy');document.body.removeChild(ta);
+    btn.classList.add('copied');btn.innerHTML='✓ Copied!';
+    setTimeout(()=>{btn.classList.remove('copied');btn.innerHTML='📋 Copy'},2000);
+  });
+}
+
+function sharePrediction(id){
+  const pred=userPredictions.find(p=>p.id===id);
+  if(!pred)return;
+  const statusEmoji={pending:'⏳',validated:'✅',failed:'❌',tracking:'🔍'};
+  const tweetText=`${statusEmoji[pred.status]} Prediction ${pred.status==='validated'?'VALIDATED':'locked'}:\n\n"${pred.text.substring(0,120)}${pred.text.length>120?'...':''}"\n\n🔒 ${pred.timestampDisplay}\n\nLocked via @TheFrequencyFW\nfrequencyframework.org/tools`;
+  const url='https://twitter.com/intent/tweet?text='+encodeURIComponent(tweetText);
+  window.open(url,'_blank','width=550,height=420');
+}
+
+// Set default deadline to 30 days out
+const defaultDeadline=new Date();
+defaultDeadline.setDate(defaultDeadline.getDate()+30);
+document.getElementById('addDeadline').valueAsDate=defaultDeadline;
+
+// Initialize
+renderTrackRecord();
+renderWindows();
+</script>
+</body>
+</html>
