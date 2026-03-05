@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Obfuscation Layer Identifier | The Frequency Framework</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#0a0a0f;--surface:#111118;--surface2:#18181f;--surface3:#1f1f28;
+--border:#2a2a35;--border-glow:#3a3a4a;
+--text:#e8e8f0;--text-dim:#8888a0;--text-muted:#555568;
+--accent:#00e5ff;--accent2:#7b2ff7;--accent3:#ff2d6b;
+--green:#00ff88;--yellow:#ffd600;--orange:#ff8a00;--red:#ff2d4a;
+--gradient:linear-gradient(135deg,#00e5ff 0%,#7b2ff7 50%,#ff2d6b 100%);
+--l1:#00e5ff;--l2:#3d9eff;--l3:#7b2ff7;--l4:#b44dff;--l5:#ff2d6b;--l6:#ff8a00;--l7:#ffd600;--l8:#00ff88;
+}
+body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:
+  linear-gradient(90deg,rgba(180,77,255,.02) 1px,transparent 1px),
+  linear-gradient(rgba(180,77,255,.02) 1px,transparent 1px);
+  background-size:60px 60px;pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 30% 100%,rgba(123,47,247,.06) 0%,transparent 50%),radial-gradient(ellipse at 70% 0%,rgba(255,45,107,.05) 0%,transparent 50%);pointer-events:none;z-index:0}
+
+.container{max-width:920px;margin:0 auto;padding:20px;position:relative;z-index:1}
+
+.header{text-align:center;padding:40px 0 24px;position:relative}
+.header::after{content:'';display:block;width:200px;height:2px;background:var(--gradient);margin:20px auto 0;border-radius:1px}
+.logo-icon{font-size:48px;margin-bottom:8px;display:block;filter:drop-shadow(0 0 20px rgba(180,77,255,.4))}
+.header h1{font-family:'Orbitron',sans-serif;font-size:clamp(20px,4.5vw,30px);font-weight:800;letter-spacing:3px;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-transform:uppercase}
+.header .subtitle{font-size:14px;color:var(--text-dim);letter-spacing:4px;text-transform:uppercase;margin-top:8px;font-weight:300}
+.header .oneliner{font-size:13px;color:var(--text-muted);margin-top:14px;letter-spacing:1px;font-weight:300}
+
+.section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin:20px 0;position:relative;overflow:hidden}
+.section::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--gradient);opacity:.6}
+.section h2{font-family:'Orbitron',sans-serif;font-size:14px;letter-spacing:2px;color:var(--accent2);text-transform:uppercase;margin-bottom:16px}
+
+.input-group{margin-bottom:16px}
+.input-group label{display:block;font-size:12px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;font-weight:500}
+.input-group input,.input-group textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:15px;outline:none;transition:border-color .3s}
+.input-group input:focus,.input-group textarea:focus{border-color:var(--accent2)}
+.input-group textarea{min-height:70px;resize:vertical}
+
+/* Layer Cards */
+.layers-container{display:flex;flex-direction:column;gap:10px}
+
+.layer-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:all .4s;cursor:pointer;user-select:none}
+.layer-card:hover{border-color:var(--border-glow)}
+.layer-card.active{border-color:var(--accent2)}
+.layer-card.active .lc-header{background:rgba(123,47,247,.05)}
+
+.lc-header{display:flex;align-items:center;gap:14px;padding:14px 18px;transition:background .3s}
+.lc-num{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:14px;font-weight:800;flex-shrink:0;border:2px solid;transition:all .4s}
+.layer-card.active .lc-num{box-shadow:0 0 12px rgba(123,47,247,.3)}
+.lc-info{flex:1}
+.lc-name{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.lc-tagline{font-size:12px;color:var(--text-muted);margin-top:2px}
+.lc-check{width:22px;height:22px;border-radius:4px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .3s;flex-shrink:0}
+.layer-card.active .lc-check{border-color:var(--accent2);background:var(--accent2);color:var(--bg)}
+
+.lc-body{display:none;padding:0 18px 16px;border-top:1px solid var(--border)}
+.layer-card.active .lc-body{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+.lc-desc{font-size:14px;color:var(--text-dim);line-height:1.6;margin-top:12px}
+.lc-question{font-size:13px;color:var(--accent2);font-style:italic;margin-top:10px;padding:10px;background:rgba(123,47,247,.05);border-radius:6px;border-left:3px solid var(--accent2)}
+.lc-examples{margin-top:10px}
+.lc-examples-title{font-size:11px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
+.lc-example{font-size:13px;color:var(--text-muted);padding:4px 0;display:flex;gap:8px}
+.lc-example::before{content:'•';color:var(--accent2);flex-shrink:0}
+
+.lc-evidence{margin-top:12px}
+.lc-evidence textarea{width:100%;background:var(--surface3);border:1px solid var(--border);border-radius:6px;padding:10px 12px;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:14px;min-height:50px;resize:vertical;outline:none}
+.lc-evidence textarea:focus{border-color:var(--accent2)}
+.lc-evidence label{font-size:11px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;display:block}
+
+/* Analyze button */
+.analyze-btn{width:100%;padding:16px;background:transparent;border:2px solid var(--accent2);border-radius:10px;color:var(--accent2);font-family:'Orbitron',sans-serif;font-size:16px;font-weight:700;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:all .4s;margin-top:20px}
+.analyze-btn:hover{background:var(--accent2);color:#fff;box-shadow:0 0 30px rgba(123,47,247,.3)}
+
+/* Results */
+.results{display:none;margin:24px 0;animation:fadeUp .6s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* Onion visualization */
+.onion-viz{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:36px 24px;text-align:center;position:relative;overflow:hidden}
+.onion-viz::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--gradient)}
+.onion-viz h3{font-family:'Orbitron',sans-serif;font-size:13px;letter-spacing:2px;color:var(--accent2);text-transform:uppercase;margin-bottom:24px}
+
+.onion-rings{position:relative;width:300px;height:300px;margin:0 auto}
+.onion-ring{position:absolute;border-radius:50%;border:2px solid;display:flex;align-items:center;justify-content:center;transition:all .8s ease;opacity:.15}
+.onion-ring.detected{opacity:1;animation:ring-pulse 3s ease infinite}
+@keyframes ring-pulse{0%,100%{filter:brightness(1)}50%{filter:brightness(1.3)}}
+.onion-ring.r8{width:300px;height:300px;top:0;left:0}
+.onion-ring.r7{width:262px;height:262px;top:19px;left:19px}
+.onion-ring.r6{width:224px;height:224px;top:38px;left:38px}
+.onion-ring.r5{width:186px;height:186px;top:57px;left:57px}
+.onion-ring.r4{width:148px;height:148px;top:76px;left:76px}
+.onion-ring.r3{width:110px;height:110px;top:95px;left:95px}
+.onion-ring.r2{width:72px;height:72px;top:114px;left:114px}
+.onion-ring.r1{width:34px;height:34px;top:133px;left:133px}
+
+.onion-score{margin-top:20px}
+.os-num{font-family:'Orbitron',sans-serif;font-size:56px;font-weight:900}
+.os-label{font-size:16px;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-top:4px}
+.os-sub{font-size:13px;color:var(--text-muted);margin-top:6px}
+
+/* Report */
+.report-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-top:16px;position:relative;overflow:hidden}
+.report-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.report-card h3{font-family:'Orbitron',sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
+
+.layer-result{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid rgba(42,42,53,.3)}
+.layer-result:last-child{border-bottom:none}
+.lr-num{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;flex-shrink:0;border:2px solid}
+.lr-content{flex:1}
+.lr-name{font-size:14px;font-weight:600}
+.lr-status{font-family:'JetBrains Mono',monospace;font-size:11px;padding:2px 8px;border-radius:4px;margin-left:8px}
+.lr-evidence{font-size:13px;color:var(--text-dim);margin-top:4px;line-height:1.5}
+
+.thermo-card{background:var(--surface);border:1px solid;border-radius:12px;padding:24px;margin-top:16px}
+.thermo-card h3{font-family:'Orbitron',sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
+.thermo-text{font-size:15px;line-height:1.7;color:var(--text-dim)}
+.thermo-text strong{color:var(--text)}
+
+.rec-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-top:16px}
+.rec-card h3{font-family:'Orbitron',sans-serif;font-size:13px;letter-spacing:2px;color:var(--accent2);text-transform:uppercase;margin-bottom:14px}
+.rec-item{display:flex;gap:10px;padding:8px 0;font-size:14px;color:var(--text-dim);line-height:1.5}
+.rec-item::before{content:'▸';color:var(--accent2);font-weight:bold;flex-shrink:0}
+
+/* Scanning */
+.scanning-overlay{display:none;position:fixed;inset:0;background:rgba(10,10,15,.85);z-index:100;align-items:center;justify-content:center;flex-direction:column}
+.scanning-overlay.active{display:flex}
+.scan-eye{font-size:60px;animation:eye-scan 2s ease infinite}
+@keyframes eye-scan{0%,100%{transform:scale(1);filter:drop-shadow(0 0 10px rgba(180,77,255,.3))}50%{transform:scale(1.1);filter:drop-shadow(0 0 30px rgba(180,77,255,.6))}}
+.scan-text{font-family:'Orbitron',sans-serif;font-size:13px;letter-spacing:3px;color:var(--accent2);margin-top:20px;text-transform:uppercase;animation:blink 1s ease infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+.footer{text-align:center;padding:30px 0;border-top:1px solid var(--border);margin-top:40px}
+.footer p{font-size:12px;color:var(--text-muted);letter-spacing:1px}
+.footer a{color:var(--accent2);text-decoration:none}
+.timestamp{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);text-align:right;margin-top:12px}
+
+@media(max-width:600px){
+  .container{padding:12px}
+  .onion-rings{width:220px;height:220px}
+  .onion-ring.r8{width:220px;height:220px;top:0;left:0}
+  .onion-ring.r7{width:192px;height:192px;top:14px;left:14px}
+  .onion-ring.r6{width:164px;height:164px;top:28px;left:28px}
+  .onion-ring.r5{width:136px;height:136px;top:42px;left:42px}
+  .onion-ring.r4{width:108px;height:108px;top:56px;left:56px}
+  .onion-ring.r3{width:80px;height:80px;top:70px;left:70px}
+  .onion-ring.r2{width:52px;height:52px;top:84px;left:84px}
+  .onion-ring.r1{width:24px;height:24px;top:98px;left:98px}
+  .os-num{font-size:42px}
+  .lc-header{flex-wrap:wrap;gap:10px}
+}
+</style>
+</head>
+<body>
+
+<div class="scanning-overlay" id="scanOverlay">
+  <div class="scan-eye">🧅</div>
+  <div class="scan-text">Peeling Back Obfuscation Layers...</div>
+</div>
+
+<div class="container">
+  <div class="header">
+    <span class="logo-icon">🧅</span>
+    <h1>Obfuscation Layer Identifier</h1>
+    <div class="subtitle">How Coordination Hides in Plain Sight</div>
+    <div class="oneliner">Eight layers. Eight ways the truth gets buried. Peel them back.</div>
+  </div>
+
+  <div class="section">
+    <h2>🎯 Subject Under Analysis</h2>
+    <div class="input-group">
+      <label>Event / Narrative / Policy</label>
+      <input type="text" id="subjectTitle" placeholder="e.g. Senate war powers vote failing 47-53 during active unauthorized war">
+    </div>
+    <div class="input-group">
+      <label>Context</label>
+      <textarea id="subjectContext" placeholder="What are you observing? What feels orchestrated but hard to prove?"></textarea>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>🧅 The Eight Layers of Obfuscation</h2>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px">Each layer is a concealment mechanism. Select every layer you can identify operating in this event. Expand for descriptions, examples, and evidence documentation.</p>
+
+    <div class="layers-container" id="layersContainer"></div>
+
+    <button class="analyze-btn" onclick="analyze()">🧅 IDENTIFY ACTIVE OBFUSCATION LAYERS</button>
+  </div>
+
+  <!-- Results -->
+  <div class="results" id="results">
+    <div class="onion-viz">
+      <h3>🧅 Obfuscation Depth Map</h3>
+      <div class="onion-rings" id="onionRings">
+        <div class="onion-ring r8" style="border-color:var(--l8)"></div>
+        <div class="onion-ring r7" style="border-color:var(--l7)"></div>
+        <div class="onion-ring r6" style="border-color:var(--l6)"></div>
+        <div class="onion-ring r5" style="border-color:var(--l5)"></div>
+        <div class="onion-ring r4" style="border-color:var(--l4)"></div>
+        <div class="onion-ring r3" style="border-color:var(--l3)"></div>
+        <div class="onion-ring r2" style="border-color:var(--l2)"></div>
+        <div class="onion-ring r1" style="border-color:var(--l1)"></div>
+      </div>
+      <div class="onion-score">
+        <div class="os-num" id="osNum">0/8</div>
+        <div class="os-label" id="osLabel">—</div>
+        <div class="os-sub" id="osSub">—</div>
+      </div>
+    </div>
+
+    <div class="report-card" id="reportCard">
+      <h3 style="color:var(--accent2)">📋 Layer Detection Report</h3>
+      <div id="reportItems"></div>
+    </div>
+
+    <div class="thermo-card" id="thermoCard">
+      <h3>🌡 Concealment Assessment</h3>
+      <div class="thermo-text" id="thermoText"></div>
+    </div>
+
+    <div class="rec-card">
+      <h3>🔍 Recommended Counter-Analysis</h3>
+      <div id="recItems"></div>
+    </div>
+
+    <div class="timestamp" id="analysisTimestamp"></div>
+  </div>
+
+  <div class="footer">
+    <p>OBFUSCATION LAYER IDENTIFIER — <a href="https://frequencyframework.org" target="_blank">THE FREQUENCY FRAMEWORK</a></p>
+    <p style="margin-top:6px;font-size:11px;color:var(--text-muted)">Eight layers hide the pattern. The Framework peels them back.<br>Transparency is the antidote to obfuscation.</p>
+  </div>
+</div>
+
+<script>
+const layerColors=['var(--l1)','var(--l2)','var(--l3)','var(--l4)','var(--l5)','var(--l6)','var(--l7)','var(--l8)'];
+const layers=[
+  {num:1,name:'Complexity Layering',color:'var(--l1)',
+    tagline:'Make it too complicated to follow',
+    desc:'Information is buried under layers of bureaucratic, legal, or technical complexity that discourages investigation. The system is deliberately structured so that understanding it requires expertise that few possess and fewer can communicate to the public.',
+    question:'Is this event wrapped in so much complexity that most people give up trying to understand it?',
+    examples:['Financial derivatives structured to hide risk','Multi-jurisdiction corporate structures','Classification systems that prevent public access','Regulatory frameworks that only specialists can navigate']
+  },
+  {num:2,name:'Time Delay',color:'var(--l2)',
+    tagline:'Separate cause from effect until the connection fades',
+    desc:'The gap between an action and its consequence is extended so that by the time the impact is felt, the original cause is forgotten or normalized. Policies planted years ago produce "unexpected" results that seem organic.',
+    question:'Is there a significant time gap between the decision that enabled this and the outcome we\'re seeing?',
+    examples:['JCPOA withdrawal (2018) → Iran nuclear escalation (2026)','Deregulation → financial crisis years later','Trade agreements → manufacturing collapse a decade on','Judicial appointments → rulings decades later']
+  },
+  {num:3,name:'Jurisdiction Fragmentation',color:'var(--l3)',
+    tagline:'Split oversight across so many bodies that nobody has the full picture',
+    desc:'Responsibility is divided across multiple agencies, countries, or legal systems so that no single entity can see or address the complete operation. Each fragment appears manageable; the totality is invisible.',
+    question:'Is oversight split across so many jurisdictions that no one has complete visibility?',
+    examples:['Intelligence shared across 17 agencies — none sees all','Multinational operations crossing legal boundaries','Corporate structures spanning multiple regulatory regimes','PAC funding flowing through multiple committees and entities']
+  },
+  {num:4,name:'Semantic Manipulation',color:'var(--l4)',
+    tagline:'Change the words to change the perception',
+    desc:'Language is deliberately chosen to reframe reality. Military operations become "interventions." Torture becomes "enhanced interrogation." Surveillance becomes "data collection." The vocabulary shapes what questions are permissible to ask.',
+    question:'Is the language being used designed to make this sound different from what it actually is?',
+    examples:['"Collateral damage" instead of civilian deaths','"Enhanced interrogation" instead of torture','"Kinetic action" instead of war','"Narco-terrorism" to justify regime change','"Department of War" renamed to "Department of Defense"']
+  },
+  {num:5,name:'Beneficiary Concealment',color:'var(--l5)',
+    tagline:'Hide who profits',
+    desc:'The actual beneficiaries of an action are obscured behind layers of intermediaries, holding companies, trusts, and proxies. When the public asks "who benefits?" the answer is deliberately made impossible to find through normal investigation.',
+    question:'Can you identify who ultimately profits from this, or are the beneficiaries hidden behind layers?',
+    examples:['Defense contracts flowing through subcontractors','Political donations routed through PACs and dark money groups','Resource extraction through local intermediaries','Post-war reconstruction contracts pre-positioned before war begins']
+  },
+  {num:6,name:'Plausible Deniability',color:'var(--l6)',
+    tagline:'Ensure no one person can be held responsible',
+    desc:'Decision-making is structured so that no individual or institution bears clear responsibility. Orders are verbal, decisions are collective, chain of command is ambiguous. "I was not personally aware" becomes the universal defense.',
+    question:'Is the decision-making structure designed so that no one can be held individually accountable?',
+    examples:['"I was following orders" / "I was not briefed"','Verbal orders with no paper trail','Committee decisions with shared responsibility','Intelligence assessments presented as consensus rather than individual judgment']
+  },
+  {num:7,name:'Defensive Complexity',color:'var(--l7)',
+    tagline:'Make investigating more expensive than ignoring',
+    desc:'Legal, technical, and procedural barriers are erected to make investigation prohibitively expensive, time-consuming, or dangerous. FOIA requests take years. Lawsuits are fought with unlimited resources. Whistleblowers are prosecuted.',
+    question:'Are there significant barriers preventing investigation or accountability?',
+    examples:['FOIA requests delayed years or returned fully redacted','Whistleblower prosecutions under Espionage Act','Legal teams with unlimited budgets fighting disclosure','Classification used to prevent Congressional oversight','Investigations defunded or deprioritized']
+  },
+  {num:8,name:'Meta-Narrative Control',color:'var(--l8)',
+    tagline:'Control the story about the story',
+    desc:'The most sophisticated layer. Rather than hiding specific facts, this layer controls the framework through which facts are interpreted. Anyone who sees the pattern is labeled a "conspiracy theorist." The debate is shifted from "is this true?" to "are you crazy for asking?"',
+    question:'Is anyone who questions this narrative being discredited, labeled, or dismissed rather than answered?',
+    examples:['"Conspiracy theorist" label applied to pattern recognition','Media framing that makes questioning seem unpatriotic','"Both sides" framing that equates evidence with denial','Algorithmic suppression of alternative analysis','Experts who disagree are quietly excluded from platforms']
+  }
+];
+
+// Build layer cards
+function buildLayers(){
+  const container=document.getElementById('layersContainer');
+  layers.forEach((l,i)=>{
+    const card=document.createElement('div');
+    card.className='layer-card';
+    card.dataset.index=i;
+    card.innerHTML=`
+      <div class="lc-header" onclick="toggleLayer(${i})">
+        <div class="lc-num" style="border-color:${l.color};color:${l.color}">${l.num}</div>
+        <div class="lc-info">
+          <div class="lc-name" style="color:${l.color}">${l.name}</div>
+          <div class="lc-tagline">${l.tagline}</div>
+        </div>
+        <div class="lc-check">✓</div>
+      </div>
+      <div class="lc-body">
+        <div class="lc-desc">${l.desc}</div>
+        <div class="lc-question">${l.question}</div>
+        <div class="lc-examples">
+          <div class="lc-examples-title">Common Examples</div>
+          ${l.examples.map(e=>`<div class="lc-example">${e}</div>`).join('')}
+        </div>
+        <div class="lc-evidence">
+          <label>Your Evidence / Observations</label>
+          <textarea id="layerEv${i}" placeholder="Document how this layer is operating..." onclick="event.stopPropagation()"></textarea>
+        </div>
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+function toggleLayer(idx){
+  const card=document.querySelectorAll('.layer-card')[idx];
+  card.classList.toggle('active');
+}
+
+function analyze(){
+  const title=document.getElementById('subjectTitle').value||'This event';
+  const overlay=document.getElementById('scanOverlay');
+  overlay.classList.add('active');
+  setTimeout(()=>{overlay.classList.remove('active');generateResults(title)},2000);
+}
+
+function generateResults(title){
+  const cards=document.querySelectorAll('.layer-card');
+  const detected=[];
+  cards.forEach((card,i)=>{
+    if(card.classList.contains('active')){
+      const ev=document.getElementById('layerEv'+i).value;
+      detected.push({index:i,layer:layers[i],evidence:ev});
+    }
+  });
+
+  const count=detected.length;
+  const results=document.getElementById('results');
+  results.style.display='block';
+  results.scrollIntoView({behavior:'smooth'});
+
+  // Onion rings
+  const ringClasses=['r1','r2','r3','r4','r5','r6','r7','r8'];
+  ringClasses.forEach(r=>{
+    document.querySelector('.onion-ring.'+r).classList.remove('detected');
+  });
+  detected.forEach(d=>{
+    const ringIdx=d.index;
+    document.querySelector('.onion-ring.r'+(ringIdx+1)).classList.add('detected');
+  });
+
+  // Score
+  const numEl=document.getElementById('osNum');
+  numEl.textContent=count+'/8';
+
+  let label,color,sub;
+  if(count<=2){label='SURFACE LEVEL';color='var(--green)';sub='Few concealment mechanisms detected. Relatively transparent.';}
+  else if(count<=4){label='MODERATE OBFUSCATION';color='var(--yellow)';sub='Multiple layers active. Deliberate concealment likely.';}
+  else if(count<=6){label='DEEP OBFUSCATION';color='var(--orange)';sub='Sophisticated concealment architecture. Professional-grade information management.';}
+  else{label='MAXIMUM OBFUSCATION';color='var(--red)';sub='Nearly all layers active. This is a fully architected concealment operation.';}
+
+  document.getElementById('osLabel').textContent=label;
+  document.getElementById('osLabel').style.color=color;
+  numEl.style.color=color;
+  document.getElementById('osSub').textContent=sub;
+
+  // Report
+  const reportDiv=document.getElementById('reportItems');
+  reportDiv.innerHTML='';
+  layers.forEach((l,i)=>{
+    const isDetected=detected.some(d=>d.index===i);
+    const ev=detected.find(d=>d.index===i);
+    reportDiv.innerHTML+=`
+      <div class="layer-result">
+        <div class="lr-num" style="border-color:${l.color};color:${isDetected?l.color:'var(--text-muted)'};${isDetected?'background:rgba(123,47,247,.1)':''}">${l.num}</div>
+        <div class="lr-content">
+          <span class="lr-name" style="color:${isDetected?l.color:'var(--text-muted)'}">${l.name}</span>
+          <span class="lr-status" style="background:${isDetected?'rgba(255,138,0,.15)':'rgba(0,255,136,.1)'};color:${isDetected?'var(--orange)':'var(--green)'}">${isDetected?'DETECTED':'CLEAR'}</span>
+          ${ev&&ev.evidence?`<div class="lr-evidence">${ev.evidence}</div>`:''}
+        </div>
+      </div>`;
+  });
+
+  // Thermo assessment
+  const thermoCard=document.getElementById('thermoCard');
+  const thermoText=document.getElementById('thermoText');
+  let thermoContent;
+
+  if(count<=2){
+    thermoContent=`<strong>${title}</strong> shows minimal obfuscation. ${count===0?'No concealment layers detected — this event appears relatively transparent.':'The '+count+' detected layer'+(count>1?'s':'')+' may represent standard institutional opacity rather than deliberate concealment.'} Continue monitoring but the information environment appears navigable.`;
+    thermoCard.style.borderColor='var(--green)';
+    thermoCard.querySelector('h3').style.color='var(--green)';
+  }else if(count<=4){
+    thermoContent=`<strong>${title}</strong> shows ${count} active obfuscation layers — a level consistent with deliberate information management. The combination of ${detected.map(d=>d.layer.name.toLowerCase()).join(', ')} suggests coordinated concealment rather than incidental opacity. The thermodynamic principle applies: maintaining this many concealment layers simultaneously requires significant energy investment. That energy is detectable.`;
+    thermoCard.style.borderColor='var(--yellow)';
+    thermoCard.querySelector('h3').style.color='var(--yellow)';
+  }else if(count<=6){
+    thermoContent=`<strong>${title}</strong> triggers ${count} of 8 obfuscation layers — this is professional-grade concealment architecture. The layers are working in concert: ${detected.slice(0,3).map(d=>d.layer.name.toLowerCase()).join(', ')} create the surface barrier, while deeper layers like ${detected.slice(-2).map(d=>d.layer.name.toLowerCase()).join(' and ')} protect the core. This level of obfuscation requires institutional resources and sustained coordination to maintain.`;
+    thermoCard.style.borderColor='var(--orange)';
+    thermoCard.querySelector('h3').style.color='var(--orange)';
+  }else{
+    thermoContent=`<strong>${title}</strong> activates ${count} of 8 obfuscation layers — near-maximum concealment. Every major mechanism is operating simultaneously: complexity hides the structure, time delays separate cause from effect, jurisdictions fragment oversight, language reframes reality, beneficiaries are hidden, accountability is diffused, investigation is obstructed, and anyone who sees the pattern is discredited. This is a fully mature concealment architecture. The thermodynamic cost of maintaining all eight layers simultaneously is enormous — which means the thing being hidden is proportionally significant.`;
+    thermoCard.style.borderColor='var(--red)';
+    thermoCard.querySelector('h3').style.color='var(--red)';
+  }
+  thermoText.innerHTML=thermoContent;
+
+  // Recommendations
+  const recDiv=document.getElementById('recItems');
+  recDiv.innerHTML='';
+  const recs=[];
+
+  if(detected.some(d=>d.index===0))recs.push('Map the complexity — create a visual diagram showing all entities, jurisdictions, and relationships. Complexity dissolves under systematic documentation.');
+  if(detected.some(d=>d.index===1))recs.push('Build the timeline backward — connect today\'s outcome to decisions made months or years ago. The time delay layer breaks when the causal chain is documented.');
+  if(detected.some(d=>d.index===2))recs.push('Identify which jurisdiction has the most complete view. Often one entity has access to more information than it admits. FOIA requests targeted at overlooked agencies can yield results.');
+  if(detected.some(d=>d.index===3))recs.push('Create a translation table — document the euphemisms alongside their plain-language equivalents. Language manipulation loses power when the substitution is visible.');
+  if(detected.some(d=>d.index===4))recs.push('Follow the money through intermediaries. Corporate registries, SEC filings, PAC disclosures, and contract databases can reveal beneficiary chains. The Six-Step Analyzer\'s monetization step maps this directly.');
+  if(detected.some(d=>d.index===5))recs.push('Document the decision chain — who briefed whom, who approved what, when orders were given. Plausible deniability breaks under precise chronological documentation.');
+  if(detected.some(d=>d.index===6))recs.push('Identify the weakest link in the defensive perimeter. Often one whistleblower, one leaked document, or one congressional hearing can bypass years of defensive complexity.');
+  if(detected.some(d=>d.index===7))recs.push('The meta-narrative layer is the hardest to crack because it controls how people interpret evidence. Counter it by building credibility through validated predictions and documented track records — methodology over accusations.');
+  if(count===0)recs.push('No obfuscation layers detected. Continue standard monitoring.');
+  if(count>=5)recs.push('Cross-reference with the BS Meter for coordination detection and the Six-Step Analyzer for lifecycle positioning. Multiple tools applied together penetrate deeper than any single lens.');
+
+  recs.forEach(r=>{recDiv.innerHTML+=`<div class="rec-item">${r}</div>`});
+
+  document.getElementById('analysisTimestamp').textContent=`Analysis generated: ${new Date().toLocaleString()} | Subject: ${title} | The Frequency Framework`;
+}
+
+buildLayers();
+</script>
+</body>
+</html>
