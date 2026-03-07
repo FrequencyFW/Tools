@@ -25,7 +25,6 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 
 .container{max-width:1000px;margin:0 auto;padding:20px;position:relative;z-index:1}
 
-/* Header */
 .header{text-align:center;padding:40px 0 24px;position:relative}
 .header::after{content:'';display:block;width:200px;height:2px;background:var(--gradient);margin:20px auto 0;border-radius:1px}
 .logo-icon{font-size:48px;margin-bottom:8px;display:block;filter:drop-shadow(0 0 20px rgba(255,45,74,.4))}
@@ -33,7 +32,6 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .header .subtitle{font-size:14px;color:var(--text-dim);letter-spacing:4px;text-transform:uppercase;margin-top:8px;font-weight:300}
 .header .oneliner{font-size:13px;color:var(--text-muted);margin-top:14px;letter-spacing:1px;font-weight:300}
 
-/* Global threat bar */
 .global-threat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin:20px 0;display:flex;align-items:center;gap:20px;position:relative;overflow:hidden}
 .global-threat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
 .gt-indicator{width:16px;height:16px;border-radius:50%;flex-shrink:0;animation:pulse-dot 2s ease infinite}
@@ -43,14 +41,12 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .gt-time{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted);text-align:right;flex-shrink:0}
 .gt-time div:first-child{font-size:14px;color:var(--text-dim)}
 
-/* Theater filter tabs */
 .filter-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
 .filter-tab{padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:1px;cursor:pointer;transition:all .3s;text-transform:uppercase}
 .filter-tab:hover{border-color:var(--border-glow);color:var(--text-dim)}
 .filter-tab.active{border-color:var(--accent);color:var(--accent);background:rgba(0,229,255,.05)}
 .filter-tab .tab-count{font-family:'JetBrains Mono',monospace;margin-left:6px;opacity:.6}
 
-/* Theater cards */
 .theaters-grid{display:flex;flex-direction:column;gap:12px;margin:16px 0}
 
 .theater-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:all .4s ease;cursor:pointer}
@@ -69,7 +65,6 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .tc-expand{width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .3s;flex-shrink:0}
 .theater-card.expanded .tc-expand{transform:rotate(180deg);border-color:var(--accent)}
 
-/* Expanded content */
 .tc-body{display:none;padding:0 20px 20px;border-top:1px solid var(--border);margin-top:0}
 .theater-card.expanded .tc-body{display:block;animation:fadeIn .3s ease}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
@@ -77,30 +72,25 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .tc-section{margin-top:16px}
 .tc-section-title{font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:2px;color:var(--text-muted);text-transform:uppercase;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid rgba(42,42,53,.5)}
 
-/* Key metrics row */
 .tc-metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:12px}
 .tc-metric{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;text-align:center}
 .tc-metric-val{font-family:'Orbitron',sans-serif;font-size:20px;font-weight:800}
 .tc-metric-label{font-size:10px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-top:2px}
 
-/* Updates list */
 .tc-updates{display:flex;flex-direction:column;gap:6px;margin-top:8px}
 .tc-update{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid rgba(42,42,53,.3);font-size:13px;color:var(--text-dim);line-height:1.4}
 .tc-update:last-child{border-bottom:none}
 .tc-update-time{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);flex-shrink:0;min-width:50px}
 .tc-update-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:6px}
 
-/* Connections */
 .tc-connections{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .tc-conn{padding:4px 10px;border-radius:12px;font-size:11px;font-family:'JetBrains Mono',monospace;border:1px solid var(--border);color:var(--text-dim);background:var(--surface3);letter-spacing:.5px}
 .tc-conn:hover{border-color:var(--accent);color:var(--accent)}
 
-/* Six-step position */
 .tc-step-bar{display:flex;gap:2px;margin-top:8px;height:8px}
 .tc-step-seg{flex:1;border-radius:2px;background:var(--surface3);transition:all .3s}
 .tc-step-seg.active{opacity:1}
 
-/* Add theater section */
 .add-theater{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin:20px 0;position:relative;overflow:hidden}
 .add-theater::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--gradient);opacity:.6}
 .add-theater h2{font-family:'Orbitron',sans-serif;font-size:14px;letter-spacing:2px;color:var(--accent);margin-bottom:16px;text-transform:uppercase}
@@ -115,14 +105,12 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .add-btn{width:100%;padding:12px;border-radius:8px;border:1px solid var(--green);background:transparent;color:var(--green);font-family:'Orbitron',sans-serif;font-size:13px;letter-spacing:2px;cursor:pointer;transition:all .3s;text-transform:uppercase;grid-column:1/-1;margin-top:4px}
 .add-btn:hover{background:var(--green);color:var(--bg)}
 
-/* Summary bar */
 .summary-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:20px 0}
 .summary-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;position:relative;overflow:hidden}
 .summary-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
 .sc-num{font-family:'Orbitron',sans-serif;font-size:32px;font-weight:900}
 .sc-label{font-size:11px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-top:4px}
 
-/* Footer */
 .footer{text-align:center;padding:30px 0;border-top:1px solid var(--border);margin-top:40px}
 .footer p{font-size:12px;color:var(--text-muted);letter-spacing:1px}
 .footer a{color:var(--accent);text-decoration:none}
@@ -158,6 +146,7 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
     <div class="gt-time">
       <div id="gtClock"></div>
       <div id="gtDate"></div>
+      <div id="gtTZ" style="font-size:10px;color:var(--text-muted);margin-top:2px">PST</div>
     </div>
   </div>
 
@@ -234,96 +223,132 @@ const stepColors=['#00e5ff','#7b2ff7','#ff8a00','#ff2d6b','#ffd600','#00ff88'];
 let theaters=[
   {
     id:'iran',name:'Iran — Operation Epic Fury',emoji:'🇮🇷',level:'critical',domain:'military',
-    sub:'Day 6 — US/Israel joint strikes, Iranian retaliation across Gulf',
-    metrics:[{val:'1,230+',label:'Killed in Iran'},{val:'6',label:'US KIA'},{val:'128',label:'Attack Waves'},{val:'20+',label:'Ships Destroyed'}],
+    sub:'Day 7 — Unconditional surrender demand, Mehrabad Airport struck, 3,000+ targets hit',
+    metrics:[{val:'1,332+',label:'Killed in Iran'},{val:'6',label:'US KIA'},{val:'3,000+',label:'Targets Struck'},{val:'30+',label:'Ships Destroyed'}],
     updates:[
-      {time:'Day 6',text:'Death toll rises to 1,230+. Israel launches 10th wave. IAF: 4,000 munitions in 1,600 sorties.',dot:'var(--critical)'},
-      {time:'Day 5',text:'Katz confirms operation pre-planned for mid-2026, accelerated to February.',dot:'var(--high)'},
-      {time:'Day 5',text:'USS submarine torpedoes IRIS Dena off Sri Lanka — first torpedo kill since WWII.',dot:'var(--critical)'},
-      {time:'Day 5',text:'Senate war powers vote fails 47-53. Constitutional check dead.',dot:'var(--high)'},
-      {time:'Day 4',text:'Iran military loses control of several units — operating on old general instructions.',dot:'var(--critical)'}
+      {time:'Day 7',text:'Trump posts to Truth Social: "There will be no deal with Iran except UNCONDITIONAL SURRENDER!" Dow drops 900+ points.',dot:'var(--critical)'},
+      {time:'Day 7',text:'IDF strikes Mehrabad International Airport in Tehran — fire confirmed, CNN geolocated footage. Joint civil-military facility.',dot:'var(--critical)'},
+      {time:'Day 7',text:'CENTCOM: 3,000+ total targets struck since Feb 28. 400+ in western Iran on Friday alone.',dot:'var(--critical)'},
+      {time:'Day 7',text:'Trump on Khamenei\'s son Mojtaba: "Unacceptable to me. I have to be involved in the appointment."',dot:'var(--high)'},
+      {time:'Day 7',text:'White House states US needs 4-6 weeks to meet war objectives.',dot:'var(--high)'},
+      {time:'Day 6',text:'Russia confirmed providing Iran targeting intel on US warship/aircraft locations. Three US officials on record. "Pretty comprehensive effort." (WashPost/AP/CNN)',dot:'var(--critical)'},
+      {time:'Day 5',text:'USS submarine torpedoes IRIS Dena off Sri Lanka — first torpedo kill since WWII.',dot:'var(--critical)'}
     ],
-    connections:['Hormuz','Lebanon','Turkey/NATO','Gulf States','DHS Shutdown','Energy Markets','Domestic Threat'],
+    connections:['Hormuz','Lebanon','Russia Intel','China','Gulf States','Ecuador/SOUTHCOM','Energy Markets','Domestic Cover'],
     steps:[1,1,1,1,1,0]
   },
   {
-    id:'hormuz',name:'Strait of Hormuz — Energy Chokepoint',emoji:'⛽',level:'critical',domain:'energy',
-    sub:'Effectively closed — 20% global oil supply disrupted',
-    metrics:[{val:'4/day',label:'Transits (avg 24)'},{val:'150+',label:'Ships Stranded'},{val:'+14%',label:'Brent This Week'},{val:'$424K',label:'Tanker Rate/Day'}],
+    id:'russia',name:'Russia — Intel Support to Iran',emoji:'🇷🇺',level:'high',domain:'military',
+    sub:'Confirmed providing Iran targeting data on US forces — Hegseth denial contradicted on record',
+    metrics:[{val:'3',label:'US Officials'},{val:'Day 7',label:'Confirmed'},{val:'30-day',label:'India Oil Waiver'},{val:'$90+',label:'Brent/barrel'}],
     updates:[
-      {time:'Day 6',text:'IRGC claims strike on US oil tanker in Persian Gulf.',dot:'var(--critical)'},
-      {time:'Day 5',text:'Maersk suspends ALL Gulf cargo — UAE, Saudi, Bahrain, Kuwait, Oman, Qatar, Iraq.',dot:'var(--critical)'},
-      {time:'Day 5',text:'Trump pledges DFC insurance + Navy escorts. Navy says no availability.',dot:'var(--high)'},
-      {time:'Day 4',text:'Qatar shuts down LNG production after drone strikes. 20% global LNG offline.',dot:'var(--critical)'},
-      {time:'Day 3',text:'IRGC declares strait closed. Zero civilian transits.',dot:'var(--critical)'}
+      {time:'Day 7',text:'WashPost/AP/CNN: Russia providing Iran targeting intelligence on US warship and aircraft locations. Three named US officials. "Pretty comprehensive effort."',dot:'var(--critical)'},
+      {time:'Day 7',text:'Hegseth on record: Russia/China "not really a factor here." Statement directly contradicted by named officials same day.',dot:'var(--high)'},
+      {time:'Day 7',text:'Kremlin spokesperson Peskov confirms Russia "in dialogue" with Iran\'s leadership and will continue that dialogue.',dot:'var(--high)'},
+      {time:'Day 7',text:'Bessent: US issued 30-day waiver for India to buy Russian crude stranded at sea. May "unsanction other Russian oil." Hundreds of millions of sanctioned barrels on water.',dot:'var(--high)'},
+      {time:'Day 7',text:'Rep. Don Bacon (R-NE): "I condemn this decision. The weakness towards Russia is appalling."',dot:'var(--elevated)'},
+      {time:'Day 7',text:'Bloomberg energy columnist Javier Blas: "Vladimir Putin can\'t believe his luck."',dot:'var(--elevated)'}
     ],
-    connections:['Iran','Energy Markets','Gulf States','Mediterranean','Global Trade'],
+    connections:['Iran','Energy Markets','China','Global Markets'],
+    steps:[1,1,1,0,0,0]
+  },
+  {
+    id:'china',name:'China — Strategic Positioning',emoji:'🇨🇳',level:'elevated',domain:'diplomatic',
+    sub:'BeiDou navigation to Iran, mediation envoy deployed, Trump-Xi summit intact',
+    metrics:[{val:'3,000+',label:'Citizens Evacuated'},{val:'Mar 31',label:'Trump-Xi Summit'},{val:'BeiDou',label:'Nav Support'},{val:'Paris',label:'Bessent Mtg'}],
+    updates:[
+      {time:'Day 7',text:'Providing BeiDou satellite navigation to Iran — GPS jamming workaround confirmed.',dot:'var(--high)'},
+      {time:'Day 7',text:'Sending special envoy to mediate. Pressuring Iran to keep Hormuz open — protects Chinese oil supply.',dot:'var(--elevated)'},
+      {time:'Day 7',text:'Trump-Xi summit still scheduled March 31–April 2. China not sacrificing the relationship.',dot:'var(--elevated)'},
+      {time:'Day 7',text:'Bessent meeting Chinese VP He Lifeng in Paris next week. US pressing China to cut Russian/Iranian oil purchases, buy American crude/LNG.',dot:'var(--elevated)'},
+      {time:'Day 7',text:'No Chinese military assistance confirmed (two US officials).',dot:'var(--guarded)'}
+    ],
+    connections:['Iran','Russia Intel','Energy Markets','Global Markets'],
+    steps:[1,1,0,0,0,0]
+  },
+  {
+    id:'hormuz',name:'Strait of Hormuz — Energy Chokepoint',emoji:'⛽',level:'critical',domain:'energy',
+    sub:'Effectively closed — Maersk/Hapag-Lloyd rerouting Africa, $20B DFC reinsurance deployed',
+    metrics:[{val:'~0',label:'Daily Transits'},{val:'150+',label:'Ships Stranded'},{val:'+35%',label:'WTI This Week'},{val:'$20B',label:'DFC Reinsurance'}],
+    updates:[
+      {time:'Day 7',text:'WTI crude tops $90/barrel. Weekly gain +35.63% — largest in futures history dating to 1983.',dot:'var(--critical)'},
+      {time:'Day 7',text:'DFC maritime war-risk reinsurance up to $20B deployed for Gulf tanker transit.',dot:'var(--high)'},
+      {time:'Day 7',text:'Bessent: may unsanction hundreds of millions of barrels of Russian crude to create supply.',dot:'var(--high)'},
+      {time:'Day 6',text:'P&I insurance suspended March 5. Maersk, Hapag-Lloyd, CMA CGM rerouting around Cape of Good Hope.',dot:'var(--critical)'},
+      {time:'Day 3',text:'IRGC declares strait closed. Zero civilian transits. Qatar LNG offline.',dot:'var(--critical)'}
+    ],
+    connections:['Iran','Russia Intel','Energy Markets','Gulf States','Global Markets'],
     steps:[1,1,1,0,0,0]
   },
   {
     id:'lebanon',name:'Lebanon — Third Front',emoji:'🇱🇧',level:'high',domain:'military',
-    sub:'Israel ground incursion + Hezbollah expanding attacks to Tel Aviv',
-    metrics:[{val:'50+',label:'Killed'},{val:'62',label:'Hezb. Attacks'},{val:'91st Div',label:'IDF Ground'},{val:'2',label:'Tel Aviv Strikes'}],
+    sub:'217 killed, 300K displaced, Mehrabad-level escalation — no end date declared',
+    metrics:[{val:'217',label:'Killed'},{val:'798',label:'Wounded'},{val:'300K',label:'Displaced'},{val:'11',label:'Dahiyeh Strikes'}],
     updates:[
-      {time:'Day 6',text:'Israel 91st Division ground incursion into southern Lebanon.',dot:'var(--critical)'},
-      {time:'Day 5',text:'Hezbollah coordinates simultaneous barrage with Iran — saturation doctrine.',dot:'var(--high)'},
-      {time:'Day 5',text:'Lebanese gov bans Hezbollah military activity. Hezbollah ignores.',dot:'var(--elevated)'},
-      {time:'Day 4',text:'Drone from Lebanon hits UK RAF base in Cyprus.',dot:'var(--high)'}
+      {time:'Day 7',text:'Death toll 217 killed, 798 wounded, 300,000 displaced per Norwegian Refugee Council. Israel declares no end date for Lebanon ops.',dot:'var(--critical)'},
+      {time:'Day 7',text:'Israel struck all of Dahiyeh (Beirut southern suburbs) with 11 strikes overnight. Hezbollah Executive Council HQ and drone warehouse hit.',dot:'var(--critical)'},
+      {time:'Day 7',text:'Hezbollah commander Zaid Ali Jumaa killed. Hamas Lebanon commander killed in Tripoli strike.',dot:'var(--high)'},
+      {time:'Day 7',text:'Israeli FM Smotrich: "Dahiyeh will look like Khan Younis." IDF ground troops in southern Lebanon.',dot:'var(--high)'},
+      {time:'Day 7',text:'UN rights chief Volker Türk: "Extremely concerned." Called for immediate cessation. 1M+ affected by evacuation orders.',dot:'var(--elevated)'},
+      {time:'Day 7',text:'UK deployed 4 additional Typhoons to region. British defense secretary does not rule out UK participation in Iran strikes.',dot:'var(--elevated)'}
     ],
-    connections:['Iran','Turkey/NATO','Cyprus','Israel'],
+    connections:['Iran','Gulf States','Cyprus/NATO','Israel'],
+    steps:[1,1,1,0,0,0]
+  },
+  {
+    id:'ecuador',name:'Ecuador — SOUTHCOM Land Strike',emoji:'🇪🇨',level:'high',domain:'military',
+    sub:'CONFIRMED: First US land kinetic operation in Ecuador — "Much more to come" — Hegseth',
+    metrics:[{val:'Mar 6',label:'Strike Confirmed'},{val:'SOUTHCOM',label:'Command'},{val:'44+',label:'Total Boat Strikes'},{val:'150+',label:'Killed (Total)'}],
+    updates:[
+      {time:'Day 7',text:'SOUTHCOM confirms March 6 kinetic strike in Ecuador — "lethal kinetic operations against Designated Terrorist Organizations." Joint op with Ecuadorian forces.',dot:'var(--critical)'},
+      {time:'Day 7',text:'Hegseth on X: "Yes — we are bombing narco-terrorists on land as well. Thank you to our partners in Ecuador. MUCH MORE TO COME from @Southcom."',dot:'var(--high)'},
+      {time:'Day 7',text:'Americas Counter Cartel Conference held March 5 at SOUTHCOM HQ, Doral FL. Donovan, Hegseth, Stephen Miller present — strike followed next day.',dot:'var(--high)'},
+      {time:'Day 7',text:'SOUTHCOM predecessor commander abruptly retired reportedly over civilian casualty reports from boat strikes. 150+ killed since September, identities unconfirmed.',dot:'var(--elevated)'},
+      {time:'Mar 3',text:'US Special Forces deployed to Ecuador. SOUTHCOM commander Gen. Donovan met President Noboa in Quito March 2 — strike followed 4 days later.',dot:'var(--high)'}
+    ],
+    connections:['Venezuela','Cuba','Western Hemisphere','Iran'],
     steps:[1,1,1,0,0,0]
   },
   {
     id:'turkey',name:'Turkey / NATO — Escalation Tripwire',emoji:'🇹🇷',level:'high',domain:'diplomatic',
-    sub:'Iranian missile intercepted in Turkish airspace — Article 5 threshold',
+    sub:'Iranian missile intercepted in Turkish airspace — Article 5 threshold crossed',
     metrics:[{val:'1',label:'Missile Intercept'},{val:'$2T',label:'Economic Damage'},{val:'86M',label:'Population'},{val:'2nd',label:'NATO Army'}],
     updates:[
       {time:'Day 5',text:'NATO air defense destroys Iranian ballistic missile heading into Turkish airspace.',dot:'var(--critical)'},
-      {time:'Day 5',text:'Erdogan breaks silence — calls operation "banditry," positions as mediator.',dot:'var(--high)'},
+      {time:'Day 5',text:'Erdogan breaks silence — calls operation "banditry," positions Turkey as mediator.',dot:'var(--high)'},
       {time:'Day 5',text:'Hegseth: doesn\'t expect Article 5 invocation. Not his call — it\'s Erdogan\'s.',dot:'var(--elevated)'}
     ],
     connections:['Iran','NATO/EU','Hormuz','Azerbaijan'],
     steps:[1,1,0,0,0,0]
   },
   {
-    id:'gulf',name:'Gulf States — UAE / Qatar / Kuwait / Saudi',emoji:'🏜️',level:'critical',domain:'military',
-    sub:'Absorbing heaviest Iranian retaliation — 1,100+ attacks on UAE alone',
-    metrics:[{val:'1,100+',label:'UAE Attacks'},{val:'189',label:'UAE Missiles'},{val:'941',label:'UAE Drones'},{val:'3',label:'Embassies Closed'}],
+    id:'gulf',name:'Gulf States — UAE / Qatar / Kuwait / Bahrain / Saudi',emoji:'🏜️',level:'critical',domain:'military',
+    sub:'Multi-vector Iranian retaliation — Amazon data centers, refineries, US bases, embassies',
+    metrics:[{val:'1,100+',label:'UAE Attacks'},{val:'7',label:'Bahrain Drones (Day 7)'},{val:'3',label:'Embassies Closed'},{val:'RAF',label:'UK Typhoons Over Bahrain'}],
     updates:[
+      {time:'Day 7',text:'Iran fired 7 attack drones at residential neighborhoods in Bahrain. One intercepted near Israel\'s Bahrain Embassy. UK RAF Typhoons deployed over Bahrain.',dot:'var(--critical)'},
+      {time:'Day 7',text:'UAE: 9 ballistic missiles + 109 drones intercepted on Day 7. Saudi: 3 ballistic missiles intercepted at Prince Sultan Air Base.',dot:'var(--critical)'},
+      {time:'Day 7',text:'Basra, Iraq: Halliburton/KBR offices struck by drone. Victoria Base (Camp Victory, Baghdad Airport) struck by Iranian rockets.',dot:'var(--critical)'},
       {time:'Day 6',text:'Azerbaijan airport struck by drones — war expanding beyond Middle East.',dot:'var(--critical)'},
-      {time:'Day 5',text:'UAE: "We do not believe military solutions can deliver lasting stability."',dot:'var(--high)'},
-      {time:'Day 5',text:'Qatar arrests 10 suspected IRGC spies. Airspace remains closed.',dot:'var(--high)'},
-      {time:'Day 4',text:'US embassies in Saudi, Kuwait, Lebanon closed after strikes.',dot:'var(--critical)'}
+      {time:'Day 5',text:'Iran drone attack on Amazon data centers in Bahrain and two UAE facilities.',dot:'var(--high)'}
     ],
-    connections:['Iran','Hormuz','Energy Markets','US Bases'],
+    connections:['Iran','Hormuz','Energy Markets','US Bases','Russia Intel'],
     steps:[1,1,1,1,0,0]
   },
   {
     id:'venezuela',name:'Venezuela — Resource Extraction',emoji:'🇻🇪',level:'elevated',domain:'financial',
-    sub:'Mining law reform with US Interior Secretary — Six-Step Monetization',
+    sub:'Mining law reform with US Interior Secretary — Six-Step Monetization active',
     metrics:[{val:'Jan 3',label:'Maduro Captured'},{val:'24',label:'Mining Companies'},{val:'Step 5',label:'Six-Step Position'},{val:'$T+',label:'Mineral Reserves'}],
     updates:[
-      {time:'Mar 4',text:'Interim President Rodriguez meets US Interior Sec. Burgum — mining law reform.',dot:'var(--high)'},
-      {time:'Mar 4',text:'"Cut the red tape" for capital investment. Two dozen mining companies present.',dot:'var(--high)'},
+      {time:'Mar 4',text:'Interim President Rodriguez meets US Interior Sec. Burgum — mining law reform. "Cut the red tape" for capital investment.',dot:'var(--high)'},
       {time:'Jan 3',text:'US military captures President Maduro — Operation completed.',dot:'var(--critical)'}
     ],
     connections:['Ecuador','Cuba','Greenland','Western Hemisphere'],
     steps:[1,1,1,1,1,0]
   },
   {
-    id:'ecuador',name:'Ecuador — Cartel Operations',emoji:'🇪🇨',level:'elevated',domain:'military',
-    sub:'First US land operation against cartels under this administration',
-    metrics:[{val:'Mar 3',label:'Op. Launched'},{val:'16',label:'Arrested'},{val:'6 tons',label:'Cocaine Seized'},{val:'151',label:'Boat Strike Deaths'}],
-    updates:[
-      {time:'Mar 3',text:'SOUTHCOM announces first land operation. US advisors provided planning/intel.',dot:'var(--high)'},
-      {time:'Mar 3',text:'Not mentioned at Pentagon briefing — Iran consumed all attention.',dot:'var(--elevated)'}
-    ],
-    connections:['Venezuela','Cuba','Western Hemisphere'],
-    steps:[1,1,1,0,0,0]
-  },
-  {
     id:'cuba',name:'Cuba — Energy Collapse',emoji:'🇨🇺',level:'elevated',domain:'energy',
-    sub:'Nationwide blackout from US oil chokehold',
+    sub:'Nationwide blackout from US oil chokehold — Venezuela lifeline severed',
     metrics:[{val:'Mar 4',label:'Blackout'},{val:'11M',label:'Population'},{val:'0',label:'Oil Lifeline'},{val:'100%',label:'Grid Down'}],
     updates:[
       {time:'Mar 4',text:'Reuters: "Blackout hits most of Cuba amid US oil chokehold."',dot:'var(--high)'},
@@ -331,6 +356,48 @@ let theaters=[
     ],
     connections:['Venezuela','Energy Markets','Western Hemisphere'],
     steps:[1,1,1,1,0,0]
+  },
+  {
+    id:'domestic',name:'US Domestic — Cover Theater',emoji:'🇺🇸',level:'high',domain:'domestic',
+    sub:'Jobs -92K, stagflation signal, War Powers failed, Ecuador buried under Iran coverage',
+    metrics:[{val:'-92K',label:'Feb Jobs'},{val:'4.4%',label:'Unemployment'},{val:'$3.32',label:'Gas/gallon'},{val:'-900',label:'Dow (Day 7)'}],
+    updates:[
+      {time:'Day 7',text:'Trump "unconditional surrender" Truth Social post drops Dow 900+ points same day as -92K jobs report. Stagflation language entering analyst commentary.',dot:'var(--critical)'},
+      {time:'Day 7',text:'Trump on gas prices: "If they rise, they rise." WH energy messaging blitz (Ratepayer Pledge, affordability fact sheet) running parallel to internal price panic.',dot:'var(--high)'},
+      {time:'Day 7',text:'State Dept approved emergency $151.8M FMS to Israel: 12,000 BLU-110A/B 1,000-lb bomb bodies. Emergency determination waiving congressional review.',dot:'var(--high)'},
+      {time:'Day 7',text:'Federal grand jury convicted Pakistani IRGC operative Asif Merchant for 2024 plot to assassinate Trump and other US officials.',dot:'var(--elevated)'},
+      {time:'Day 6',text:'War Powers: Massie-Khanna H.Con.Res.38 failed 212-219 (House). Senate version failed 47-53. Constitutional check exhausted.',dot:'var(--high)'},
+      {time:'Day 6',text:'FBI "Operation Winter Shield" cyber announcement same day as WH cybercrime fact sheet. Timing alignment logged.',dot:'var(--elevated)'}
+    ],
+    connections:['Iran','Energy Markets','Ecuador/SOUTHCOM','Russia Intel','Information Ecosystem'],
+    steps:[1,1,1,1,0,0]
+  },
+  {
+    id:'markets',name:'Global Markets — War Economy',emoji:'📈',level:'high',domain:'financial',
+    sub:'Largest weekly oil gain in futures history, S&P worst week of 2026, stagflation confirmed',
+    metrics:[{val:'$90+',label:'WTI/barrel'},{val:'+35%',label:'Oil Weekly Gain'},{val:'-2%',label:'S&P This Week'},{val:'$3.32',label:'US Gas/gal'}],
+    updates:[
+      {time:'Day 7',text:'WTI crude +35.63% on the week — largest weekly gain in oil futures history dating to 1983. S&P -1.3% Friday, -2% on the week. Worst week of 2026.',dot:'var(--critical)'},
+      {time:'Day 7',text:'Bessent: 30-day waiver for India to buy Russian oil. May "unsanction other Russian oil." Hundreds of millions of sanctioned barrels on water.',dot:'var(--high)'},
+      {time:'Day 7',text:'DFC $20B maritime war-risk reinsurance deployed for Gulf tankers.',dot:'var(--high)'},
+      {time:'Day 7',text:'US crude weekly gain +35.63% — CNBC: "biggest weekly gain in the history of the futures contract dating back to 1983."',dot:'var(--critical)'},
+      {time:'Day 6',text:'Defense contractor CEOs at WH: BAE, Boeing, Honeywell, L3Harris, Lockheed, Northrop, Raytheon. Quadruple production of Exquisite Class weaponry ordered. Expansion began December 2025.',dot:'var(--high)'}
+    ],
+    connections:['Iran','Hormuz','Russia Intel','Energy Markets','Domestic'],
+    steps:[1,1,1,1,1,0]
+  },
+  {
+    id:'mediterranean',name:'Mediterranean — Second Energy Front',emoji:'🌊',level:'high',domain:'energy',
+    sub:'Russian LNG tanker sunk, Red Sea return hopes ended, Cape of Good Hope rerouting',
+    metrics:[{val:'61K tons',label:'LNG Lost'},{val:'+76%',label:'EU Gas Week'},{val:'Cape',label:'Rerouting'},{val:'Cyprus',label:'RAF Drone Strike'}],
+    updates:[
+      {time:'Day 7',text:'Iran warns European countries joining attacks will be "legitimate targets." Cyprus RAF base previously struck by Iranian drone.',dot:'var(--high)'},
+      {time:'Day 7',text:'EU mutual defence clause up for discussion. France, Greece, Italy, Spain, Netherlands, UK mobilizing forces to protect Cyprus.',dot:'var(--high)'},
+      {time:'Mar 3',text:'Arctic Metagaz LNG tanker sunk between Libya and Malta — first LNG attack in history.',dot:'var(--critical)'},
+      {time:'Mar 4',text:'Red Sea return hopes ended. Maersk, Hapag-Lloyd, CMA CGM rerouting around Africa.',dot:'var(--critical)'}
+    ],
+    connections:['Iran','Hormuz','Energy Markets','NATO/EU','Russia Intel'],
+    steps:[1,1,1,0,0,0]
   },
   {
     id:'greenland',name:'Greenland — Staged',emoji:'🧊',level:'guarded',domain:'diplomatic',
@@ -343,44 +410,6 @@ let theaters=[
     ],
     connections:['NATO/EU','Western Hemisphere','Energy Markets'],
     steps:[1,1,0,0,0,0]
-  },
-  {
-    id:'mediterranean',name:'Mediterranean — Second Energy Front',emoji:'🌊',level:'high',domain:'energy',
-    sub:'Russian LNG tanker sunk by Ukrainian drones — first LNG attack in history',
-    metrics:[{val:'61K tons',label:'LNG Lost'},{val:'2nd',label:'Tanker Attack (3mo)'},{val:'+76%',label:'EU Gas Week'},{val:'30%',label:'EU Jet Fuel Risk'}],
-    updates:[
-      {time:'Mar 3',text:'Arctic Metagaz sunk between Libya and Malta. Ukrainian sea drones from Libya coast.',dot:'var(--critical)'},
-      {time:'Mar 4',text:'Zelensky calls Bahrain/Kuwait leaders — positioning Ukraine as Gulf partner.',dot:'var(--elevated)'}
-    ],
-    connections:['Iran','Hormuz','Energy Markets','Ukraine/Russia','NATO/EU'],
-    steps:[1,1,1,0,0,0]
-  },
-  {
-    id:'domestic',name:'US Domestic — Threat & Shutdown',emoji:'🇺🇸',level:'high',domain:'domestic',
-    sub:'DHS shutdown Week 3, counterterrorism on war footing, fatwa issued',
-    metrics:[{val:'20',label:'Shutdown Days'},{val:'40%',label:'CISA Staffing'},{val:'50K+',label:'Unpaid Workers'},{val:'+26¢',label:'Gas 3-Day Rise'}],
-    updates:[
-      {time:'Mar 4',text:'Grand Ayatollah issues fatwa: violence against Trump/Zionists "obligatory."',dot:'var(--critical)'},
-      {time:'Mar 4',text:'Austin TX: Iran-motivated shooting at bar kills multiple Americans.',dot:'var(--critical)'},
-      {time:'Mar 4',text:'CISA at 40% staffing while DHS/FBI warn of cyber attacks on financial/water systems.',dot:'var(--high)'},
-      {time:'Mar 4',text:'ICE confirms measles outbreak at largest detention facility. Closed to attorneys.',dot:'var(--elevated)'},
-      {time:'Mar 4',text:'Mace subpoenas AG Bondi over Epstein files. Buried under war coverage.',dot:'var(--elevated)'}
-    ],
-    connections:['Iran','DHS Shutdown','Energy Markets','Information Ecosystem'],
-    steps:[1,1,1,1,0,0]
-  },
-  {
-    id:'markets',name:'Global Markets — War Economy',emoji:'📈',level:'high',domain:'financial',
-    sub:'Defense surging, energy spiking, Asian markets volatile, prediction markets frozen',
-    metrics:[{val:'$82',label:'Brent/barrel'},{val:'$5,180',label:'Gold/oz'},{val:'-12%',label:'KOSPI Day'},{val:'$54M',label:'Kalshi Frozen'}],
-    updates:[
-      {time:'Mar 5',text:'KOSPI rebounds 9.6% after record crash. Asian markets recovering.',dot:'var(--elevated)'},
-      {time:'Mar 4',text:'Kalshi freezes $54M in Khamenei death bets. Insider trading signal.',dot:'var(--high)'},
-      {time:'Mar 4',text:'Tech giants sign energy pledges at White House. Gates nuclear approved.',dot:'var(--elevated)'},
-      {time:'Mar 4',text:'Musk launches X Money — 9.3M views. Alternative financial infrastructure.',dot:'var(--elevated)'}
-    ],
-    connections:['Iran','Hormuz','Energy Markets','Domestic','Information Ecosystem'],
-    steps:[1,1,1,1,1,0]
   }
 ];
 
@@ -480,7 +509,6 @@ function updateStats(){
   document.getElementById('scDomains').textContent=domains.size;
   document.getElementById('countAll').textContent=`(${active})`;
 
-  // Global threat
   const gtBar=document.getElementById('globalThreat');
   const gtDot=document.getElementById('gtDot');
   const gtLevel=document.getElementById('gtLevel');
@@ -498,16 +526,11 @@ function updateStats(){
     globalDesc=`${active} theaters active. Monitoring for escalation.`;
   }
 
-  gtBar.style.setProperty('--gt-color',globalColor);
-  gtBar.querySelector('::before');
   gtDot.style.background=globalColor;
   gtDot.style.color=globalColor;
   gtLevel.textContent=globalLevel;
   gtLevel.style.color=globalColor;
   gtDesc.textContent=globalDesc;
-  document.querySelector('.global-threat').style.borderColor=globalColor.replace('var(','').replace(')','');
-
-  // Set border top color
   gtBar.style.borderTopColor=globalColor;
 }
 
@@ -538,16 +561,17 @@ function addTheater(){
   setTimeout(()=>{btn.textContent='▶ Add Theater to Board';btn.style.background='transparent';btn.style.color='var(--green)'},1500);
 }
 
-// Clock
+// Clock — PST timezone
 function updateClock(){
   const now=new Date();
-  document.getElementById('gtClock').textContent=now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  document.getElementById('gtDate').textContent=now.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+  const pstOptions={timeZone:'America/Los_Angeles',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true};
+  const dateOptions={timeZone:'America/Los_Angeles',weekday:'short',month:'short',day:'numeric',year:'numeric'};
+  document.getElementById('gtClock').textContent=now.toLocaleTimeString('en-US',pstOptions);
+  document.getElementById('gtDate').textContent=now.toLocaleDateString('en-US',dateOptions);
 }
 setInterval(updateClock,1000);
 updateClock();
 
-// Initialize
 renderTheaters();
 </script>
 </body>
