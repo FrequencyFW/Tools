@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>THE FREQUENCY FRAMEWORK</title>
-<meta name="description" content="The Frequency Framework — Tool Hub. 15 free interactive tools for pattern recognition.">
+<meta name="description" content="The Frequency Framework — Tool Hub. 16 free interactive tools for pattern recognition across geopolitics, sports, and California policy.">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&display=swap');
 
@@ -23,6 +23,8 @@
     --cyan: #00c8ff;
     --purple: #b266ff;
     --purple-dim: rgba(178,102,255,0.1);
+    --gold: #d4a843;
+    --gold-dim: rgba(212,168,67,0.08);
     --text: #e0e0ee;
     --text-dim: #5a5d78;
     --text-mid: #8a8da8;
@@ -76,6 +78,7 @@
   .tool-card:hover::after { opacity: 1; }
   .tool-card[data-cat="geo"]::after { background: var(--teal); }
   .tool-card[data-cat="sports"]::after { background: var(--amber); }
+  .tool-card[data-cat="california"]::after { background: var(--gold); }
 
   .card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
   .card-id { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px; color: var(--text-dim); }
@@ -90,6 +93,7 @@
   .tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; padding: 3px 8px; border-radius: 3px; border: 1px solid; }
   .tag-geo { color: var(--teal); border-color: rgba(0,229,160,0.2); background: var(--teal-dim); }
   .tag-sports { color: var(--amber); border-color: rgba(255,170,0,0.2); background: var(--amber-dim); }
+  .tag-california { color: var(--gold); border-color: rgba(212,168,67,0.2); background: var(--gold-dim); }
   .tag-live { color: var(--cyan); border-color: rgba(0,200,255,0.2); background: rgba(0,200,255,0.06); }
 
   .orb-cta { text-align: center; padding: 36px 24px; margin-bottom: 36px; background: radial-gradient(ellipse at center, rgba(0,229,160,0.03) 0%, transparent 65%); border: 1px solid var(--border); border-radius: 10px; transition: border-color 0.3s; }
@@ -141,6 +145,7 @@
     <button class="filter-btn active" onclick="filterTools('all')">All Tools</button>
     <button class="filter-btn" onclick="filterTools('geo')">Geopolitical</button>
     <button class="filter-btn" onclick="filterTools('sports')">March Madness 2026</button>
+    <button class="filter-btn" onclick="filterTools('california')">California</button>
   </div>
 
   <!-- ═══ GEOPOLITICAL ═══ -->
@@ -253,6 +258,22 @@
     </a>
   </div>
 
+  <!-- ═══ CALIFORNIA ═══ -->
+  <div class="section-header" data-section="california">
+    <span class="section-title">California</span>
+    <span class="section-line"></span>
+    <span class="section-count">1 tool</span>
+  </div>
+
+  <div class="card-grid" data-section="california">
+    <a class="tool-card" data-cat="california" href="https://frequencyfw.github.io/prop-due-diligence/">
+      <div class="card-top"><span class="card-id">CA-001</span><div class="card-badges"><span class="badge badge-new">New</span><span class="badge badge-live">Live</span></div></div>
+      <div class="card-title">Proposition Due Diligence</div>
+      <div class="card-desc">Score any California ballot measure across six dimensions using public record data. Who's paying, who benefits, and what the filings reveal.</div>
+      <div class="card-tags"><span class="tag tag-california">FPPC</span><span class="tag tag-california">Ballot Measures</span><span class="tag tag-california">Public Record</span></div>
+    </a>
+  </div>
+
   <div class="orb-cta">
     <h3>The Frequency Orb</h3>
     <p>432 Hz + Schumann Resonance. Pattern density without reading. The front door.</p>
@@ -281,6 +302,9 @@ function filterTools(cat) {
   });
   document.querySelectorAll('[data-section="sports"]').forEach(el => {
     el.style.display = (cat === 'all' || cat === 'sports') ? (el.classList.contains('card-grid') ? 'grid' : 'flex') : 'none';
+  });
+  document.querySelectorAll('[data-section="california"]').forEach(el => {
+    el.style.display = (cat === 'all' || cat === 'california') ? (el.classList.contains('card-grid') ? 'grid' : 'flex') : 'none';
   });
 }
 </script>
