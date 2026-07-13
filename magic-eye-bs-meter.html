@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Magic Eye BS Meter | The Frequency Framework</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#0a0a0f;--surface:#111118;--surface2:#18181f;--surface3:#1f1f28;
+--border:#2a2a35;--border-glow:#3a3a4a;
+--text:#e8e8f0;--text-dim:#8888a0;--text-muted:#555568;
+--accent:#00e5ff;--accent2:#7b2ff7;--accent3:#ff2d6b;
+--green:#00ff88;--yellow:#ffd600;--orange:#ff8a00;--red:#ff2d4a;
+--gradient:linear-gradient(135deg,#00e5ff 0%,#7b2ff7 50%,#ff2d6b 100%);
+}
+body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* Animated background grid */
+body::before{content:'';position:fixed;inset:0;background:
+  linear-gradient(90deg,rgba(0,229,255,.03) 1px,transparent 1px),
+  linear-gradient(rgba(0,229,255,.03) 1px,transparent 1px);
+  background-size:60px 60px;pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(123,47,247,.08) 0%,transparent 60%);pointer-events:none;z-index:0}
+
+.container{max-width:900px;margin:0 auto;padding:20px;position:relative;z-index:1}
+
+/* Header */
+.header{text-align:center;padding:40px 0 30px;position:relative}
+.header::after{content:'';display:block;width:200px;height:2px;background:var(--gradient);margin:20px auto 0;border-radius:1px}
+.logo-icon{font-size:48px;margin-bottom:8px;display:block;filter:drop-shadow(0 0 20px rgba(0,229,255,.4))}
+.header h1{font-family:'Orbitron',sans-serif;font-size:clamp(24px,5vw,36px);font-weight:800;letter-spacing:3px;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-transform:uppercase}
+.header .subtitle{font-size:14px;color:var(--text-dim);letter-spacing:4px;text-transform:uppercase;margin-top:8px;font-weight:300}
+.header .tagline{font-size:13px;color:var(--text-muted);margin-top:4px;font-style:italic}
+
+/* Input Section */
+.input-section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin:24px 0;position:relative;overflow:hidden}
+.input-section::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--gradient);opacity:.6}
+.input-section h2{font-family:'Orbitron',sans-serif;font-size:14px;letter-spacing:2px;color:var(--accent);margin-bottom:16px;text-transform:uppercase}
+.input-group{margin-bottom:16px}
+.input-group label{display:block;font-size:13px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;font-weight:500}
+.input-group input,.input-group textarea,.input-group select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:15px;transition:all .3s ease;outline:none}
+.input-group input:focus,.input-group textarea:focus,.input-group select:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(0,229,255,.15)}
+.input-group textarea{min-height:80px;resize:vertical}
+.input-group select option{background:var(--surface2);color:var(--text)}
+
+/* Indicators Grid */
+.indicators-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;margin:16px 0}
+.indicator-item{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;cursor:pointer;transition:all .3s ease;position:relative;overflow:hidden;user-select:none}
+.indicator-item:hover{border-color:var(--border-glow);transform:translateY(-1px)}
+.indicator-item.active{border-color:var(--accent);background:rgba(0,229,255,.05)}
+.indicator-item.active::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent)}
+.indicator-item .ind-header{display:flex;justify-content:space-between;align-items:center}
+.indicator-item .ind-name{font-size:14px;font-weight:600;color:var(--text)}
+.indicator-item .ind-check{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;transition:all .3s ease;font-size:12px}
+.indicator-item.active .ind-check{border-color:var(--accent);background:var(--accent);color:var(--bg)}
+.indicator-item .ind-desc{font-size:12px;color:var(--text-muted);margin-top:6px;line-height:1.4}
+.indicator-item .ind-weight{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent2);margin-top:4px}
+
+/* Category headers */
+.category-header{font-family:'Orbitron',sans-serif;font-size:12px;letter-spacing:2px;color:var(--text-muted);text-transform:uppercase;margin:20px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+
+/* Analyze button */
+.analyze-btn{width:100%;padding:16px;background:transparent;border:2px solid var(--accent);border-radius:10px;color:var(--accent);font-family:'Orbitron',sans-serif;font-size:16px;font-weight:700;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:all .4s ease;position:relative;overflow:hidden;margin-top:20px}
+.analyze-btn:hover{background:var(--accent);color:var(--bg);box-shadow:0 0 30px rgba(0,229,255,.3)}
+.analyze-btn:active{transform:scale(.98)}
+.analyze-btn.scanning{animation:pulse-border 1.5s ease infinite}
+@keyframes pulse-border{0%,100%{box-shadow:0 0 5px rgba(0,229,255,.3)}50%{box-shadow:0 0 25px rgba(0,229,255,.5)}}
+
+/* Results Section */
+.results-section{display:none;margin:30px 0;animation:fadeUp .6s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* The Meter */
+.meter-container{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;text-align:center;position:relative;overflow:hidden}
+.meter-container::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--gradient);opacity:.6}
+.meter-label{font-family:'Orbitron',sans-serif;font-size:12px;letter-spacing:3px;color:var(--text-muted);text-transform:uppercase;margin-bottom:20px}
+
+.meter-dial{position:relative;width:280px;height:160px;margin:0 auto}
+.meter-arc{width:280px;height:280px;border-radius:50%;position:absolute;top:0;left:0;
+  background:conic-gradient(from 180deg,var(--green) 0deg,var(--yellow) 72deg,var(--orange) 126deg,var(--red) 180deg,transparent 180deg);
+  mask:radial-gradient(circle at center,transparent 90px,black 92px,black 138px,transparent 140px);
+  -webkit-mask:radial-gradient(circle at center,transparent 90px,black 92px,black 138px,transparent 140px)}
+.meter-needle{position:absolute;bottom:0;left:50%;width:3px;height:110px;background:var(--text);transform-origin:bottom center;transform:rotate(-90deg);transition:transform 1.5s cubic-bezier(.34,1.56,.64,1);border-radius:2px}
+.meter-needle::after{content:'';position:absolute;bottom:-6px;left:-6px;width:15px;height:15px;background:var(--text);border-radius:50%;box-shadow:0 0 10px rgba(232,232,240,.3)}
+.meter-center{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:24px;height:24px;background:var(--surface);border:2px solid var(--border);border-radius:50%}
+
+.meter-score{font-family:'Orbitron',sans-serif;font-size:64px;font-weight:900;margin-top:12px;transition:color .5s ease}
+.meter-score-label{font-size:18px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-top:4px}
+.meter-scale{display:flex;justify-content:space-between;margin-top:12px;padding:0 10px}
+.meter-scale span{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted)}
+
+/* Breakdown */
+.breakdown{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-top:20px}
+.breakdown h3{font-family:'Orbitron',sans-serif;font-size:13px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:16px}
+.breakdown-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(42,42,53,.5)}
+.breakdown-item:last-child{border-bottom:none}
+.breakdown-item .bi-icon{font-size:18px;width:28px;text-align:center}
+.breakdown-item .bi-label{flex:1;font-size:14px;color:var(--text-dim)}
+.breakdown-item .bi-value{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600}
+.breakdown-bar{flex:0 0 100px;height:6px;background:var(--surface3);border-radius:3px;overflow:hidden}
+.breakdown-bar .fill{height:100%;border-radius:3px;transition:width 1s ease}
+
+/* Verdict */
+.verdict-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-top:20px;position:relative;overflow:hidden}
+.verdict-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.verdict-box h3{font-family:'Orbitron',sans-serif;font-size:13px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:12px}
+.verdict-text{font-size:15px;line-height:1.7;color:var(--text-dim)}
+.verdict-text strong{color:var(--text)}
+
+/* Recommendations */
+.recommendations{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-top:20px}
+.recommendations h3{font-family:'Orbitron',sans-serif;font-size:13px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:16px}
+.rec-item{display:flex;gap:10px;padding:8px 0;font-size:14px;color:var(--text-dim);line-height:1.5}
+.rec-item::before{content:'▸';color:var(--accent);font-weight:bold;flex-shrink:0}
+
+/* Footer */
+.footer{text-align:center;padding:30px 0;border-top:1px solid var(--border);margin-top:40px}
+.footer p{font-size:12px;color:var(--text-muted);letter-spacing:1px}
+.footer a{color:var(--accent);text-decoration:none}
+
+/* Responsive */
+@media(max-width:600px){
+  .container{padding:12px}
+  .meter-dial{width:220px;height:130px}
+  .meter-arc{width:220px;height:220px;
+    mask:radial-gradient(circle at center,transparent 70px,black 72px,black 108px,transparent 110px);
+    -webkit-mask:radial-gradient(circle at center,transparent 70px,black 72px,black 108px,transparent 110px)}
+  .meter-needle{height:86px}
+  .meter-score{font-size:48px}
+  .indicators-grid{grid-template-columns:1fr}
+}
+
+/* Share buttons */
+.share-bar{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+.share-btn{padding:12px 20px;border-radius:8px;border:1px solid;font-family:'Orbitron',sans-serif;font-size:12px;font-weight:600;letter-spacing:1px;cursor:pointer;transition:all .3s;text-transform:uppercase;display:flex;align-items:center;gap:8px;flex:1;justify-content:center;min-width:140px}
+.share-btn:hover{transform:translateY(-1px)}
+.share-btn.copy{border-color:var(--accent);color:var(--accent);background:transparent}
+.share-btn.copy:hover{background:var(--accent);color:var(--bg)}
+.share-btn.twitter{border-color:#1DA1F2;color:#1DA1F2;background:transparent}
+.share-btn.twitter:hover{background:#1DA1F2;color:#fff}
+.share-btn.copied{background:var(--green)!important;border-color:var(--green)!important;color:var(--bg)!important}
+.share-preview{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px;margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-dim);line-height:1.6;white-space:pre-wrap;display:none}
+
+/* Scanning animation */
+.scanning-overlay{display:none;position:fixed;inset:0;background:rgba(10,10,15,.85);z-index:100;align-items:center;justify-content:center;flex-direction:column}
+.scanning-overlay.active{display:flex}
+.scan-ring{width:120px;height:120px;border:3px solid transparent;border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite}
+.scan-ring::before{content:'';position:absolute;inset:8px;border:3px solid transparent;border-top-color:var(--accent2);border-radius:50%;animation:spin .7s linear infinite reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+.scan-text{font-family:'Orbitron',sans-serif;font-size:14px;letter-spacing:3px;color:var(--accent);margin-top:20px;text-transform:uppercase;animation:blink 1s ease infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* Timestamp */
+.timestamp{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);text-align:right;margin-top:8px}
+</style>
+</head>
+<body>
+
+<div class="scanning-overlay" id="scanOverlay">
+  <div class="scan-ring" style="position:relative"></div>
+  <div class="scan-text">Analyzing Coordination Signatures...</div>
+</div>
+
+<div class="container">
+  <div class="header">
+    <span class="logo-icon">👁️</span>
+    <h1>Magic Eye BS Meter</h1>
+    <div class="subtitle">Real-Time Coordination Detection</div>
+    <div class="tagline">The Frequency Framework — See the Pattern Behind the Noise</div>
+    <div style="font-size:13px;color:var(--text-muted);margin-top:14px;letter-spacing:1px;font-weight:300">Select the indicators you observe. The meter does the rest.</div>
+  </div>
+
+  <div class="input-section">
+    <h2>📡 Event Input</h2>
+    <div class="input-group">
+      <label>Event / Headline</label>
+      <input type="text" id="eventTitle" placeholder="e.g. Defense Secretary announces air dominance achieved over Iran">
+    </div>
+    <div class="input-group">
+      <label>Source / Context</label>
+      <textarea id="eventContext" placeholder="Paste headline, quote, or describe the event you want to analyze..."></textarea>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="input-group">
+        <label>Date of Event</label>
+        <input type="date" id="eventDate">
+      </div>
+      <div class="input-group">
+        <label>Category</label>
+        <select id="eventCategory">
+          <option value="">Select...</option>
+          <option value="military">Military / Defense</option>
+          <option value="political">Political / Legislative</option>
+          <option value="financial">Financial / Markets</option>
+          <option value="media">Media / Narrative</option>
+          <option value="diplomatic">Diplomatic / International</option>
+          <option value="domestic">Domestic Policy</option>
+          <option value="energy">Energy / Resources</option>
+          <option value="tech">Technology / Infrastructure</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="input-section">
+    <h2>🔍 Coordination Indicators</h2>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px">Select all indicators that apply to this event. Each adds to the coordination signature score.</p>
+
+    <div class="category-header">⏱ Timing Signatures</div>
+    <div class="indicators-grid" id="timingIndicators">
+      <div class="indicator-item" data-weight="12" data-cat="timing" onclick="toggleIndicator(this)">
+        <div class="ind-header"><span class="ind-name">Holiday / Recess Timing</span><span class="ind-check">✓</span></div>
+        <div class="ind-desc">Event occurs during federal holiday, congressional recess, or cultural attention gap</div>
+        <div class="ind-weight">Weight: +12</div>
+      </div>
+      <div class="indicator-item" data-weight="10" data-cat="timing" onclick="toggleIndicator(this)">
+        <div class="ind-header"><span class="ind-name">Friday Night / Weekend Drop</span><span class="ind-check">✓</span></div>
+        <div class="ind-desc">Announcement timed for minimum media coverage cycle</div>
+        <div class="ind-weight">Weight: +10</div>
+      </div>
+      <div class="indicator-item" data-weight="15" data-cat="timing" onclick="toggleIndicator(this)">
+        <div class="ind-header"><span class="ind-name">Concurrent Distraction Event</span><span class="ind-check">✓</span></div>
+        <div class="ind-desc">Major unrelated event dominates attention while this occurs</div>
+        <div class="ind-weight">Weight: +15</div>
+      </div>
+      <div class="indicator-item" data-weight="8" data-cat="timing" onclick="toggleIndicator(this)">
+        <div class="ind-header"><span class="ind-name">Pre-Market / After-Hours</span><span class="ind-check">✓</span></div>
+        <div class="ind-desc">Financial announcement timed outside trading hours</div>
+        <div class="ind-weight">Weight: +8</div>
+      </div>
+    </div>
+
+    <div class="category-header">📢 Narrative Signatures</div>
+    <div class="indicators-grid" id="narrativeIndicators">
+      <div class="indicator-item" data-weight="10" data-cat="narrative" onclick="toggleIndicator(this)">
+        <div class="ind-header"><span class="ind-name">Shifting Justification</span><span class="ind-check">✓</span></div>
+        <div class="ind-desc">Official reason changes multiple times after the event</div>
+        <div class="ind-weight">Weight: +10</div>
+      </div>
+      <div class="indicator-item" data-weight="8" data-cat="narrative" onclick="toggleIndicator(this)">
+        <div class="ind-header"><span class="ind-name">Pre-Built Media Response</span><span class="ind-check">✓</span></div>
+        <div class="ind-desc">Talking points, graphics, or messaging appears unusually fast</div>
+        <div class="ind-weight">Weight: +8</div>
+      </div>
+      <div class="indicator-item" data-weight="12" data-cat="narrative" onclick="toggleIndicator(this)">
+        <div class="ind-header"><span class="ind-name">Unified Cross-Outlet Framing</span><span class="ind-check">✓</span></div>
+        <div class="ind-desc">Multiple outlets use identical language or framing simultaneously</div>
+        <div class="ind-weight">Weight: +12</div>
+      </div>
+      <div class="indicator-item" data-weight="6" data-cat="narrative" onclick="toggleIndicator(this)">
+        <div class="ind-header"><span class="ind-name">Emotional Override Language</span><span class="ind-check">✓</span></div>
+        <div class="ind-desc">Messaging designed to trigger fear, anger, or patriotism over analysis</div>
+        <div class="ind-weight">Weight: +6</div>
+      </div>
+    </div>
+
+    <div class="category-header">💰 Financial Signatures</div>
+    <div class="indicators-grid" id="financialIndicators">
+      <div class="indicator-item" data-weight="14" data-cat="financial" onclick="toggleIndicator(this)">
+        <div class="ind-header"><span class="ind-name">Pre-Event Market Movement</span><span class="ind-check">✓</span></div>
+        <div class="ind-desc">Stocks, commodities, or options moved BEFORE public announcement</div>
+        <div class="ind-weight">Weight: +14</div>
+      </div>
+      <div class="indicator-item" data-weight="10" data-cat="financial" onclick="toggleIndicator(this)">
+        <div class="ind-header"><span class="ind-name">Beneficiary Identifiable</span><span class="ind-check">✓</span></div>
+        <div class="ind-desc">Clear financial winners can be identified from the event</div>
+        <div class="ind-weight">Weight: +10</div>
+      </div>
+      <div class="indicator-item" data-weight="8" data-cat="financial" onclick="toggleIndicator(this)">
+        <div class="ind-header"><span class="ind-name">Defense / Contractor Surge</span><span class="ind-check">✓</span></div>
+        <div class="ind-desc">Military-industrial stocks spike in response</div>
+        <div class="ind-weight">Weight: +8</div>
+      </div>
+    </div>
+
+    <div class="category-header">🏛 Institutional Signatures</div>
+    <div class="indicators-grid" id="institutionalIndicators">
+      <div class="indicator-item" data-weight="12" data-cat="institutional" onclick="toggleIndicator(this)">
+        <div class="ind-header"><span class="ind-name">Bypassed Oversight</span><span class="ind-check">✓</span></div>
+        <div class="ind-desc">Action taken without required congressional or judicial review</div>
+        <div class="ind-weight">Weight: +12</div>
+      </div>
+      <div class="indicator-item" data-weight="10" data-cat="institutional" onclick="toggleIndicator(this)">
+        <div class="ind-header"><span class="ind-name">Multi-Agency Coordination</span><span class="ind-check">✓</span></div>
+        <div class="ind-desc">Multiple government agencies moved simultaneously</div>
+        <div class="ind-weight">Weight: +10</div>
+      </div>
+      <div class="indicator-item" data-weight="8" data-cat="institutional" onclick="toggleIndicator(this)">
+        <div class="ind-header"><span class="ind-name">Historical Pattern Match</span><span class="ind-check">✓</span></div>
+        <div class="ind-desc">Event follows a documented playbook from previous operations</div>
+        <div class="ind-weight">Weight: +8</div>
+      </div>
+      <div class="indicator-item" data-weight="10" data-cat="institutional" onclick="toggleIndicator(this)">
+        <div class="ind-header"><span class="ind-name">Classified Justification</span><span class="ind-check">✓</span></div>
+        <div class="ind-desc">Key evidence cited as classified or unavailable for public review</div>
+        <div class="ind-weight">Weight: +10</div>
+      </div>
+    </div>
+
+    <div class="category-header">🌐 Geopolitical Signatures</div>
+    <div class="indicators-grid" id="geopoliticalIndicators">
+      <div class="indicator-item" data-weight="10" data-cat="geopolitical" onclick="toggleIndicator(this)">
+        <div class="ind-header"><span class="ind-name">Multi-Theater Simultaneity</span><span class="ind-check">✓</span></div>
+        <div class="ind-desc">Operations in multiple regions at the same time</div>
+        <div class="ind-weight">Weight: +10</div>
+      </div>
+      <div class="indicator-item" data-weight="8" data-cat="geopolitical" onclick="toggleIndicator(this)">
+        <div class="ind-header"><span class="ind-name">Alliance Coercion Visible</span><span class="ind-check">✓</span></div>
+        <div class="ind-desc">Allied nations publicly pressured into compliance</div>
+        <div class="ind-weight">Weight: +8</div>
+      </div>
+      <div class="indicator-item" data-weight="12" data-cat="geopolitical" onclick="toggleIndicator(this)">
+        <div class="ind-header"><span class="ind-name">Pre-Positioning Documented</span><span class="ind-check">✓</span></div>
+        <div class="ind-desc">Military or diplomatic assets moved into position before event</div>
+        <div class="ind-weight">Weight: +12</div>
+      </div>
+    </div>
+
+    <button class="analyze-btn" id="analyzeBtn" onclick="analyze()">
+      ▶ ANALYZE COORDINATION SIGNATURE
+    </button>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="results-section" id="results">
+    <div class="meter-container">
+      <div class="meter-label">Coordination Probability Score</div>
+      <div class="meter-dial">
+        <div class="meter-arc"></div>
+        <div class="meter-needle" id="needle"></div>
+        <div class="meter-center"></div>
+      </div>
+      <div class="meter-score" id="scoreDisplay">0</div>
+      <div class="meter-score-label" id="scoreLabelDisplay">—</div>
+      <div class="meter-scale">
+        <span>0 — ORGANIC</span>
+        <span>50 — SUSPICIOUS</span>
+        <span>100 — COORDINATED</span>
+      </div>
+    </div>
+
+    <div class="breakdown" id="breakdownSection">
+      <h3>📊 Category Breakdown</h3>
+      <div id="breakdownItems"></div>
+    </div>
+
+    <div class="verdict-box" id="verdictBox">
+      <h3>🎯 Framework Assessment</h3>
+      <div class="verdict-text" id="verdictText"></div>
+    </div>
+
+    <div class="recommendations" id="recsBox">
+      <h3>🔎 Recommended Next Steps</h3>
+      <div id="recsItems"></div>
+    </div>
+
+    <div class="timestamp" id="analysisTimestamp"></div>
+
+    <div class="share-bar">
+      <button class="share-btn copy" onclick="copyResults()">📋 Copy Results</button>
+      <button class="share-btn twitter" onclick="shareTwitter()">𝕏 Share on X</button>
+    </div>
+    <div class="share-preview" id="sharePreview"></div>
+  </div>
+
+  <div class="footer">
+    <p>MAGIC EYE BS METER — <a href="https://frequencyframework.org" target="_blank">THE FREQUENCY FRAMEWORK</a></p>
+    <p style="margin-top:6px;font-size:11px;color:var(--text-muted)">Pattern recognition, not prophecy. Methodology, not conspiracy.<br>Truth requires zero maintenance energy.</p>
+  </div>
+</div>
+
+<script>
+function toggleIndicator(el){el.classList.toggle('active')}
+
+function analyze(){
+  const title=document.getElementById('eventTitle').value;
+  const context=document.getElementById('eventContext').value;
+  if(!title&&!context){alert('Please enter an event to analyze.');return}
+
+  // Show scanning overlay
+  const overlay=document.getElementById('scanOverlay');
+  overlay.classList.add('active');
+  document.getElementById('analyzeBtn').classList.add('scanning');
+
+  setTimeout(()=>{
+    overlay.classList.remove('active');
+    document.getElementById('analyzeBtn').classList.remove('scanning');
+    calculateResults();
+  },2200);
+}
+
+function calculateResults(){
+  const active=document.querySelectorAll('.indicator-item.active');
+  let totalScore=0;
+  const cats={timing:0,narrative:0,financial:0,institutional:0,geopolitical:0};
+  const catMax={timing:45,narrative:36,financial:32,institutional:40,geopolitical:30};
+  const catNames={timing:'Timing Signatures',narrative:'Narrative Signatures',financial:'Financial Signatures',institutional:'Institutional Signatures',geopolitical:'Geopolitical Signatures'};
+  const catIcons={timing:'⏱',narrative:'📢',financial:'💰',institutional:'🏛',geopolitical:'🌐'};
+
+  active.forEach(item=>{
+    const w=parseInt(item.dataset.weight);
+    const c=item.dataset.cat;
+    totalScore+=w;
+    if(cats[c]!==undefined)cats[c]+=w;
+  });
+
+  // Normalize to 100
+  const maxPossible=183;
+  let score=Math.min(100,Math.round((totalScore/maxPossible)*100));
+  if(active.length===0)score=0;
+
+  // Determine level
+  let level,color;
+  if(score<=20){level='LIKELY ORGANIC';color='var(--green)'}
+  else if(score<=40){level='LOW SUSPICION';color='var(--yellow)'}
+  else if(score<=60){level='MODERATE SUSPICION';color='var(--yellow)'}
+  else if(score<=80){level='HIGH PROBABILITY';color='var(--orange)'}
+  else{level='COORDINATION DETECTED';color='var(--red)'}
+
+  // Show results
+  const results=document.getElementById('results');
+  results.style.display='block';
+  results.scrollIntoView({behavior:'smooth',block:'start'});
+
+  // Animate needle (-90deg=0, 0deg=50, 90deg=100)
+  const needleDeg=-90+(score*1.8);
+  document.getElementById('needle').style.transform=`rotate(${needleDeg}deg)`;
+
+  // Animate score counter
+  const scoreEl=document.getElementById('scoreDisplay');
+  scoreEl.style.color=color;
+  let current=0;
+  const increment=Math.ceil(score/40);
+  const counter=setInterval(()=>{
+    current+=increment;
+    if(current>=score){current=score;clearInterval(counter)}
+    scoreEl.textContent=current;
+  },30);
+
+  document.getElementById('scoreLabelDisplay').textContent=level;
+  document.getElementById('scoreLabelDisplay').style.color=color;
+
+  // Breakdown
+  const breakdownDiv=document.getElementById('breakdownItems');
+  breakdownDiv.innerHTML='';
+  Object.keys(cats).forEach(c=>{
+    const pct=catMax[c]>0?Math.round((cats[c]/catMax[c])*100):0;
+    let barColor;
+    if(pct<=25)barColor='var(--green)';
+    else if(pct<=50)barColor='var(--yellow)';
+    else if(pct<=75)barColor='var(--orange)';
+    else barColor='var(--red)';
+
+    breakdownDiv.innerHTML+=`
+      <div class="breakdown-item">
+        <div class="bi-icon">${catIcons[c]}</div>
+        <div class="bi-label">${catNames[c]}</div>
+        <div class="bi-value" style="color:${barColor}">${cats[c]}/${catMax[c]}</div>
+        <div class="breakdown-bar"><div class="fill" style="width:${pct}%;background:${barColor}"></div></div>
+      </div>`;
+  });
+
+  // Verdict
+  const title=document.getElementById('eventTitle').value||'This event';
+  let verdict='';
+  if(score<=20){
+    verdict=`<strong>${title}</strong> shows minimal coordination signatures. The timing, narrative, and institutional patterns appear largely organic. Continue monitoring but no immediate flags.`;
+  }else if(score<=40){
+    verdict=`<strong>${title}</strong> shows some coordination indicators. While individual elements could be coincidental, the combination warrants attention. Note which specific categories scored highest for pattern tracking.`;
+  }else if(score<=60){
+    verdict=`<strong>${title}</strong> triggers moderate coordination signatures across multiple categories. The pattern density suggests this is unlikely to be entirely organic. Recommended: cross-reference with the Six-Step Pattern Analyzer for structural positioning.`;
+  }else if(score<=80){
+    verdict=`<strong>${title}</strong> shows high coordination probability. Multiple signature categories are firing simultaneously — a hallmark of pre-planned operations. The thermodynamic energy required for this pattern to occur organically approaches statistical improbability.`;
+  }else{
+    verdict=`<strong>${title}</strong> triggers maximum coordination detection across nearly all signature categories. This pattern is consistent with documented coordination infrastructure operating at full capacity. Every major indicator is present. Apply the Six-Step Formula to map the complete exploitation lifecycle.`;
+  }
+  document.getElementById('verdictText').innerHTML=verdict;
+
+  // Verdict box border color
+  document.getElementById('verdictBox').style.borderColor=color;
+  document.querySelector('#verdictBox::before');
+  document.getElementById('verdictBox').querySelector('h3').style.color=color;
+
+  // Recommendations
+  const recsDiv=document.getElementById('recsItems');
+  recsDiv.innerHTML='';
+  const recs=[];
+  if(cats.timing>15)recs.push('Cross-reference with the Coordination Window Calendar to identify the specific timing infrastructure being exploited.');
+  if(cats.narrative>12)recs.push('Track narrative evolution over the next 48-72 hours. Coordinated narratives require maintenance energy — watch for shifts or contradictions.');
+  if(cats.financial>10)recs.push('Check pre-event options activity and insider trading patterns. Financial signatures often leave the most verifiable trail.');
+  if(cats.institutional>15)recs.push('Apply the Six-Step Formula to map where this event sits in the exploitation lifecycle (relationship → dependency → expansion → institutionalization → monetization → defense).');
+  if(cats.geopolitical>10)recs.push('Monitor concurrent operations in other theaters. Multi-theater simultaneity is a primary coordination signature — the attention economy can only process one crisis at a time.');
+  if(score>60)recs.push('Document everything with timestamps. Archive source material. This event may become significant for historical pattern validation.');
+  if(score>40)recs.push('Apply the Eight Layers of Obfuscation framework to identify which concealment mechanisms are active.');
+  if(recs.length===0)recs.push('Continue routine monitoring. No elevated indicators at this time.');
+
+  recs.forEach(r=>{recsDiv.innerHTML+=`<div class="rec-item">${r}</div>`});
+
+  // Timestamp
+  document.getElementById('analysisTimestamp').textContent=`Analysis generated: ${new Date().toLocaleString()} | The Frequency Framework`;
+
+  // Build share text
+  const shareText=buildShareText(title,score,level,cats,catNames);
+  document.getElementById('sharePreview').textContent=shareText;
+}
+
+function buildShareText(title,score,level,cats,catNames){
+  const bars={timing:'░',narrative:'░',financial:'░',institutional:'░',geopolitical:'░'};
+  const catMax={timing:45,narrative:36,financial:32,institutional:40,geopolitical:30};
+  Object.keys(cats).forEach(c=>{
+    const pct=Math.round((cats[c]/catMax[c])*100);
+    const filled=Math.round(pct/10);
+    bars[c]='█'.repeat(filled)+'░'.repeat(10-filled)+' '+pct+'%';
+  });
+
+  return `👁️ MAGIC EYE BS METER
+━━━━━━━━━━━━━━━━━━━
+${title||'Event Analysis'}
+
+SCORE: ${score}/100 — ${level}
+
+⏱ Timing:        ${bars.timing}
+📢 Narrative:     ${bars.narrative}
+💰 Financial:     ${bars.financial}
+🏛 Institutional: ${bars.institutional}
+🌐 Geopolitical:  ${bars.geopolitical}
+
+${new Date().toLocaleDateString()} | frequencyframework.org/tools`;
+}
+
+function copyResults(){
+  const text=document.getElementById('sharePreview').textContent;
+  const preview=document.getElementById('sharePreview');
+  preview.style.display='block';
+
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn=document.querySelector('.share-btn.copy');
+    btn.classList.add('copied');
+    btn.innerHTML='✓ Copied!';
+    setTimeout(()=>{btn.classList.remove('copied');btn.innerHTML='📋 Copy Results'},2000);
+  }).catch(()=>{
+    // Fallback
+    const ta=document.createElement('textarea');
+    ta.value=text;document.body.appendChild(ta);ta.select();
+    document.execCommand('copy');document.body.removeChild(ta);
+    const btn=document.querySelector('.share-btn.copy');
+    btn.classList.add('copied');
+    btn.innerHTML='✓ Copied!';
+    setTimeout(()=>{btn.classList.remove('copied');btn.innerHTML='📋 Copy Results'},2000);
+  });
+}
+
+function shareTwitter(){
+  const title=document.getElementById('eventTitle').value||'this event';
+  const scoreEl=document.getElementById('scoreDisplay');
+  const score=scoreEl.textContent;
+  const level=document.getElementById('scoreLabelDisplay').textContent;
+  const tweetText=`👁️ BS Meter Score: ${score}/100 — ${level}\n\nRan "${title}" through @TheFrequencyFW's coordination detection tool.\n\nSee what the pattern looks like 👇\nfrequencyframework.org/tools`;
+  const url='https://twitter.com/intent/tweet?text='+encodeURIComponent(tweetText);
+  window.open(url,'_blank','width=550,height=420');
+}
+
+// Set today's date as default
+document.getElementById('eventDate').valueAsDate=new Date();
+</script>
+</body>
+</html>
