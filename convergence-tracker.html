@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Institutional Convergence Tracker | The Frequency Framework</title>
+<meta name="description" content="Eight institutional sources independently codifying the structural-disruption read of the US-Iran war within a single six-day window. Tier 1 sourced. The Frequency Framework.">
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=JetBrains+Mono:wght@300;400;500;600&display=swap');
+
+:root {
+  --bg-primary: #0a0e1a;
+  --bg-secondary: #0f1420;
+  --bg-card: #131a28;
+  --bg-card-hover: #18202f;
+  --border-subtle: #1e2738;
+  --border-accent: #2a3548;
+  --text-primary: #ffffff;
+  --text-secondary: #a8b0c0;
+  --text-muted: #666e7d;
+  --text-faint: #444a55;
+  --accent-gold: #d4a843;
+  --accent-gold-bright: #e8c068;
+  --accent-red: #e85a4f;
+  --accent-cyan: #64dcdc;
+  --accent-cyan-dim: #3aa5a5;
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+  --shadow-card-hover: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Playfair Display', Georgia, serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  overflow-x: hidden;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(100, 220, 220, 0.04) 0%, transparent 40%),
+    radial-gradient(circle at 80% 90%, rgba(212, 168, 67, 0.04) 0%, transparent 40%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.grid-bg {
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(100, 220, 220, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(100, 220, 220, 0.025) 1px, transparent 1px);
+  background-size: 80px 80px;
+  pointer-events: none;
+  z-index: 0;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 32px;
+  position: relative;
+  z-index: 1;
+}
+
+.site-header {
+  padding: 32px 0 24px;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 80px;
+}
+
+.site-header-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.brand {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 4px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.brand a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.brand a:hover {
+  color: var(--accent-gold);
+}
+
+.nav-links {
+  display: flex;
+  gap: 28px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.nav-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover {
+  color: var(--accent-cyan);
+}
+
+.hero {
+  padding: 60px 0 100px;
+  text-align: left;
+  position: relative;
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 4px;
+  color: var(--accent-gold);
+  text-transform: uppercase;
+  margin-bottom: 32px;
+  font-weight: 500;
+}
+
+.hero-eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--accent-gold), transparent);
+}
+
+.hero-title {
+  font-size: clamp(48px, 7vw, 96px);
+  font-weight: 500;
+  line-height: 1.0;
+  letter-spacing: -2px;
+  margin-bottom: 24px;
+  max-width: 900px;
+}
+
+.hero-title .em {
+  font-style: italic;
+  color: var(--accent-red);
+}
+
+.hero-subtitle {
+  font-size: clamp(20px, 2.2vw, 26px);
+  font-weight: 400;
+  font-style: italic;
+  color: var(--text-secondary);
+  max-width: 760px;
+  line-height: 1.4;
+  margin-bottom: 48px;
+}
+
+.hero-meta {
+  display: flex;
+  gap: 48px;
+  flex-wrap: wrap;
+  padding-top: 32px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.hero-meta-item {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.hero-meta-label {
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.hero-meta-value {
+  font-size: 28px;
+  color: var(--accent-cyan);
+  font-weight: 500;
+  letter-spacing: -1px;
+}
+
+.thesis {
+  margin: 80px 0 100px;
+  padding: 56px 64px;
+  background: var(--bg-secondary);
+  border-left: 3px solid var(--accent-gold);
+  position: relative;
+}
+
+.thesis-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: var(--accent-gold);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  font-weight: 500;
+}
+
+.thesis-text {
+  font-size: clamp(20px, 2vw, 26px);
+  line-height: 1.5;
+  color: var(--text-primary);
+  font-weight: 400;
+  max-width: 900px;
+}
+
+.thesis-text strong {
+  color: var(--accent-cyan);
+  font-weight: 500;
+}
+
+.timeline-section {
+  margin: 100px 0;
+}
+
+.section-header {
+  margin-bottom: 64px;
+  display: flex;
+  align-items: baseline;
+  gap: 32px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 24px;
+}
+
+.section-number {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  letter-spacing: 4px;
+  color: var(--accent-gold);
+  font-weight: 500;
+}
+
+.section-title {
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: 500;
+  letter-spacing: -1px;
+  line-height: 1.1;
+  flex: 1;
+  min-width: 300px;
+}
+
+.section-title .em {
+  font-style: italic;
+  color: var(--accent-cyan);
+}
+
+.timeline {
+  position: relative;
+  padding-left: 48px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  bottom: 12px;
+  width: 1px;
+  background: linear-gradient(180deg,
+    var(--accent-gold) 0%,
+    var(--border-accent) 30%,
+    var(--border-accent) 70%,
+    var(--accent-red) 100%);
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 56px;
+  padding-left: 24px;
+}
+
+.timeline-item:last-child {
+  margin-bottom: 0;
+}
+
+.timeline-marker {
+  position: absolute;
+  left: -42px;
+  top: 8px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--bg-primary);
+  border: 2px solid var(--accent-gold);
+  z-index: 2;
+  transition: all 0.3s ease;
+}
+
+.timeline-item:hover .timeline-marker {
+  background: var(--accent-gold);
+  box-shadow: 0 0 24px rgba(212, 168, 67, 0.6);
+}
+
+.timeline-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  padding: 32px 40px;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-card);
+}
+
+.timeline-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-accent);
+  box-shadow: var(--shadow-card-hover);
+  transform: translateX(4px);
+}
+
+.tl-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.tl-date {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--accent-cyan);
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.tl-source {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.tl-institution {
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: -0.5px;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+}
+
+.tl-claim {
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  font-style: italic;
+}
+
+.tl-context {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  font-style: normal;
+}
+
+.tl-figure {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: var(--accent-gold);
+  background: rgba(212, 168, 67, 0.08);
+  padding: 4px 12px;
+  border: 1px solid rgba(212, 168, 67, 0.2);
+  margin-top: 12px;
+  margin-right: 8px;
+  font-weight: 500;
+}
+
+.methodology {
+  margin: 120px 0 80px;
+  padding: 56px 64px;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-accent);
+  border-bottom: 1px solid var(--border-accent);
+  position: relative;
+}
+
+.methodology-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: var(--accent-cyan);
+  text-transform: uppercase;
+  margin-bottom: 32px;
+  font-weight: 500;
+}
+
+.methodology-text {
+  font-size: 18px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  max-width: 880px;
+  margin-bottom: 24px;
+}
+
+.methodology-text:last-child {
+  margin-bottom: 0;
+}
+
+.methodology-text strong {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.methodology-text em {
+  color: var(--accent-cyan);
+  font-style: italic;
+}
+
+.citations {
+  margin: 80px 0;
+}
+
+.citations h3 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 4px;
+  color: var(--accent-gold);
+  text-transform: uppercase;
+  margin-bottom: 32px;
+  font-weight: 500;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 16px;
+}
+
+.citations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 24px;
+}
+
+.citation-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  padding: 24px 28px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  transition: all 0.2s;
+}
+
+.citation-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-accent);
+}
+
+.citation-source {
+  color: var(--accent-cyan);
+  font-weight: 500;
+  margin-bottom: 8px;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.citation-detail {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.site-footer {
+  margin-top: 120px;
+  padding: 48px 0 64px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.footer-tagline {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  letter-spacing: 4px;
+  color: var(--accent-cyan);
+  text-transform: uppercase;
+  margin-bottom: 32px;
+  font-weight: 500;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 32px;
+  align-items: end;
+  flex-wrap: wrap;
+}
+
+.footer-brand {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.footer-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  text-align: right;
+  line-height: 1.8;
+}
+
+.footer-meta a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-meta a:hover {
+  color: var(--accent-gold);
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 20px;
+  }
+  .site-header {
+    padding: 24px 0 16px;
+    margin-bottom: 48px;
+  }
+  .hero {
+    padding: 40px 0 60px;
+  }
+  .thesis,
+  .methodology {
+    padding: 36px 28px;
+  }
+  .timeline {
+    padding-left: 32px;
+  }
+  .timeline-card {
+    padding: 24px 24px;
+  }
+  .timeline-marker {
+    left: -34px;
+    width: 12px;
+    height: 12px;
+  }
+  .timeline::before {
+    left: 8px;
+  }
+  .hero-meta {
+    gap: 24px;
+  }
+  .citations-grid {
+    grid-template-columns: 1fr;
+  }
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+  .footer-meta {
+    text-align: left;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-eyebrow,
+.hero-title,
+.hero-subtitle,
+.hero-meta {
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards;
+}
+
+.hero-eyebrow { animation-delay: 0.1s; }
+.hero-title { animation-delay: 0.2s; }
+.hero-subtitle { animation-delay: 0.4s; }
+.hero-meta { animation-delay: 0.6s; }
+
+.timeline-item {
+  opacity: 0;
+  animation: fadeUp 0.6s ease forwards;
+}
+
+.timeline-item:nth-child(1) { animation-delay: 0.1s; }
+.timeline-item:nth-child(2) { animation-delay: 0.2s; }
+.timeline-item:nth-child(3) { animation-delay: 0.3s; }
+.timeline-item:nth-child(4) { animation-delay: 0.4s; }
+.timeline-item:nth-child(5) { animation-delay: 0.5s; }
+.timeline-item:nth-child(6) { animation-delay: 0.6s; }
+.timeline-item:nth-child(7) { animation-delay: 0.7s; }
+.timeline-item:nth-child(8) { animation-delay: 0.8s; }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<header class="site-header">
+  <div class="container">
+    <div class="site-header-inner">
+      <div class="brand">
+        <a href="https://frequencyframework.org">The Frequency Framework</a>
+      </div>
+      <nav class="nav-links">
+        <a href="https://frequencyfw.github.io/Tools/">Tools</a>
+        <a href="https://frequencyframework.org">Site</a>
+        <a href="https://patreon.com/TheFrequencyFramework">Patreon</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="container">
+      <div class="hero-eyebrow">Institutional Convergence Tracker · April 2026</div>
+      <h1 class="hero-title">Eight Institutions.<br><span class="em">Six Days.</span></h1>
+      <p class="hero-subtitle">In a single week, the largest institutional voices in global finance, energy, defense, and journalism independently codified the same structural read of the US-Iran war: this is not transient disruption. The architecture is the new baseline.</p>
+
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <div class="hero-meta-label">Window</div>
+          <div class="hero-meta-value">Apr 23 — 29</div>
+        </div>
+        <div class="hero-meta-item">
+          <div class="hero-meta-label">Sources</div>
+          <div class="hero-meta-value">Eight</div>
+        </div>
+        <div class="hero-meta-item">
+          <div class="hero-meta-label">Tier</div>
+          <div class="hero-meta-value">One</div>
+        </div>
+        <div class="hero-meta-item">
+          <div class="hero-meta-label">Convergence</div>
+          <div class="hero-meta-value">Closed</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container">
+    <div class="thesis">
+      <div class="thesis-label">The Thesis</div>
+      <p class="thesis-text">The Frequency Framework documented the dual-blockade of the Strait of Hormuz as <strong>structural disruption</strong> on April 13, 2026 &mdash; not a transient closure, not a negotiating posture, but a permanent rewrite of maritime, energy, and monetary architecture. Six weeks later, eight institutions converged on the same reading, in the same six-day window. This page documents what they said and when.</p>
+    </div>
+  </section>
+
+  <section class="timeline-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-number">§ 01</div>
+        <h2 class="section-title">The <span class="em">Timeline</span></h2>
+      </div>
+
+      <div class="timeline">
+
+        <div class="timeline-item">
+          <div class="timeline-marker"></div>
+          <div class="timeline-card">
+            <div class="tl-meta">
+              <div class="tl-date">April 23, 2026</div>
+              <div class="tl-source">CNBC Live · IEA Press Conference</div>
+            </div>
+            <div class="tl-institution">International Energy Agency</div>
+            <p class="tl-claim">"We are facing the biggest energy security threat in history."</p>
+            <p class="tl-context">IEA Executive Director Fatih Birol, speaking on CNBC, framed the current crisis as exceeding both 1970s oil shocks combined. The Agency had already released 400 million barrels of emergency stocks on March 11 &mdash; the largest collective release in IEA history.</p>
+            <span class="tl-figure">13M bbl/day lost</span>
+            <span class="tl-figure">vs. 5M in 1970s</span>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-marker"></div>
+          <div class="timeline-card">
+            <div class="tl-meta">
+              <div class="tl-date">April 28, 2026</div>
+              <div class="tl-source">World Bank Public Statement</div>
+            </div>
+            <div class="tl-institution">The World Bank</div>
+            <p class="tl-claim">Global energy prices up 24% since the start of the war; European Union has spent an additional &euro;27 billion on fossil fuel imports.</p>
+            <p class="tl-context">The World Bank quantified the global cost-pass-through of the conflict, framing it as a structural macroeconomic shock rather than a temporary commodity spike. The &euro;27 billion figure is the largest single-conflict EU energy cost increase on record.</p>
+            <span class="tl-figure">+24% global energy</span>
+            <span class="tl-figure">&euro;27B EU cost</span>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-marker"></div>
+          <div class="timeline-card">
+            <div class="tl-meta">
+              <div class="tl-date">April 29, 2026</div>
+              <div class="tl-source">IMF Chart of the Week · @IMFNews</div>
+            </div>
+            <div class="tl-institution">International Monetary Fund</div>
+            <p class="tl-claim">"Even in the best case, there will be no clean return to the way things were."</p>
+            <p class="tl-context">The IMF published a three-panel chart documenting collapse of Strait of Hormuz transits, regional flight volumes, and Bab el-Mandeb shipping. The Bab el-Mandeb panel shows that traffic remains "stuck at about half their 2023 level" two years after the initial Houthi disruption &mdash; the historical precedent for permanent partial closure.</p>
+            <span class="tl-figure">Hormuz: ~near zero</span>
+            <span class="tl-figure">Bab el-Mandeb: 2-yr precedent</span>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-marker"></div>
+          <div class="timeline-card">
+            <div class="tl-meta">
+              <div class="tl-date">April 29, 2026 · 2:00 PM EDT</div>
+              <div class="tl-source">FOMC Statement (Official Release)</div>
+            </div>
+            <div class="tl-institution">Federal Reserve</div>
+            <p class="tl-claim">"Developments in the Middle East are contributing to a high level of uncertainty about the economic outlook... inflation is elevated."</p>
+            <p class="tl-context">The Federal Reserve held rates steady at 3.5&ndash;3.75% on an 8-4 vote &mdash; the first four-dissent FOMC decision since October 1992. Statement language was rewritten: "somewhat elevated" became "is elevated"; new direct attribution of inflation to global energy prices and Middle East developments. Three regional Fed presidents dissented against easing-bias language.</p>
+            <span class="tl-figure">8-4 vote</span>
+            <span class="tl-figure">First 4-dissent since 1992</span>
+            <span class="tl-figure">Language: "is elevated"</span>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-marker"></div>
+          <div class="timeline-card">
+            <div class="tl-meta">
+              <div class="tl-date">April 29, 2026</div>
+              <div class="tl-source">House Armed Services Committee · Sworn Testimony</div>
+            </div>
+            <div class="tl-institution">Pentagon Comptroller</div>
+            <p class="tl-claim">"The first public accounting of Iran operation costs at $25 billion."</p>
+            <p class="tl-context">Acting Under Secretary Jules Hurst III testified that war costs to date total approximately $25 billion, with the majority attributable to munitions expended. Independent CSIS analysis confirms ~50% of US Patriot interceptor inventory and ~50% of THAAD interceptors expended, with replenishment timelines of 1&ndash;4 years constrained by China-controlled critical mineral supply chains.</p>
+            <span class="tl-figure">$25B war cost</span>
+            <span class="tl-figure">~50% Patriot inventory</span>
+            <span class="tl-figure">$70B FY27 munitions request</span>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-marker"></div>
+          <div class="timeline-card">
+            <div class="tl-meta">
+              <div class="tl-date">April 29, 2026</div>
+              <div class="tl-source">NYT Breaking News Lede</div>
+            </div>
+            <div class="tl-institution">The New York Times</div>
+            <p class="tl-claim">"The Fed kept interest rates steady for the third straight month, as the war in Iran continued to push inflation higher."</p>
+            <p class="tl-context">In its breaking news headline reporting on the FOMC decision, the New York Times directly attributed inflation pressure to the Iran war as institutional baseline framing &mdash; not commentary, not analysis, not interpretation. The framing has shifted from contested to default.</p>
+            <span class="tl-figure">Default frame</span>
+            <span class="tl-figure">Direct attribution</span>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-marker"></div>
+          <div class="timeline-card">
+            <div class="tl-meta">
+              <div class="tl-date">April 29, 2026</div>
+              <div class="tl-source">CNN Breaking News</div>
+            </div>
+            <div class="tl-institution">CNN</div>
+            <p class="tl-claim">"Fed holds interest rates steady for a third consecutive time in Jerome Powell's likely last meeting as chair."</p>
+            <p class="tl-context">CNN's framing of the FOMC decision incorporated the Powell succession context, noting his concurrent announcement that he will remain at the Fed as Governor through January 2028 &mdash; explicitly citing executive-branch investigations of the Federal Reserve as the reason. The institutional pressure layer is now part of the baseline frame.</p>
+            <span class="tl-figure">Powell: stays as Governor</span>
+            <span class="tl-figure">Cites: investigations of Fed</span>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-marker"></div>
+          <div class="timeline-card">
+            <div class="tl-meta">
+              <div class="tl-date">April 29, 2026</div>
+              <div class="tl-source">ABC News · CBS News · Bloomberg</div>
+            </div>
+            <div class="tl-institution">The Confirming Carriers</div>
+            <p class="tl-claim">Tier 1 institutional carriers independently codify the structural-disruption read across maritime, energy, monetary, and fiscal domains.</p>
+            <p class="tl-context">ABC News carried the $25B testimony as "the first public accounting disclosed by the Pentagon." CBS News carried both the FOMC statement and the Hegseth contradiction in committee testimony. Bloomberg quantified Iran's currency hitting record lows and tracked Brent crude reaching $119.50, the highest since 2022. Three additional Tier 1 carriers, same six-day window, same structural read.</p>
+            <span class="tl-figure">Brent: $119.50</span>
+            <span class="tl-figure">Iran currency: record low</span>
+            <span class="tl-figure">First public accounting</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="container">
+    <div class="methodology">
+      <div class="methodology-label">Methodology Note</div>
+      <p class="methodology-text">The Frequency Framework reads <strong>architecture, not intention.</strong> What this page documents is observable institutional behavior: eight named bodies, on the public record, within six calendar days, independently arriving at the same structural reading of the war's economic and strategic effect.</p>
+      <p class="methodology-text">The Framework's contribution is not the data &mdash; the data is institutional Tier 1, fully attributed, independently verifiable. The Framework's contribution is the <em>pattern recognition across domains</em>: recognizing the same architecture expressing itself simultaneously in central bank language, IMF transit data, energy-agency emergency releases, and defense-procurement budget submissions.</p>
+      <p class="methodology-text">This is what institutional convergence looks like when measured as a thermodynamic event. The signal is not in any single source. The signal is in the simultaneity.</p>
+    </div>
+  </section>
+
+  <section class="container">
+    <div class="citations">
+      <h3>Primary Sources</h3>
+      <div class="citations-grid">
+        <div class="citation-card">
+          <div class="citation-source">IEA</div>
+          <div class="citation-detail">Fatih Birol on CNBC · April 23, 2026 · Spring Meetings briefing</div>
+        </div>
+        <div class="citation-card">
+          <div class="citation-source">World Bank</div>
+          <div class="citation-detail">Global energy price index · EU fossil import data · April 28, 2026</div>
+        </div>
+        <div class="citation-card">
+          <div class="citation-source">IMF</div>
+          <div class="citation-detail">@IMFNews · Chart of the Week · PortWatch · April 29, 2026</div>
+        </div>
+        <div class="citation-card">
+          <div class="citation-source">Federal Reserve</div>
+          <div class="citation-detail">FOMC Statement · April 29, 2026 · 2:00 PM EDT release</div>
+        </div>
+        <div class="citation-card">
+          <div class="citation-source">Pentagon Comptroller</div>
+          <div class="citation-detail">House Armed Services Committee testimony · April 29, 2026</div>
+        </div>
+        <div class="citation-card">
+          <div class="citation-source">New York Times</div>
+          <div class="citation-detail">Breaking News headline · FOMC decision coverage · April 29, 2026</div>
+        </div>
+        <div class="citation-card">
+          <div class="citation-source">CNN</div>
+          <div class="citation-detail">Breaking News · Powell succession context · April 29, 2026</div>
+        </div>
+        <div class="citation-card">
+          <div class="citation-source">ABC · CBS · Bloomberg</div>
+          <div class="citation-detail">Confirming carriers · $25B accounting · Brent $119.50 · April 29, 2026</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-tagline">Bullshit gets tired.&nbsp;&nbsp;Truth doesn't.</div>
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">The Frequency Framework</div>
+        <div class="footer-meta" style="text-align: left;">One methodology. Every domain.</div>
+      </div>
+      <div class="footer-meta">
+        <div><a href="https://frequencyframework.org">frequencyframework.org</a></div>
+        <div><a href="https://frequencyfw.github.io/Tools/">All Tools</a></div>
+        <div><a href="https://patreon.com/TheFrequencyFramework">Patreon · Observer Tier</a></div>
+        <div style="margin-top: 12px; color: var(--text-faint);">© 2026 The Frequency Framework LLC</div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
