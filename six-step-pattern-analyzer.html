@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Six-Step Pattern Analyzer | The Frequency Framework</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#0a0a0f;--surface:#111118;--surface2:#18181f;--surface3:#1f1f28;
+--border:#2a2a35;--border-glow:#3a3a4a;
+--text:#e8e8f0;--text-dim:#8888a0;--text-muted:#555568;
+--accent:#00e5ff;--accent2:#7b2ff7;--accent3:#ff2d6b;
+--green:#00ff88;--yellow:#ffd600;--orange:#ff8a00;--red:#ff2d4a;
+--gradient:linear-gradient(135deg,#00e5ff 0%,#7b2ff7 50%,#ff2d6b 100%);
+--s1:#00e5ff;--s2:#7b2ff7;--s3:#ff8a00;--s4:#ff2d6b;--s5:#ffd600;--s6:#00ff88;
+}
+body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:
+  linear-gradient(90deg,rgba(123,47,247,.03) 1px,transparent 1px),
+  linear-gradient(rgba(123,47,247,.03) 1px,transparent 1px);
+  background-size:60px 60px;pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(123,47,247,.08) 0%,transparent 60%);pointer-events:none;z-index:0}
+
+.container{max-width:920px;margin:0 auto;padding:20px;position:relative;z-index:1}
+
+/* Header */
+.header{text-align:center;padding:40px 0 30px;position:relative}
+.header::after{content:'';display:block;width:200px;height:2px;background:var(--gradient);margin:20px auto 0;border-radius:1px}
+.logo-icon{font-size:48px;margin-bottom:8px;display:block;filter:drop-shadow(0 0 20px rgba(123,47,247,.4))}
+.header h1{font-family:'Orbitron',sans-serif;font-size:clamp(22px,4.5vw,32px);font-weight:800;letter-spacing:3px;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-transform:uppercase}
+.header .subtitle{font-size:14px;color:var(--text-dim);letter-spacing:4px;text-transform:uppercase;margin-top:8px;font-weight:300}
+.header .tagline{font-size:13px;color:var(--text-muted);margin-top:4px;font-style:italic}
+.header .oneliner{font-size:13px;color:var(--text-muted);margin-top:14px;letter-spacing:1px;font-weight:300}
+
+/* Input Section */
+.input-section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin:24px 0;position:relative;overflow:hidden}
+.input-section::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--gradient);opacity:.6}
+.input-section h2{font-family:'Orbitron',sans-serif;font-size:14px;letter-spacing:2px;color:var(--accent2);margin-bottom:16px;text-transform:uppercase}
+.input-group{margin-bottom:16px}
+.input-group label{display:block;font-size:13px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;font-weight:500}
+.input-group input,.input-group textarea,.input-group select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:15px;transition:all .3s ease;outline:none}
+.input-group input:focus,.input-group textarea:focus,.input-group select:focus{border-color:var(--accent2);box-shadow:0 0 0 2px rgba(123,47,247,.15)}
+.input-group textarea{min-height:70px;resize:vertical}
+.input-group select option{background:var(--surface2);color:var(--text)}
+
+/* The Six Steps Visual Pipeline */
+.pipeline-section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin:24px 0;position:relative;overflow:hidden}
+.pipeline-section::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--gradient);opacity:.6}
+.pipeline-section h2{font-family:'Orbitron',sans-serif;font-size:14px;letter-spacing:2px;color:var(--accent2);margin-bottom:8px;text-transform:uppercase}
+.pipeline-intro{font-size:13px;color:var(--text-muted);margin-bottom:20px;line-height:1.5}
+
+/* Step Cards */
+.steps-container{display:flex;flex-direction:column;gap:0;position:relative}
+
+/* Connector line */
+.steps-container::before{content:'';position:absolute;left:28px;top:36px;bottom:36px;width:2px;background:linear-gradient(to bottom,var(--s1),var(--s2),var(--s3),var(--s4),var(--s5),var(--s6));opacity:.3;z-index:0}
+
+.step-card{display:flex;gap:16px;padding:16px;border:1px solid var(--border);border-radius:10px;background:var(--surface2);cursor:pointer;transition:all .4s ease;position:relative;z-index:1;margin-bottom:8px;user-select:none}
+.step-card:hover{border-color:var(--border-glow);transform:translateX(4px)}
+.step-card.active{background:rgba(123,47,247,.05)}
+
+.step-num{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:16px;font-weight:800;flex-shrink:0;border:2px solid;transition:all .4s ease}
+.step-card.active .step-num{box-shadow:0 0 15px rgba(123,47,247,.3)}
+
+.step-body{flex:1}
+.step-title{font-family:'Orbitron',sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;transition:color .3s ease}
+.step-desc{font-size:13px;color:var(--text-muted);line-height:1.5;margin-bottom:8px}
+.step-question{font-size:13px;color:var(--text-dim);font-style:italic;margin-bottom:10px;display:none}
+.step-card.active .step-question{display:block}
+
+.step-evidence{display:none;margin-top:8px}
+.step-card.active .step-evidence{display:block}
+.step-evidence textarea{width:100%;background:var(--surface3);border:1px solid var(--border);border-radius:6px;padding:10px 12px;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:14px;min-height:60px;resize:vertical;outline:none;transition:border-color .3s}
+.step-evidence textarea:focus{border-color:var(--accent2)}
+.step-evidence label{font-size:11px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;display:block}
+
+/* Confidence selector */
+.confidence-row{display:flex;gap:6px;margin-top:8px}
+.conf-btn{padding:6px 12px;border-radius:6px;border:1px solid var(--border);background:var(--surface3);color:var(--text-muted);font-family:'JetBrains Mono',monospace;font-size:11px;cursor:pointer;transition:all .3s ease}
+.conf-btn:hover{border-color:var(--border-glow)}
+.conf-btn.selected{border-color:var(--accent2);color:var(--accent2);background:rgba(123,47,247,.1)}
+
+/* Status badges */
+.step-status{display:inline-block;padding:3px 10px;border-radius:12px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;margin-left:auto;flex-shrink:0;align-self:flex-start;margin-top:2px}
+
+/* Analyze button */
+.analyze-btn{width:100%;padding:16px;background:transparent;border:2px solid var(--accent2);border-radius:10px;color:var(--accent2);font-family:'Orbitron',sans-serif;font-size:16px;font-weight:700;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:all .4s ease;position:relative;overflow:hidden;margin-top:20px}
+.analyze-btn:hover{background:var(--accent2);color:#fff;box-shadow:0 0 30px rgba(123,47,247,.3)}
+.analyze-btn:active{transform:scale(.98)}
+
+/* Results */
+.results-section{display:none;margin:30px 0;animation:fadeUp .6s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* Lifecycle Visualization */
+.lifecycle-viz{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px 24px;text-align:center;position:relative;overflow:hidden}
+.lifecycle-viz::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--gradient);opacity:.6}
+.lifecycle-viz h3{font-family:'Orbitron',sans-serif;font-size:13px;letter-spacing:2px;color:var(--accent2);text-transform:uppercase;margin-bottom:24px}
+
+.lifecycle-bar{display:flex;gap:3px;height:60px;margin:0 auto;max-width:700px}
+.lc-segment{flex:1;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:all .6s ease;opacity:.2;position:relative}
+.lc-segment.identified{opacity:1;box-shadow:0 0 15px rgba(0,0,0,.3)}
+.lc-segment.current{opacity:1;box-shadow:0 0 20px rgba(255,255,255,.1);transform:scaleY(1.1)}
+.lc-segment .lc-num{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;color:rgba(0,0,0,.6)}
+.lc-segment .lc-label{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(0,0,0,.5);margin-top:2px}
+
+.lifecycle-position{margin-top:16px;font-family:'Orbitron',sans-serif;font-size:20px;font-weight:700;letter-spacing:2px}
+.lifecycle-subtext{font-size:14px;color:var(--text-dim);margin-top:6px}
+
+/* Analysis Cards */
+.analysis-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-top:20px;position:relative;overflow:hidden}
+.analysis-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.analysis-card h3{font-family:'Orbitron',sans-serif;font-size:13px;letter-spacing:2px;color:var(--accent2);text-transform:uppercase;margin-bottom:16px}
+
+/* Evidence Summary */
+.evidence-item{padding:12px 0;border-bottom:1px solid rgba(42,42,53,.5)}
+.evidence-item:last-child{border-bottom:none}
+.ev-step{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.ev-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.ev-name{font-family:'Orbitron',sans-serif;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase}
+.ev-conf{font-family:'JetBrains Mono',monospace;font-size:11px;padding:2px 8px;border-radius:4px;background:var(--surface3);margin-left:auto}
+.ev-text{font-size:14px;color:var(--text-dim);line-height:1.5;padding-left:20px}
+
+/* Prediction */
+.prediction-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-top:20px}
+.prediction-box h3{font-family:'Orbitron',sans-serif;font-size:13px;letter-spacing:2px;color:var(--accent2);text-transform:uppercase;margin-bottom:16px}
+.pred-item{display:flex;gap:10px;padding:8px 0;font-size:14px;color:var(--text-dim);line-height:1.5}
+.pred-item::before{content:'▸';color:var(--accent2);font-weight:bold;flex-shrink:0}
+
+/* Thermodynamic read */
+.thermo-box{background:var(--surface);border-radius:12px;padding:24px;margin-top:20px;border:1px solid}
+.thermo-box h3{font-family:'Orbitron',sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
+.thermo-text{font-size:15px;line-height:1.7;color:var(--text-dim)}
+.thermo-text strong{color:var(--text)}
+
+/* Footer */
+.footer{text-align:center;padding:30px 0;border-top:1px solid var(--border);margin-top:40px}
+.footer p{font-size:12px;color:var(--text-muted);letter-spacing:1px}
+.footer a{color:var(--accent2);text-decoration:none}
+
+/* Timestamp */
+.timestamp{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);text-align:right;margin-top:12px}
+
+/* Scanning overlay */
+.scanning-overlay{display:none;position:fixed;inset:0;background:rgba(10,10,15,.85);z-index:100;align-items:center;justify-content:center;flex-direction:column}
+.scanning-overlay.active{display:flex}
+.scan-helix{position:relative;width:80px;height:80px}
+.scan-helix span{position:absolute;width:80px;height:80px;border:3px solid transparent;border-radius:50%;animation:spin3d 1.5s linear infinite}
+.scan-helix span:nth-child(1){border-top-color:var(--s1);animation-delay:0s}
+.scan-helix span:nth-child(2){border-right-color:var(--s3);animation-delay:.2s}
+.scan-helix span:nth-child(3){border-bottom-color:var(--s5);animation-delay:.4s}
+@keyframes spin3d{to{transform:rotate(360deg)}}
+.scan-text{font-family:'Orbitron',sans-serif;font-size:13px;letter-spacing:3px;color:var(--accent2);margin-top:24px;text-transform:uppercase;animation:blink 1s ease infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* Responsive */
+@media(max-width:600px){
+  .container{padding:12px}
+  .step-card{flex-direction:column;gap:10px}
+  .lifecycle-bar{height:50px}
+  .lc-segment .lc-label{display:none}
+  .confidence-row{flex-wrap:wrap}
+}
+</style>
+</head>
+<body>
+
+<div class="scanning-overlay" id="scanOverlay">
+  <div class="scan-helix"><span></span><span></span><span></span></div>
+  <div class="scan-text">Mapping Exploitation Lifecycle...</div>
+</div>
+
+<div class="container">
+  <div class="header">
+    <span class="logo-icon">🔬</span>
+    <h1>Six-Step Pattern Analyzer</h1>
+    <div class="subtitle">Exploitation Lifecycle Mapping</div>
+    <div class="tagline">The Frequency Framework — Map Where Power Moves</div>
+    <div class="oneliner">Identify the event. Walk the steps. See the structure.</div>
+  </div>
+
+  <div class="input-section">
+    <h2>🎯 Subject Input</h2>
+    <div class="input-group">
+      <label>Event / Entity / Policy</label>
+      <input type="text" id="subjectTitle" placeholder="e.g. Venezuela mining law reform with US Interior Secretary">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="input-group">
+        <label>Date / Timeframe</label>
+        <input type="text" id="subjectDate" placeholder="e.g. March 4, 2026">
+      </div>
+      <div class="input-group">
+        <label>Domain</label>
+        <select id="subjectDomain">
+          <option value="">Select...</option>
+          <option value="military">Military / Defense</option>
+          <option value="political">Political / Legislative</option>
+          <option value="financial">Financial / Corporate</option>
+          <option value="diplomatic">Diplomatic / International</option>
+          <option value="domestic">Domestic Policy</option>
+          <option value="energy">Energy / Resources</option>
+          <option value="media">Media / Information</option>
+          <option value="technology">Technology / Infrastructure</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="pipeline-section">
+    <h2>⚙️ The Six-Step Formula</h2>
+    <div class="pipeline-intro">For each step, assess whether evidence exists. Click to expand, document your observations, and rate your confidence level.</div>
+
+    <div class="steps-container">
+      <div class="step-card" id="step1" onclick="toggleStep(this)">
+        <div class="step-num" style="border-color:var(--s1);color:var(--s1)">1</div>
+        <div class="step-body">
+          <div class="step-title" style="color:var(--s1)">Relationships</div>
+          <div class="step-desc">Initial connections are established. Trust is built. Access is created through personal, financial, or institutional ties.</div>
+          <div class="step-question">❓ What pre-existing relationships enabled this event? Who knew whom before this began?</div>
+          <div class="step-evidence">
+            <label>Your observations</label>
+            <textarea id="ev1" placeholder="Document the relationships you can identify..."></textarea>
+            <div class="confidence-row">
+              <span style="font-size:11px;color:var(--text-muted);padding:6px 0">Confidence:</span>
+              <button class="conf-btn" onclick="event.stopPropagation();setConf(1,this,'none')">None</button>
+              <button class="conf-btn" onclick="event.stopPropagation();setConf(1,this,'low')">Low</button>
+              <button class="conf-btn" onclick="event.stopPropagation();setConf(1,this,'medium')">Medium</button>
+              <button class="conf-btn" onclick="event.stopPropagation();setConf(1,this,'high')">High</button>
+              <button class="conf-btn" onclick="event.stopPropagation();setConf(1,this,'verified')">Verified</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card" id="step2" onclick="toggleStep(this)">
+        <div class="step-num" style="border-color:var(--s2);color:var(--s2)">2</div>
+        <div class="step-body">
+          <div class="step-title" style="color:var(--s2)">Dependencies</div>
+          <div class="step-desc">Relationships become dependencies. One party needs the other. Leverage is created through financial, political, or security reliance.</div>
+          <div class="step-question">❓ Who depends on whom? What leverage exists? What happens if one party walks away?</div>
+          <div class="step-evidence">
+            <label>Your observations</label>
+            <textarea id="ev2" placeholder="Document the dependencies you can identify..."></textarea>
+            <div class="confidence-row">
+              <span style="font-size:11px;color:var(--text-muted);padding:6px 0">Confidence:</span>
+              <button class="conf-btn" onclick="event.stopPropagation();setConf(2,this,'none')">None</button>
+              <button class="conf-btn" onclick="event.stopPropagation();setConf(2,this,'low')">Low</button>
+              <button class="conf-btn" onclick="event.stopPropagation();setConf(2,this,'medium')">Medium</button>
+              <button class="conf-btn" onclick="event.stopPropagation();setConf(2,this,'high')">High</button>
+              <button class="conf-btn" onclick="event.stopPropagation();setConf(2,this,'verified')">Verified</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card" id="step3" onclick="toggleStep(this)">
+        <div class="step-num" style="border-color:var(--s3);color:var(--s3)">3</div>
+        <div class="step-body">
+          <div class="step-title" style="color:var(--s3)">Expansion</div>
+          <div class="step-desc">The operation grows beyond its original scope. New territories, new markets, new domains. The dependency becomes a platform for growth.</div>
+          <div class="step-question">❓ How has this grown beyond its stated purpose? What new areas are being entered?</div>
+          <div class="step-evidence">
+            <label>Your observations</label>
+            <textarea id="ev3" placeholder="Document the expansion you can identify..."></textarea>
+            <div class="confidence-row">
+              <span style="font-size:11px;color:var(--text-muted);padding:6px 0">Confidence:</span>
+              <button class="conf-btn" onclick="event.stopPropagation();setConf(3,this,'none')">None</button>
+              <button class="conf-btn" onclick="event.stopPropagation();setConf(3,this,'low')">Low</button>
+              <button class="conf-btn" onclick="event.stopPropagation();setConf(3,this,'medium')">Medium</button>
+              <button class="conf-btn" onclick="event.stopPropagation();setConf(3,this,'high')">High</button>
+              <button class="conf-btn" onclick="event.stopPropagation();setConf(3,this,'verified')">Verified</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card" id="step4" onclick="toggleStep(this)">
+        <div class="step-num" style="border-color:var(--s4);color:var(--s4)">4</div>
+        <div class="step-body">
+          <div class="step-title" style="color:var(--s4)">Institutionalization</div>
+          <div class="step-desc">The operation becomes embedded in formal structures. Laws, treaties, organizations, or norms are created to make it permanent and legitimate.</div>
+          <div class="step-question">❓ What laws, institutions, or formal structures have been created or modified to embed this?</div>
+          <div class="step-evidence">
+            <label>Your observations</label>
+            <textarea id="ev4" placeholder="Document the institutionalization you can identify..."></textarea>
+            <div class="confidence-row">
+              <span style="font-size:11px;color:var(--text-muted);padding:6px 0">Confidence:</span>
+              <button class="conf-btn" onclick="event.stopPropagation();setConf(4,this,'none')">None</button>
+              <button class="conf-btn" onclick="event.stopPropagation();setConf(4,this,'low')">Low</button>
+              <button class="conf-btn" onclick="event.stopPropagation();setConf(4,this,'medium')">Medium</button>
+              <button class="conf-btn" onclick="event.stopPropagation();setConf(4,this,'high')">High</button>
+              <button class="conf-btn" onclick="event.stopPropagation();setConf(4,this,'verified')">Verified</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card" id="step5" onclick="toggleStep(this)">
+        <div class="step-num" style="border-color:var(--s5);color:var(--s5)">5</div>
+        <div class="step-body">
+          <div class="step-title" style="color:var(--s5)">Monetization</div>
+          <div class="step-desc">The infrastructure is leveraged for profit. Contracts flow, resources are extracted, financial returns materialize for the positioned parties.</div>
+          <div class="step-question">❓ Who profits? What contracts, deals, or financial flows result? Follow the money.</div>
+          <div class="step-evidence">
+            <label>Your observations</label>
+            <textarea id="ev5" placeholder="Document the monetization you can identify..."></textarea>
+            <div class="confidence-row">
+              <span style="font-size:11px;color:var(--text-muted);padding:6px 0">Confidence:</span>
+              <button class="conf-btn" onclick="event.stopPropagation();setConf(5,this,'none')">None</button>
+              <button class="conf-btn" onclick="event.stopPropagation();setConf(5,this,'low')">Low</button>
+              <button class="conf-btn" onclick="event.stopPropagation();setConf(5,this,'medium')">Medium</button>
+              <button class="conf-btn" onclick="event.stopPropagation();setConf(5,this,'high')">High</button>
+              <button class="conf-btn" onclick="event.stopPropagation();setConf(5,this,'verified')">Verified</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card" id="step6" onclick="toggleStep(this)">
+        <div class="step-num" style="border-color:var(--s6);color:var(--s6)">6</div>
+        <div class="step-body">
+          <div class="step-title" style="color:var(--s6)">Defense</div>
+          <div class="step-desc">The operation is protected from accountability. Critics are discredited, investigations are deflected, narratives are controlled, and legal shields are erected.</div>
+          <div class="step-question">❓ How is this being shielded from scrutiny? Who is being discredited? What narratives protect it?</div>
+          <div class="step-evidence">
+            <label>Your observations</label>
+            <textarea id="ev6" placeholder="Document the defense mechanisms you can identify..."></textarea>
+            <div class="confidence-row">
+              <span style="font-size:11px;color:var(--text-muted);padding:6px 0">Confidence:</span>
+              <button class="conf-btn" onclick="event.stopPropagation();setConf(6,this,'none')">None</button>
+              <button class="conf-btn" onclick="event.stopPropagation();setConf(6,this,'low')">Low</button>
+              <button class="conf-btn" onclick="event.stopPropagation();setConf(6,this,'medium')">Medium</button>
+              <button class="conf-btn" onclick="event.stopPropagation();setConf(6,this,'high')">High</button>
+              <button class="conf-btn" onclick="event.stopPropagation();setConf(6,this,'verified')">Verified</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="analyze-btn" onclick="runAnalysis()">
+      ▶ MAP EXPLOITATION LIFECYCLE
+    </button>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="results-section" id="results">
+
+    <div class="lifecycle-viz">
+      <h3>📐 Lifecycle Position Map</h3>
+      <div class="lifecycle-bar" id="lifecycleBar">
+        <div class="lc-segment" id="lc1" style="background:var(--s1)"><div class="lc-num">1</div><div class="lc-label">Relate</div></div>
+        <div class="lc-segment" id="lc2" style="background:var(--s2)"><div class="lc-num">2</div><div class="lc-label">Depend</div></div>
+        <div class="lc-segment" id="lc3" style="background:var(--s3)"><div class="lc-num">3</div><div class="lc-label">Expand</div></div>
+        <div class="lc-segment" id="lc4" style="background:var(--s4)"><div class="lc-num">4</div><div class="lc-label">Embed</div></div>
+        <div class="lc-segment" id="lc5" style="background:var(--s5)"><div class="lc-num">5</div><div class="lc-label">Extract</div></div>
+        <div class="lc-segment" id="lc6" style="background:var(--s6)"><div class="lc-num">6</div><div class="lc-label">Defend</div></div>
+      </div>
+      <div class="lifecycle-position" id="positionText">—</div>
+      <div class="lifecycle-subtext" id="positionSub">—</div>
+    </div>
+
+    <div class="analysis-card">
+      <h3>📋 Evidence Summary</h3>
+      <div id="evidenceSummary"></div>
+    </div>
+
+    <div class="thermo-box" id="thermoBox">
+      <h3>🌡 Thermodynamic Assessment</h3>
+      <div class="thermo-text" id="thermoText"></div>
+    </div>
+
+    <div class="prediction-box">
+      <h3>🔮 Predictive Framework</h3>
+      <div class="pipeline-intro" style="margin-bottom:12px">Based on the current lifecycle position, the Framework predicts these likely next developments:</div>
+      <div id="predictions"></div>
+    </div>
+
+    <div class="timestamp" id="analysisTimestamp"></div>
+  </div>
+
+  <div class="footer">
+    <p>SIX-STEP PATTERN ANALYZER — <a href="https://frequencyframework.org" target="_blank">THE FREQUENCY FRAMEWORK</a></p>
+    <p style="margin-top:6px;font-size:11px;color:var(--text-muted)">The same formula. Every time. Across every domain.<br>Relationships → Dependencies → Expansion → Institutionalization → Monetization → Defense</p>
+  </div>
+</div>
+
+<script>
+const stepColors=['','var(--s1)','var(--s2)','var(--s3)','var(--s4)','var(--s5)','var(--s6)'];
+const stepNames=['','Relationships','Dependencies','Expansion','Institutionalization','Monetization','Defense'];
+const confidence={1:'none',2:'none',3:'none',4:'none',5:'none',6:'none'};
+
+function toggleStep(el){
+  const wasActive=el.classList.contains('active');
+  // Don't close if clicking inside textarea
+  el.classList.toggle('active');
+  if(!wasActive){
+    const ta=el.querySelector('textarea');
+    if(ta)setTimeout(()=>ta.focus(),100);
+  }
+}
+
+function setConf(step,btn,level){
+  confidence[step]=level;
+  const row=btn.parentElement;
+  row.querySelectorAll('.conf-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+
+  // Update step card visual
+  const card=document.getElementById('step'+step);
+  if(level!=='none'){
+    card.classList.add('active');
+    card.style.borderColor=stepColors[step];
+  }
+}
+
+function runAnalysis(){
+  const title=document.getElementById('subjectTitle').value;
+  if(!title){alert('Please enter a subject to analyze.');return}
+
+  const overlay=document.getElementById('scanOverlay');
+  overlay.classList.add('active');
+
+  setTimeout(()=>{
+    overlay.classList.remove('active');
+    generateResults();
+  },2000);
+}
+
+function generateResults(){
+  const title=document.getElementById('subjectTitle').value;
+  const date=document.getElementById('subjectDate').value;
+
+  // Determine which steps have evidence
+  const identified=[];
+  let highestStep=0;
+  const confWeights={none:0,low:1,medium:2,high:3,verified:4};
+
+  for(let i=1;i<=6;i++){
+    const text=document.getElementById('ev'+i).value.trim();
+    const conf=confidence[i];
+    if(text||conf!=='none'){
+      identified.push({step:i,text:text,conf:conf,weight:confWeights[conf]});
+      if(i>highestStep)highestStep=i;
+    }
+  }
+
+  // Show results
+  const results=document.getElementById('results');
+  results.style.display='block';
+  results.scrollIntoView({behavior:'smooth'});
+
+  // Lifecycle bar
+  for(let i=1;i<=6;i++){
+    const seg=document.getElementById('lc'+i);
+    seg.classList.remove('identified','current');
+  }
+  identified.forEach(s=>{
+    document.getElementById('lc'+s.step).classList.add('identified');
+  });
+  if(highestStep>0){
+    document.getElementById('lc'+highestStep).classList.add('current');
+  }
+
+  // Position text
+  const posEl=document.getElementById('positionText');
+  const subEl=document.getElementById('positionSub');
+  if(highestStep===0){
+    posEl.textContent='INSUFFICIENT DATA';
+    posEl.style.color='var(--text-muted)';
+    subEl.textContent='Add evidence to at least one step to map the lifecycle position.';
+  }else{
+    posEl.textContent=`STEP ${highestStep}: ${stepNames[highestStep].toUpperCase()}`;
+    posEl.style.color=stepColors[highestStep];
+    const coverage=identified.length;
+    if(coverage>=5)subEl.textContent=`${coverage}/6 steps identified — Full lifecycle visible. Late-stage operation.`;
+    else if(coverage>=3)subEl.textContent=`${coverage}/6 steps identified — Multi-stage operation in progress.`;
+    else subEl.textContent=`${coverage}/6 steps identified — Early or partially visible operation.`;
+  }
+
+  // Evidence summary
+  const evDiv=document.getElementById('evidenceSummary');
+  evDiv.innerHTML='';
+  if(identified.length===0){
+    evDiv.innerHTML='<p style="color:var(--text-muted);font-size:14px">No evidence documented. Use the step cards above to add observations.</p>';
+  }else{
+    identified.forEach(s=>{
+      const confLabel=s.conf.charAt(0).toUpperCase()+s.conf.slice(1);
+      let confColor='var(--text-muted)';
+      if(s.conf==='verified')confColor='var(--green)';
+      else if(s.conf==='high')confColor='var(--accent)';
+      else if(s.conf==='medium')confColor='var(--yellow)';
+      else if(s.conf==='low')confColor='var(--orange)';
+
+      evDiv.innerHTML+=`
+        <div class="evidence-item">
+          <div class="ev-step">
+            <div class="ev-dot" style="background:${stepColors[s.step]}"></div>
+            <div class="ev-name" style="color:${stepColors[s.step]}">Step ${s.step}: ${stepNames[s.step]}</div>
+            <div class="ev-conf" style="color:${confColor}">${confLabel}</div>
+          </div>
+          <div class="ev-text">${s.text||'<em style="color:var(--text-muted)">No notes — confidence rating only</em>'}</div>
+        </div>`;
+    });
+  }
+
+  // Thermodynamic assessment
+  const thermoBox=document.getElementById('thermoBox');
+  const thermoText=document.getElementById('thermoText');
+  let totalWeight=identified.reduce((a,b)=>a+b.weight,0);
+  let thermoColor,thermoContent;
+
+  if(totalWeight<=2){
+    thermoColor='var(--green)';
+    thermoContent=`<strong>${title}</strong> shows minimal exploitation lifecycle signatures. The energy pattern is consistent with organic development. Continue monitoring as new evidence emerges — early-stage operations are often invisible until Step 3.`;
+  }else if(totalWeight<=6){
+    thermoColor='var(--yellow)';
+    thermoContent=`<strong>${title}</strong> shows moderate lifecycle development. The energy investment required to maintain this pattern suggests deliberate positioning rather than organic emergence. The thermodynamic principle applies: sustained coordination requires constant energy input that should be visible if you know where to look.`;
+  }else if(totalWeight<=12){
+    thermoColor='var(--orange)';
+    thermoContent=`<strong>${title}</strong> shows significant lifecycle advancement across multiple stages. The coordination energy is substantial and visible. This pattern is consistent with documented exploitation operations — the Six-Step Formula is operating with clear structural integrity. Key question: has monetization begun, or is the infrastructure still being built?`;
+  }else{
+    thermoColor='var(--red)';
+    thermoContent=`<strong>${title}</strong> shows a mature exploitation lifecycle with high-confidence evidence across multiple stages. The thermodynamic signature is unmistakable — this level of multi-stage coordination requires enormous sustained energy investment. The pattern matches documented historical operations. The question is no longer whether coordination exists, but who benefits and what comes next.`;
+  }
+
+  thermoBox.style.borderColor=thermoColor;
+  thermoBox.querySelector('h3').style.color=thermoColor;
+  thermoText.innerHTML=thermoContent;
+
+  // Predictions based on highest step
+  const predDiv=document.getElementById('predictions');
+  predDiv.innerHTML='';
+  let preds=[];
+
+  if(highestStep<=1){
+    preds=['Watch for dependency creation — financial ties, political debts, security arrangements that create leverage.','Monitor for exclusive access or information-sharing arrangements that create insider advantage.','Track whether the relationship is presented as bilateral when the power dynamic is actually asymmetric.'];
+  }else if(highestStep===2){
+    preds=['Expect expansion into adjacent domains — military relationships extending to financial, diplomatic extending to economic.','Watch for the dependency being tested — a small ask that establishes precedent for larger future demands.','Monitor for third parties being excluded or marginalized as the dependency deepens.'];
+  }else if(highestStep===3){
+    preds=['Institutionalization is the likely next step — watch for new laws, treaties, or formal structures that embed the expansion permanently.','The expansion phase often includes narrative construction to justify the growth as natural or necessary.','Monitor for resistance being co-opted rather than confronted — bringing critics inside the tent.'];
+  }else if(highestStep===4){
+    preds=['Monetization follows institutionalization — watch for contracts, resource deals, and financial flows to positioned parties.','The institutional framework creates legal cover for extraction — monitor for regulatory changes that enable profit.','Key question: who was positioned financially BEFORE the institutional changes were announced?'];
+  }else if(highestStep===5){
+    preds=['Defense mechanisms are likely already active or building — watch for critics being discredited, investigations being deflected.','The monetization phase generates the resources to fund its own defense — self-sustaining cycle.','Monitor for narrative shifts that reframe extraction as public benefit — "creating jobs," "national security," "economic development."'];
+  }else if(highestStep===6){
+    preds=['A fully defended operation is in mature phase — disruption requires exposing the defense mechanisms themselves.','Watch for the cycle to restart at Step 1 in an adjacent domain — successful operations replicate.','The thermodynamic weakness: defense requires constant energy. Truth requires zero maintenance. The operation is inherently unstable long-term.'];
+  }
+
+  preds.forEach(p=>{predDiv.innerHTML+=`<div class="pred-item">${p}</div>`});
+
+  // Timestamp
+  document.getElementById('analysisTimestamp').textContent=`Analysis generated: ${new Date().toLocaleString()} | Subject: ${title} | The Frequency Framework`;
+}
+</script>
+</body>
+</html>
