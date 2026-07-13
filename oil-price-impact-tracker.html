@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oil Price Impact Tracker — The Frequency Framework</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Oswald:wght@400;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0f;
+    color: #c8ccd0;
+    font-family: 'Share Tech Mono', monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 700px;
+    padding: 0;
+  }
+
+  .scanline {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      transparent, transparent 2px, rgba(0,0,0,0.02) 2px, rgba(0,0,0,0.02) 4px
+    );
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  /* HEADER */
+  .header {
+    text-align: center;
+    padding: 28px 20px 20px;
+    border-bottom: 2px solid rgba(255,60,60,0.3);
+    background: linear-gradient(180deg, rgba(255,30,30,0.06) 0%, transparent 100%);
+  }
+
+  .live-dot {
+    display: inline-block;
+    width: 10px; height: 10px;
+    background: #ff3c3c;
+    border-radius: 50%;
+    margin-right: 8px;
+    animation: blink 1.5s ease-in-out infinite;
+    vertical-align: middle;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; box-shadow: 0 0 8px #ff3c3c; }
+    50% { opacity: 0.3; box-shadow: none; }
+  }
+
+  .header .live-tag {
+    font-size: 12px;
+    letter-spacing: 3px;
+    color: #ff3c3c;
+    text-transform: uppercase;
+  }
+
+  .header h1 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #e0e0e0;
+    margin-top: 10px;
+  }
+
+  .header .subtitle {
+    font-size: 13px;
+    color: #555;
+    letter-spacing: 2px;
+    margin-top: 4px;
+  }
+
+  .header .op-tag {
+    font-size: 13px;
+    color: #ff6b35;
+    letter-spacing: 2px;
+    margin-top: 10px;
+    font-family: 'Oswald', sans-serif;
+  }
+
+  /* WAR CLOCK */
+  .war-clock {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    margin-top: 14px;
+  }
+
+  .clock-unit {
+    background: rgba(255,60,60,0.1);
+    border: 1px solid rgba(255,60,60,0.2);
+    padding: 6px 10px;
+    text-align: center;
+    min-width: 52px;
+  }
+
+  .clock-unit .num {
+    font-family: 'Oswald', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: #ff3c3c;
+  }
+
+  .clock-unit .lbl {
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: #666;
+    text-transform: uppercase;
+  }
+
+  /* MAIN PRICE DISPLAY */
+  .price-section {
+    padding: 24px 20px;
+    text-align: center;
+    background: linear-gradient(180deg, rgba(255,60,60,0.03) 0%, transparent 100%);
+  }
+
+  .price-label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: #666;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .price-display {
+    font-family: 'Oswald', sans-serif;
+    font-size: 64px;
+    font-weight: 700;
+    color: #ff3c3c;
+    text-shadow: 0 0 30px rgba(255,60,60,0.3);
+    line-height: 1;
+  }
+
+  .price-display .dollar { font-size: 40px; vertical-align: top; margin-right: 2px; }
+
+  .price-change {
+    margin-top: 8px;
+    font-size: 16px;
+    font-family: 'Oswald', sans-serif;
+  }
+
+  .price-change .up { color: #ff3c3c; }
+  .price-change .pct { color: #ff6b35; margin-left: 10px; }
+
+  .price-note {
+    font-size: 10px;
+    color: #444;
+    margin-top: 6px;
+  }
+
+  /* BASELINE COMPARISON */
+  .baseline {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background: #111;
+    border-top: 1px solid #1a1a2e;
+    border-bottom: 1px solid #1a1a2e;
+  }
+
+  .baseline-box {
+    background: #0d0d14;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .baseline-box .label {
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: #555;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .baseline-box .value {
+    font-family: 'Oswald', sans-serif;
+    font-size: 28px;
+    font-weight: 600;
+  }
+
+  .baseline-box .value.before { color: #4ecdc4; }
+  .baseline-box .value.after { color: #ff3c3c; }
+
+  .baseline-box .date {
+    font-size: 9px;
+    color: #444;
+    margin-top: 2px;
+  }
+
+  /* TRICKLE DOWN IMPACTS */
+  .impacts {
+    padding: 20px;
+  }
+
+  .impacts-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 16px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #ff6b35;
+    margin-bottom: 14px;
+    text-align: center;
+  }
+
+  .impact-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 14px;
+    background: #0f0f18;
+    margin-bottom: 6px;
+    border-left: 3px solid;
+  }
+
+  .impact-row.severe { border-left-color: #ff3c3c; }
+  .impact-row.high { border-left-color: #ff6b35; }
+  .impact-row.moderate { border-left-color: #ffd93d; }
+
+  .impact-left {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .impact-name {
+    font-size: 14px;
+    color: #ccc;
+    font-family: 'Oswald', sans-serif;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .impact-detail {
+    font-size: 11px;
+    color: #666;
+    margin-top: 2px;
+  }
+
+  .impact-right {
+    text-align: right;
+  }
+
+  .impact-value {
+    font-family: 'Oswald', sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: #ff3c3c;
+  }
+
+  .impact-delta {
+    font-size: 10px;
+    color: #ff6b35;
+  }
+
+  /* COST TO HOUSEHOLDS */
+  .household {
+    padding: 20px;
+    text-align: center;
+    background: linear-gradient(180deg, transparent 0%, rgba(255,60,60,0.04) 100%);
+    border-top: 1px solid #1a1a2e;
+  }
+
+  .household .label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: #666;
+    text-transform: uppercase;
+  }
+
+  .household .big-num {
+    font-family: 'Oswald', sans-serif;
+    font-size: 48px;
+    font-weight: 700;
+    color: #ff6b35;
+    text-shadow: 0 0 20px rgba(255,107,53,0.3);
+    margin: 8px 0;
+  }
+
+  .household .explain {
+    font-size: 12px;
+    color: #888;
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.5;
+  }
+
+  /* METHODOLOGY */
+  .methodology {
+    padding: 16px 20px;
+    border-top: 1px solid #1a1a2e;
+  }
+
+  .methodology summary {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: #444;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-align: center;
+  }
+
+  .methodology .content {
+    font-size: 11px;
+    color: #555;
+    line-height: 1.6;
+    margin-top: 10px;
+    padding: 10px;
+    background: #0d0d14;
+  }
+
+  /* SHARE BAR */
+  .share-bar {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    padding: 16px;
+    border-top: 1px solid #1a1a2e;
+  }
+
+  .share-btn {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    padding: 8px 16px;
+    border: 1px solid #333;
+    background: #0f0f18;
+    color: #888;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .share-btn:hover {
+    border-color: #ff6b35;
+    color: #ff6b35;
+  }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    padding: 20px;
+    border-top: 1px solid #1a1a2e;
+  }
+
+  .footer .brand {
+    font-family: 'Oswald', sans-serif;
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #444;
+  }
+
+  .footer .brand a { color: #4ecdc4; text-decoration: none; }
+
+  .footer .tagline {
+    font-size: 11px;
+    color: #333;
+    margin-top: 6px;
+  }
+
+  /* INPUT SECTION */
+  .input-section {
+    padding: 16px 20px;
+    border-top: 1px solid #1a1a2e;
+    text-align: center;
+  }
+
+  .input-section label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: #555;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .input-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .input-row input {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 18px;
+    background: #0f0f18;
+    border: 1px solid #333;
+    color: #ff6b35;
+    padding: 8px 12px;
+    width: 120px;
+    text-align: center;
+  }
+
+  .input-row input:focus {
+    outline: none;
+    border-color: #ff6b35;
+  }
+
+  .input-row button {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    background: rgba(255,107,53,0.15);
+    border: 1px solid #ff6b35;
+    color: #ff6b35;
+    padding: 8px 16px;
+    cursor: pointer;
+    letter-spacing: 1px;
+  }
+
+  .input-row button:hover {
+    background: rgba(255,107,53,0.3);
+  }
+</style>
+</head>
+<body>
+<div class="scanline"></div>
+<div class="container">
+
+  <div class="header">
+    <div class="live-tag"><span class="live-dot"></span>LIVE ESTIMATE</div>
+    <h1>Oil Price Impact Tracker</h1>
+    <div class="subtitle">WHAT THE WAR COSTS YOU — IN REAL TIME</div>
+    <div class="op-tag">OPERATION EPIC FURY — STRIKES BEGAN FEB 28, 2026</div>
+
+    <div class="war-clock">
+      <div class="clock-unit"><div class="num" id="days">00</div><div class="lbl">Days</div></div>
+      <div class="clock-unit"><div class="num" id="hours">00</div><div class="lbl">Hrs</div></div>
+      <div class="clock-unit"><div class="num" id="mins">00</div><div class="lbl">Min</div></div>
+      <div class="clock-unit"><div class="num" id="secs">00</div><div class="lbl">Sec</div></div>
+    </div>
+  </div>
+
+  <div class="price-section">
+    <div class="price-label">Current Brent Crude (est.)</div>
+    <div class="price-display"><span class="dollar">$</span><span id="currentPrice">107.00</span></div>
+    <div class="price-change">
+      <span class="up" id="changeAbs">+$37.00</span>
+      <span class="pct" id="changePct">+52.9%</span>
+      <span style="color:#555; font-size:12px;"> since war began</span>
+    </div>
+    <div class="price-note">Update price below with latest market data</div>
+  </div>
+
+  <div class="input-section">
+    <label>Enter latest Brent crude price</label>
+    <div class="input-row">
+      <input type="number" id="priceInput" value="107.00" step="0.01" min="0">
+      <button onclick="updatePrice()">UPDATE</button>
+    </div>
+  </div>
+
+  <div class="baseline">
+    <div class="baseline-box">
+      <div class="label">Pre-War Baseline</div>
+      <div class="value before">$70.00</div>
+      <div class="date">Feb 27, 2026</div>
+    </div>
+    <div class="baseline-box">
+      <div class="label">Current Price</div>
+      <div class="value after" id="baselineAfter">$107.00</div>
+      <div class="date" id="baselineDate">Mar 9, 2026</div>
+    </div>
+  </div>
+
+  <div class="impacts">
+    <div class="impacts-title">Trickle-Down Impact Estimates</div>
+
+    <div class="impact-row severe">
+      <div class="impact-left">
+        <span class="impact-name">⛽ Gasoline (National Avg)</span>
+        <span class="impact-detail">Pre-war: $2.98/gal</span>
+      </div>
+      <div class="impact-right">
+        <div class="impact-value" id="gasPrice">$3.55</div>
+        <div class="impact-delta" id="gasDelta">+$0.57/gal</div>
+      </div>
+    </div>
+
+    <div class="impact-row severe">
+      <div class="impact-left">
+        <span class="impact-name">🚚 Diesel (Trucking/Shipping)</span>
+        <span class="impact-detail">Pre-war: $3.45/gal</span>
+      </div>
+      <div class="impact-right">
+        <div class="impact-value" id="dieselPrice">$4.10</div>
+        <div class="impact-delta" id="dieselDelta">+$0.65/gal</div>
+      </div>
+    </div>
+
+    <div class="impact-row high">
+      <div class="impact-left">
+        <span class="impact-name">✈️ Jet Fuel</span>
+        <span class="impact-detail">Pre-war: $2.55/gal</span>
+      </div>
+      <div class="impact-right">
+        <div class="impact-value" id="jetPrice">$3.12</div>
+        <div class="impact-delta" id="jetDelta">+$0.57/gal</div>
+      </div>
+    </div>
+
+    <div class="impact-row high">
+      <div class="impact-left">
+        <span class="impact-name">🛒 Grocery Index (est.)</span>
+        <span class="impact-detail">Based on transport + packaging costs</span>
+      </div>
+      <div class="impact-right">
+        <div class="impact-value" id="groceryPct">+3.8%</div>
+        <div class="impact-delta">lag: 2-4 weeks</div>
+      </div>
+    </div>
+
+    <div class="impact-row moderate">
+      <div class="impact-left">
+        <span class="impact-name">📦 Shipping Container Cost</span>
+        <span class="impact-detail">40ft container, Asia-US route</span>
+      </div>
+      <div class="impact-right">
+        <div class="impact-value" id="shippingPct">+18.5%</div>
+        <div class="impact-delta">Hormuz reroute + fuel surcharge</div>
+      </div>
+    </div>
+
+    <div class="impact-row moderate">
+      <div class="impact-left">
+        <span class="impact-name">🏠 Home Heating Oil</span>
+        <span class="impact-detail">Pre-war: $3.80/gal (Northeast avg)</span>
+      </div>
+      <div class="impact-right">
+        <div class="impact-value" id="heatingPrice">$4.52</div>
+        <div class="impact-delta" id="heatingDelta">+$0.72/gal</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="household">
+    <div class="label">Estimated Additional Cost Per US Household</div>
+    <div class="big-num" id="householdCost">$247/mo</div>
+    <div class="explain">Based on average fuel consumption, food price elasticity to oil, and heating costs. This figure will increase as oil prices remain elevated and trickle-down effects compound through supply chains over 2-6 weeks.</div>
+  </div>
+
+  <details class="methodology">
+    <summary>Methodology & Sources</summary>
+    <div class="content">
+      <strong>Baseline:</strong> Brent Crude $70.00/bbl (Feb 27, 2026 close — last trading day before Operation Epic Fury).<br><br>
+      <strong>Gas price model:</strong> Historically, every $10 increase in crude adds ~$0.15-0.20 to retail gasoline price with a 1-2 week lag. Current estimate uses $0.154/gal per $10 crude increase.<br><br>
+      <strong>Diesel model:</strong> Diesel typically moves 10-15% more than gasoline on crude increases due to refining margins and commercial demand inelasticity. Uses $0.176/gal per $10.<br><br>
+      <strong>Jet fuel:</strong> Tracks roughly 1:1 with gasoline retail movement but wholesale.<br><br>
+      <strong>Grocery impact:</strong> USDA estimates food prices increase 0.5-1.0% for every 10% rise in oil prices, with a 2-6 week lag. Transport costs represent ~3.5% of food retail price.<br><br>
+      <strong>Shipping:</strong> Includes Hormuz reroute premium (Cape of Good Hope adds 10-15 days) plus bunker fuel surcharges.<br><br>
+      <strong>Household cost:</strong> Based on EIA average household consumption of 90 gallons gasoline/month, 30% food budget sensitivity, and regional heating oil where applicable.<br><br>
+      <strong>Note:</strong> All figures are estimates based on historical relationships. Actual impacts vary by region, household size, and consumption patterns. Update the crude price with latest market data for real-time estimates.<br><br>
+      <strong>Sources:</strong> EIA, AAA, USDA ERS, Freightos Baltic Index, ICE Brent Futures
+    </div>
+  </details>
+
+  <div class="share-bar">
+    <button class="share-btn" onclick="copyToClipboard()">📋 Copy Summary</button>
+    <button class="share-btn" onclick="shareToX()">𝕏 Share on X</button>
+  </div>
+
+  <div class="footer">
+    <div class="brand">OIL PRICE IMPACT TRACKER — <a href="https://frequencyframework.org">THE FREQUENCY FRAMEWORK</a></div>
+    <div class="tagline">The war doesn't stay overseas. It follows you to the pump, the grocery store, and the thermostat.</div>
+  </div>
+
+</div>
+
+<script>
+// WAR CLOCK
+const warStart = new Date('2026-02-28T06:45:00Z'); // ~1:15 AM ET / 9:45 AM Tehran
+
+function updateClock() {
+  const now = new Date();
+  const diff = now - warStart;
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+  document.getElementById('days').textContent = String(days).padStart(2, '0');
+  document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+  document.getElementById('mins').textContent = String(mins).padStart(2, '0');
+  document.getElementById('secs').textContent = String(secs).padStart(2, '0');
+}
+
+setInterval(updateClock, 1000);
+updateClock();
+
+// PRICE CONSTANTS
+const BASELINE_CRUDE = 70.00;
+const BASELINE_GAS = 2.98;
+const BASELINE_DIESEL = 3.45;
+const BASELINE_JET = 2.55;
+const BASELINE_HEATING = 3.80;
+
+const GAS_PER_10 = 0.154;
+const DIESEL_PER_10 = 0.176;
+const JET_PER_10 = 0.154;
+const HEATING_PER_10 = 0.195;
+const GROCERY_PCT_PER_10PCT = 0.72; // % grocery increase per 10% crude increase
+const SHIPPING_PCT_PER_10PCT = 3.5; // % shipping increase per 10% crude increase
+
+function updatePrice() {
+  const price = parseFloat(document.getElementById('priceInput').value);
+  if (isNaN(price) || price <= 0) return;
+
+  const increase = price - BASELINE_CRUDE;
+  const pctChange = ((price - BASELINE_CRUDE) / BASELINE_CRUDE * 100);
+  const tens = increase / 10;
+  const crudePctChange = pctChange / 10;
+
+  // Main display
+  document.getElementById('currentPrice').textContent = price.toFixed(2);
+  document.getElementById('changeAbs').textContent = (increase >= 0 ? '+' : '') + '$' + increase.toFixed(2);
+  document.getElementById('changePct').textContent = (increase >= 0 ? '+' : '') + pctChange.toFixed(1) + '%';
+  document.getElementById('baselineAfter').textContent = '$' + price.toFixed(2);
+
+  // Gas
+  const gasPrice = BASELINE_GAS + (tens * GAS_PER_10);
+  const gasDelta = gasPrice - BASELINE_GAS;
+  document.getElementById('gasPrice').textContent = '$' + gasPrice.toFixed(2);
+  document.getElementById('gasDelta').textContent = (gasDelta >= 0 ? '+' : '') + '$' + gasDelta.toFixed(2) + '/gal';
+
+  // Diesel
+  const dieselPrice = BASELINE_DIESEL + (tens * DIESEL_PER_10);
+  const dieselDelta = dieselPrice - BASELINE_DIESEL;
+  document.getElementById('dieselPrice').textContent = '$' + dieselPrice.toFixed(2);
+  document.getElementById('dieselDelta').textContent = (dieselDelta >= 0 ? '+' : '') + '$' + dieselDelta.toFixed(2) + '/gal';
+
+  // Jet
+  const jetPrice = BASELINE_JET + (tens * JET_PER_10);
+  const jetDelta = jetPrice - BASELINE_JET;
+  document.getElementById('jetPrice').textContent = '$' + jetPrice.toFixed(2);
+  document.getElementById('jetDelta').textContent = (jetDelta >= 0 ? '+' : '') + '$' + jetDelta.toFixed(2) + '/gal';
+
+  // Heating
+  const heatingPrice = BASELINE_HEATING + (tens * HEATING_PER_10);
+  const heatingDelta = heatingPrice - BASELINE_HEATING;
+  document.getElementById('heatingPrice').textContent = '$' + heatingPrice.toFixed(2);
+  document.getElementById('heatingDelta').textContent = (heatingDelta >= 0 ? '+' : '') + '$' + heatingDelta.toFixed(2) + '/gal';
+
+  // Grocery
+  const groceryPct = crudePctChange * GROCERY_PCT_PER_10PCT;
+  document.getElementById('groceryPct').textContent = '+' + groceryPct.toFixed(1) + '%';
+
+  // Shipping
+  const shippingPct = crudePctChange * SHIPPING_PCT_PER_10PCT;
+  document.getElementById('shippingPct').textContent = '+' + shippingPct.toFixed(1) + '%';
+
+  // Household cost
+  // 90 gal gas/month * gas delta + 30% food budget ($600) * grocery pct + regional heating
+  const monthlyGasCost = 90 * gasDelta;
+  const monthlyFoodCost = 600 * (groceryPct / 100);
+  const monthlyHeatingCost = 40 * heatingDelta; // ~40 gal/month avg
+  const totalMonthly = monthlyGasCost + monthlyFoodCost + monthlyHeatingCost;
+  document.getElementById('householdCost').textContent = '$' + Math.round(totalMonthly) + '/mo';
+}
+
+// SHARE FUNCTIONS
+function copyToClipboard() {
+  const price = document.getElementById('currentPrice').textContent;
+  const change = document.getElementById('changePct').textContent;
+  const gas = document.getElementById('gasPrice').textContent;
+  const household = document.getElementById('householdCost').textContent;
+  const days = document.getElementById('days').textContent;
+
+  const text = `Oil Price Impact Tracker — Day ${parseInt(days)}
+Brent Crude: $${price} (${change} since war began)
+Gas: ${gas}/gal | Household impact: ${household}
+The war doesn't stay overseas.
+frequencyfw.github.io/Tools/`;
+
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.share-btn');
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => btn.textContent = '📋 Copy Summary', 2000);
+  });
+}
+
+function shareToX() {
+  const price = document.getElementById('currentPrice').textContent;
+  const change = document.getElementById('changePct').textContent;
+  const household = document.getElementById('householdCost').textContent;
+  const days = document.getElementById('days').textContent;
+
+  const text = `Day ${parseInt(days)} of Operation Epic Fury.
+
+Oil: $${price}/bbl (${change})
+Est. household impact: ${household}
+
+The war doesn't stay overseas.
+
+Track it yourself: frequencyfw.github.io/Tools/`;
+
+  window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text), '_blank');
+}
+
+// Initialize
+updatePrice();
+</script>
+</body>
+</html>
