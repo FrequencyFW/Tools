@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Expendables — The Frequency Framework</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&family=Inter:wght@300;400;500&display=swap');
+
+    :root {
+      --bg: #04080f;
+      --bg2: #080f1c;
+      --bg3: #0d1826;
+      --cyan: #00d4ff;
+      --cyan-dim: #0088aa;
+      --red: #ff3333;
+      --red-dim: #aa1111;
+      --amber: #ffaa00;
+      --green: #00ff88;
+      --green-dim: #00aa55;
+      --text: #c8d8e8;
+      --text-dim: #5a7a9a;
+      --border: rgba(0, 212, 255, 0.15);
+      --mono: 'Share Tech Mono', monospace;
+      --display: 'Bebas Neue', cursive;
+      --body: 'Inter', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { background: #04080f; }
+
+    body {
+      background: #04080f;
+      color: #c8d8e8;
+      font-family: var(--body);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Scanline overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.03) 2px,
+        rgba(0, 0, 0, 0.03) 4px
+      );
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    /* Header */
+    .header {
+      border-bottom: 1px solid var(--border);
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(180deg, rgba(0,212,255,0.03) 0%, transparent 100%);
+    }
+
+    .header-left {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--cyan-dim);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .header-logo {
+      font-family: var(--display);
+      font-size: 18px;
+      color: var(--cyan);
+      letter-spacing: 4px;
+    }
+
+    .header-right {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+      text-align: right;
+    }
+
+    /* Hero */
+    .hero {
+      padding: 60px 40px 40px;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--cyan-dim), transparent);
+    }
+
+    .hero-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--cyan);
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      opacity: 0.8;
+    }
+
+    .hero-title {
+      font-family: var(--display);
+      font-size: clamp(56px, 8vw, 96px);
+      color: #fff;
+      letter-spacing: 8px;
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+
+    .hero-title span {
+      color: var(--red);
+    }
+
+    .hero-subtitle {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--text-dim);
+      letter-spacing: 3px;
+      margin-bottom: 30px;
+    }
+
+    .hero-thesis {
+      max-width: 680px;
+      margin: 0 auto 20px;
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--text);
+      font-weight: 300;
+    }
+
+    .hero-thesis strong {
+      color: var(--cyan);
+      font-weight: 500;
+    }
+
+    /* Lifecycle Section */
+    .section {
+      padding: 60px 40px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--cyan);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--border), transparent);
+    }
+
+    .section-title {
+      font-family: var(--display);
+      font-size: 36px;
+      letter-spacing: 4px;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+
+    .section-desc {
+      font-size: 14px;
+      color: var(--text-dim);
+      line-height: 1.6;
+      max-width: 640px;
+      margin-bottom: 40px;
+    }
+
+    /* Stage Pipeline */
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px;
+      margin-bottom: 60px;
+      position: relative;
+    }
+
+    .pipeline::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--green-dim), var(--amber), var(--red-dim));
+      z-index: 0;
+      transform: translateY(-50%);
+    }
+
+    .stage-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      padding: 20px 12px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .stage-card:hover {
+      border-color: var(--cyan);
+      background: var(--bg3);
+      transform: translateY(-4px);
+    }
+
+    .stage-card.active {
+      border-color: var(--cyan);
+      background: var(--bg3);
+    }
+
+    .stage-number {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+
+    .stage-name {
+      font-family: var(--display);
+      font-size: 15px;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+
+    .stage-1 .stage-name { color: var(--green); }
+    .stage-2 .stage-name { color: #44dd88; }
+    .stage-3 .stage-name { color: var(--amber); }
+    .stage-4 .stage-name { color: #ffcc44; }
+    .stage-5 .stage-name { color: #ff8844; }
+    .stage-6 .stage-name { color: #ff5533; }
+    .stage-7 .stage-name { color: var(--red); }
+
+    .stage-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      margin: 0 auto;
+    }
+
+    .stage-1 .stage-dot { background: var(--green); box-shadow: 0 0 8px var(--green); }
+    .stage-2 .stage-dot { background: #44dd88; box-shadow: 0 0 8px #44dd88; }
+    .stage-3 .stage-dot { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+    .stage-4 .stage-dot { background: #ffcc44; box-shadow: 0 0 8px #ffcc44; }
+    .stage-5 .stage-dot { background: #ff8844; box-shadow: 0 0 8px #ff8844; }
+    .stage-6 .stage-dot { background: #ff5533; box-shadow: 0 0 8px #ff5533; }
+    .stage-7 .stage-dot { background: var(--red); box-shadow: 0 0 8px var(--red); animation: pulse 1.5s infinite; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.4); }
+    }
+
+    /* Stage detail panel */
+    .stage-detail {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--cyan);
+      padding: 30px;
+      margin-bottom: 60px;
+      display: none;
+    }
+
+    .stage-detail.visible {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .detail-header {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .detail-stage-num {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 3px;
+    }
+
+    .detail-title {
+      font-family: var(--display);
+      font-size: 28px;
+      letter-spacing: 3px;
+    }
+
+    .detail-body {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+
+    .detail-signals {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .signal-tag {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--cyan);
+      background: rgba(0, 212, 255, 0.06);
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      padding: 6px 12px;
+      letter-spacing: 1px;
+    }
+
+    .detail-examples {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text-dim);
+      border-top: 1px solid var(--border);
+      padding-top: 16px;
+    }
+
+    .detail-examples strong {
+      color: var(--amber);
+      display: block;
+      margin-bottom: 8px;
+      letter-spacing: 2px;
+      font-size: 10px;
+    }
+
+    /* Metrics Section */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 60px;
+    }
+
+    .metric-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      padding: 24px;
+    }
+
+    .metric-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--cyan-dim);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .metric-name {
+      font-family: var(--display);
+      font-size: 22px;
+      letter-spacing: 2px;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .metric-desc {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    .metric-desc strong {
+      color: var(--text);
+    }
+
+    /* Historical Case Studies */
+    .cases-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-bottom: 60px;
+    }
+
+    .case-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .case-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 100%;
+    }
+
+    .case-complete::before { background: var(--text-dim); }
+    .case-sacrificed::before { background: var(--red); }
+
+    .case-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .case-name {
+      font-family: var(--display);
+      font-size: 22px;
+      letter-spacing: 2px;
+      color: #fff;
+    }
+
+    .case-role {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+      margin-top: 2px;
+    }
+
+    .case-badge {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 2px;
+      padding: 4px 10px;
+      border: 1px solid;
+    }
+
+    .badge-complete { color: var(--text-dim); border-color: var(--text-dim); }
+    .badge-sacrificed { color: var(--red); border-color: var(--red); }
+
+    .case-timeline {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 12px;
+    }
+
+    .timeline-seg {
+      height: 4px;
+      flex: 1;
+      border-radius: 2px;
+    }
+
+    .seg-reached { background: var(--text-dim); }
+    .seg-peak { background: var(--amber); }
+    .seg-end { background: var(--red); }
+    .seg-empty { background: var(--bg3); }
+
+    .case-body {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .case-body strong {
+      color: var(--text);
+    }
+
+    .case-signals-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .case-sig {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--amber);
+      background: rgba(255, 170, 0, 0.06);
+      border: 1px solid rgba(255, 170, 0, 0.2);
+      padding: 3px 8px;
+      letter-spacing: 1px;
+    }
+
+    /* Vulnerability Reserve */
+    .vr-section {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--amber);
+      padding: 30px;
+      margin-bottom: 60px;
+    }
+
+    .vr-title {
+      font-family: var(--display);
+      font-size: 28px;
+      letter-spacing: 3px;
+      color: var(--amber);
+      margin-bottom: 8px;
+    }
+
+    .vr-subtitle {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 3px;
+      margin-bottom: 20px;
+    }
+
+    .vr-body {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+
+    .vr-body strong { color: var(--amber); }
+
+    .vr-institutions {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 8px;
+    }
+
+    .vr-inst {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-dim);
+      background: rgba(255, 170, 0, 0.04);
+      border: 1px solid rgba(255, 170, 0, 0.15);
+      padding: 8px 12px;
+      letter-spacing: 1px;
+    }
+
+    .vr-inst strong {
+      color: var(--amber);
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    /* Live board notice */
+    .live-notice {
+      background: rgba(255, 51, 51, 0.06);
+      border: 1px solid rgba(255, 51, 51, 0.3);
+      padding: 24px 30px;
+      margin-bottom: 60px;
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+    }
+
+    .live-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--red);
+      box-shadow: 0 0 10px var(--red);
+      animation: pulse 1.5s infinite;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+
+    .live-text {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .live-text strong {
+      color: var(--red);
+      font-family: var(--mono);
+      letter-spacing: 2px;
+      font-size: 11px;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    /* Footer */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 30px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-left {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+      line-height: 1.8;
+    }
+
+    .footer-left a {
+      color: var(--cyan);
+      text-decoration: none;
+    }
+
+    .footer-right {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+      text-align: right;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header, .hero, .section, .footer { padding: 20px; }
+      .pipeline { grid-template-columns: repeat(4, 1fr); }
+      .metrics-grid { grid-template-columns: 1fr; }
+      .cases-grid { grid-template-columns: 1fr; }
+      .vr-institutions { grid-template-columns: repeat(2, 1fr); }
+      .hero-title { font-size: 48px; }
+    }
+
+    @media (max-width: 480px) {
+      .pipeline { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">The Frequency Framework / Tools</div>
+    <div class="header-logo">THE EXPENDABLES</div>
+    <div class="header-right">
+      SSRN 6576661<br>
+      METHODOLOGY v1.1
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-label">Framework Applied · Civic Accountability</div>
+    <h1 class="hero-title">THE <span>EXPENDABLES</span></h1>
+    <div class="hero-subtitle">A Framework for Tracking Political Lifecycle Patterns</div>
+    <p class="hero-thesis">
+      Every institution that requires loyalty develops a mechanism to ensure it.
+      The pattern is consistent across governments, organized crime, intelligence agencies, and religious structures.
+      <strong>Selection. Empowerment. Execution. Sacrifice.</strong>
+      The sequence is not random. It is engineered.
+    </p>
+  </section>
+
+  <!-- Lifecycle Section -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-label">Core Methodology</span>
+      <div class="section-line"></div>
+    </div>
+    <h2 class="section-title">THE SEVEN-STAGE LIFECYCLE</h2>
+    <p class="section-desc">
+      Officials in proximity to power do not depart randomly. They follow a documented pattern.
+      The Framework maps this pattern across administrations, ideologies, and eras.
+      Click any stage to expand.
+    </p>
+
+    <!-- Pipeline -->
+    <div class="pipeline">
+      <div class="stage-card stage-1" onclick="showStage(1)">
+        <div class="stage-number">STAGE 01</div>
+        <div class="stage-name">SELECTION</div>
+        <div class="stage-dot"></div>
+      </div>
+      <div class="stage-card stage-2" onclick="showStage(2)">
+        <div class="stage-number">STAGE 02</div>
+        <div class="stage-name">EMPOWER&shy;MENT</div>
+        <div class="stage-dot"></div>
+      </div>
+      <div class="stage-card stage-3" onclick="showStage(3)">
+        <div class="stage-number">STAGE 03</div>
+        <div class="stage-name">EXECUTION</div>
+        <div class="stage-dot"></div>
+      </div>
+      <div class="stage-card stage-4" onclick="showStage(4)">
+        <div class="stage-number">STAGE 04</div>
+        <div class="stage-name">OVER&shy;EXPOSURE</div>
+        <div class="stage-dot"></div>
+      </div>
+      <div class="stage-card stage-5" onclick="showStage(5)">
+        <div class="stage-number">STAGE 05</div>
+        <div class="stage-name">PUBLIC FLOAT</div>
+        <div class="stage-dot"></div>
+      </div>
+      <div class="stage-card stage-6" onclick="showStage(6)">
+        <div class="stage-number">STAGE 06</div>
+        <div class="stage-name">SEPARATION</div>
+        <div class="stage-dot"></div>
+      </div>
+      <div class="stage-card stage-7" onclick="showStage(7)">
+        <div class="stage-number">STAGE 07</div>
+        <div class="stage-name">SACRIFICE</div>
+        <div class="stage-dot"></div>
+      </div>
+    </div>
+
+    <!-- Stage Detail Panel -->
+    <div class="stage-detail" id="stage-detail"></div>
+
+    <!-- Metrics -->
+    <div class="section-header">
+      <span class="section-label">Measurement Framework</span>
+      <div class="section-line"></div>
+    </div>
+    <h2 class="section-title">TRACKING METRICS</h2>
+    <p class="section-desc">Three primary variables determine lifecycle position and velocity.</p>
+
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-label">Metric 01</div>
+        <div class="metric-name">VULNERABILITY RESERVE</div>
+        <div class="metric-desc">
+          Personal or professional liability held by the principal as a latent control mechanism.
+          <strong>Higher reserve = greater compliance, lower dispensability.</strong>
+          Accumulates through vetting, confession, SF-86 disclosures, and documented exposure.
+        </div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Metric 02</div>
+        <div class="metric-name">EXPOSURE VECTOR</div>
+        <div class="metric-desc">
+          The rate at which the official becomes publicly identified with contested decisions.
+          <strong>High exposure = high utility as shield, high liability as liability.</strong>
+          Measured by media frequency, congressional investigation proximity, and narrative ownership.
+        </div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Metric 03</div>
+        <div class="metric-name">LOYALTY SCORE</div>
+        <div class="metric-desc">
+          Not a measure of actual loyalty — a measure of
+          <strong>perceived expendability from the principal's position.</strong>
+          Decreases as officials accumulate independent brand, power base, or public narrative ownership.
+        </div>
+      </div>
+    </div>
+
+    <!-- Vulnerability Reserve Deep Dive -->
+    <div class="vr-section">
+      <div class="vr-title">VULNERABILITY RESERVE</div>
+      <div class="vr-subtitle">The Universal Compliance Architecture</div>
+      <div class="vr-body">
+        The most consistent pattern across institutional power structures is the voluntary collection of personal liability under a beneficial framing — then held as a latent control mechanism. The subject provides the information willingly. The institution holds it indefinitely. The compliance cost is always implicit, rarely stated.
+        <br><br>
+        <strong>This is not a conspiracy theory.</strong> It is a documented structural pattern observable across every major institution that requires sustained loyalty from participants who have access to sensitive information or decision-making authority.
+      </div>
+      <div class="vr-institutions">
+        <div class="vr-inst"><strong>Government</strong>SF-86 security clearance disclosures</div>
+        <div class="vr-inst"><strong>Intelligence</strong>Polygraph + lifestyle history vetting</div>
+        <div class="vr-inst"><strong>Organized Crime</strong>Witnessed acts as entry requirement</div>
+        <div class="vr-inst"><strong>Religion</strong>Confession / auditing records</div>
+        <div class="vr-inst"><strong>Corporate</strong>Non-disclosure + financial forensics</div>
+        <div class="vr-inst"><strong>Military</strong>UCMJ exposure + classified briefings</div>
+      </div>
+    </div>
+
+    <!-- Historical Case Studies -->
+    <div class="section-header">
+      <span class="section-label">Historical Record</span>
+      <div class="section-line"></div>
+    </div>
+    <h2 class="section-title">DOCUMENTED CASE STUDIES</h2>
+    <p class="section-desc">
+      Historical examples where the complete lifecycle is documentable from primary sources.
+      All cases are concluded — officials no longer in active positions.
+    </p>
+
+    <div class="cases-grid">
+
+      <div class="case-card case-sacrificed">
+        <div class="case-header">
+          <div>
+            <div class="case-name">COMEY</div>
+            <div class="case-role">FBI Director, 2013–2017</div>
+          </div>
+          <div class="case-badge badge-sacrificed">SACRIFICED</div>
+        </div>
+        <div class="case-timeline">
+          <div class="timeline-seg seg-reached"></div>
+          <div class="timeline-seg seg-reached"></div>
+          <div class="timeline-seg seg-reached"></div>
+          <div class="timeline-seg seg-reached"></div>
+          <div class="timeline-seg seg-peak"></div>
+          <div class="timeline-seg seg-end"></div>
+          <div class="timeline-seg seg-end"></div>
+        </div>
+        <div class="case-body">
+          Reached Stage 5 when loyalty test (Clinton investigation framing) became publicly contested.
+          <strong>Principal float signal: dinner meeting request, loyalty ask, documented in Comey's own memos.</strong>
+          Sacrificed at Stage 6 via letter, publicly justified on Clinton investigation grounds —
+          a rationale subsequently contradicted by the principal's own statements within 48 hours.
+        </div>
+        <div class="case-signals-list">
+          <span class="case-sig">LOYALTY TEST DOCUMENTED</span>
+          <span class="case-sig">CONTRADICTORY RATIONALE</span>
+          <span class="case-sig">48HR NARRATIVE SHIFT</span>
+        </div>
+      </div>
+
+      <div class="case-card case-sacrificed">
+        <div class="case-header">
+          <div>
+            <div class="case-name">TILLERSON</div>
+            <div class="case-role">Secretary of State, 2017–2018</div>
+          </div>
+          <div class="case-badge badge-sacrificed">SACRIFICED</div>
+        </div>
+        <div class="case-timeline">
+          <div class="timeline-seg seg-reached"></div>
+          <div class="timeline-seg seg-reached"></div>
+          <div class="timeline-seg seg-reached"></div>
+          <div class="timeline-seg seg-peak"></div>
+          <div class="timeline-seg seg-peak"></div>
+          <div class="timeline-seg seg-end"></div>
+          <div class="timeline-seg seg-end"></div>
+        </div>
+        <div class="case-body">
+          Accumulated independent credibility through foreign policy positions that diverged from principal's public statements.
+          <strong>Moron report as public float signal.</strong>
+          Independent brand became threat rather than asset.
+          Sacrificed via Twitter announcement before personal notification —
+          a Stage 7 delivery mechanism that itself became a documented pattern.
+        </div>
+        <div class="case-signals-list">
+          <span class="case-sig">PUBLIC DIVERGENCE</span>
+          <span class="case-sig">TWITTER TERMINATION</span>
+          <span class="case-sig">INDEPENDENT BRAND THREAT</span>
+        </div>
+      </div>
+
+      <div class="case-card case-sacrificed">
+        <div class="case-header">
+          <div>
+            <div class="case-name">SCARAMUCCI</div>
+            <div class="case-role">Communications Dir., 2017</div>
+          </div>
+          <div class="case-badge badge-sacrificed">SACRIFICED — 11 DAYS</div>
+        </div>
+        <div class="case-timeline">
+          <div class="timeline-seg seg-reached"></div>
+          <div class="timeline-seg seg-reached"></div>
+          <div class="timeline-seg seg-peak"></div>
+          <div class="timeline-seg seg-end"></div>
+          <div class="timeline-seg seg-empty"></div>
+          <div class="timeline-seg seg-empty"></div>
+          <div class="timeline-seg seg-empty"></div>
+        </div>
+        <div class="case-body">
+          Fastest documented lifecycle completion on record — 11 days from Stage 1 to Stage 7.
+          <strong>Reached Stage 3 peak within 72 hours via New Yorker interview.</strong>
+          Overexposure and independent narrative creation triggered immediate Stage 7 response.
+          Case study in accelerated lifecycle — useful as baseline for velocity measurement.
+        </div>
+        <div class="case-signals-list">
+          <span class="case-sig">11-DAY CYCLE</span>
+          <span class="case-sig">VELOCITY RECORD</span>
+          <span class="case-sig">MEDIA SELF-DESTRUCTION</span>
+        </div>
+      </div>
+
+      <div class="case-card case-sacrificed">
+        <div class="case-header">
+          <div>
+            <div class="case-name">RUMSFELD</div>
+            <div class="case-role">Secretary of Defense, 2001–2006</div>
+          </div>
+          <div class="case-badge badge-sacrificed">SACRIFICED</div>
+        </div>
+        <div class="case-timeline">
+          <div class="timeline-seg seg-reached"></div>
+          <div class="timeline-seg seg-reached"></div>
+          <div class="timeline-seg seg-reached"></div>
+          <div class="timeline-seg seg-reached"></div>
+          <div class="timeline-seg seg-peak"></div>
+          <div class="timeline-seg seg-peak"></div>
+          <div class="timeline-seg seg-end"></div>
+        </div>
+        <div class="case-body">
+          Extended lifecycle (5 years) due to high institutional value during active conflict.
+          <strong>Abu Ghraib as Stage 4 overexposure trigger.</strong>
+          "Six generals" public float period extended over 12+ months before Stage 7.
+          Sacrificed day after 2006 midterm elections — timing documents the political calculation.
+          Benchmark case for extended lifecycle in wartime conditions.
+        </div>
+        <div class="case-signals-list">
+          <span class="case-sig">5-YEAR CYCLE</span>
+          <span class="case-sig">ELECTION-TIMED EXIT</span>
+          <span class="case-sig">GENERAL REVOLT SIGNAL</span>
+        </div>
+      </div>
+
+      <div class="case-card case-sacrificed">
+        <div class="case-header">
+          <div>
+            <div class="case-name">BONDI</div>
+            <div class="case-role">Attorney General, 2025–2026</div>
+          </div>
+          <div class="case-badge badge-sacrificed">SACRIFICED</div>
+        </div>
+        <div class="case-timeline">
+          <div class="timeline-seg seg-reached"></div>
+          <div class="timeline-seg seg-reached"></div>
+          <div class="timeline-seg seg-reached"></div>
+          <div class="timeline-seg seg-reached"></div>
+          <div class="timeline-seg seg-peak"></div>
+          <div class="timeline-seg seg-end"></div>
+          <div class="timeline-seg seg-end"></div>
+        </div>
+        <div class="case-body">
+          Reached Stage 5 when the principal's own social media post publicly rebuked her handling of prosecutions —
+          "same old story... no action" — a rare direct, on-record loyalty ask.
+          Epstein-files handling drew public criticism from the White House Chief of Staff ("completely whiffed")
+          and a bipartisan House Oversight subpoena.
+          <strong>Sacrificed April 2, 2026, roughly fifteen months into her tenure —
+          replaced same-day by her own deputy, Todd Blanche.</strong>
+        </div>
+        <div class="case-signals-list">
+          <span class="case-sig">DIRECT PUBLIC REBUKE</span>
+          <span class="case-sig">CONGRESSIONAL SUBPOENA</span>
+          <span class="case-sig">SAME-DAY DEPUTY REPLACEMENT</span>
+        </div>
+      </div>
+
+      <div class="case-card case-sacrificed">
+        <div class="case-header">
+          <div>
+            <div class="case-name">NOEM</div>
+            <div class="case-role">Secretary of Homeland Security, 2025–2026</div>
+          </div>
+          <div class="case-badge badge-sacrificed">SACRIFICED — SOFT LANDING</div>
+        </div>
+        <div class="case-timeline">
+          <div class="timeline-seg seg-reached"></div>
+          <div class="timeline-seg seg-reached"></div>
+          <div class="timeline-seg seg-reached"></div>
+          <div class="timeline-seg seg-reached"></div>
+          <div class="timeline-seg seg-peak"></div>
+          <div class="timeline-seg seg-peak"></div>
+          <div class="timeline-seg seg-end"></div>
+        </div>
+        <div class="case-body">
+          Reached Stage 6 when the principal quietly transferred control of a major operation to border czar
+          Tom Homan — an internal sidelining that preceded any public announcement.
+          Two days of contentious congressional hearings over agency spending and use-of-force incidents
+          followed. <strong>Sacrificed via social media post made during her own live keynote speech —
+          she learned of the decision by phone minutes before taking the stage.</strong>
+          Given a soft landing — reassigned to a newly created envoy role rather than terminated outright,
+          a variant worth noting on its own: sacrifice doesn't always announce itself as sacrifice.
+        </div>
+        <div class="case-signals-list">
+          <span class="case-sig">INTERNAL SIDELINING</span>
+          <span class="case-sig">ANNOUNCED MID-SPEECH</span>
+          <span class="case-sig">SOFT-LANDING REASSIGNMENT</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Live Board Notice -->
+    <div class="live-notice">
+      <div class="live-dot"></div>
+      <div class="live-text">
+        <strong>CURRENT ADMINISTRATION BOARD — STATUS</strong>
+        The Framework maintains a live tracking board for current administration officials.
+        Current board data is held in private research pending legal review per Framework Tier 3 protocol.
+        Historical methodology demonstrated above applies identically to active cases.
+        Live board will be published when legal review threshold is cleared.
+        <br><br>
+        Framework methodology: Two Thermodynamic Laws of Information — SSRN Abstract 6576661.
+        Current blind test track record: 94.9% accuracy across 138 elements.
+      </div>
+    </div>
+
+    <!-- Footer methodology note -->
+    <div class="section-header">
+      <span class="section-label">Methodology</span>
+      <div class="section-line"></div>
+    </div>
+    <h2 class="section-title">THE TWO LAWS APPLIED</h2>
+    <p class="section-desc" style="max-width:100%;">
+      <strong style="color:var(--cyan)">Law 1 (Truth):</strong> Truth requires zero maintenance energy. It stabilizes over time.
+      An official who has completed the lifecycle leaves a primary source record that requires no interpretation.<br><br>
+      <strong style="color:var(--red)">Law 2 (Deception):</strong> Coordinated deception requires escalating energy to sustain.
+      The maintenance cost of keeping an expendable official in position grows as the gap between
+      their public role and their actual function widens. Stage 4 (Overexposure) marks the inflection point
+      where maintenance cost exceeds utility value. Stage 7 (Sacrifice) is the energy release.
+    </p>
+
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-left">
+      The Frequency Framework LLC<br>
+      <a href="https://frequencyframework.org">frequencyframework.org</a> ·
+      <a href="https://patreon.com/TheFrequencyFramework">Patreon</a> ·
+      <a href="https://twitter.com/TheFrequencyFW">@TheFrequencyFW</a><br>
+      SSRN Abstract 6576661 · Two Thermodynamic Laws of Information
+    </div>
+    <div class="footer-right">
+      Truth doesn't need<br>a press release.<br>
+      <span style="color:var(--cyan)">v1.1 · July 2026</span>
+    </div>
+  </footer>
+
+  <script>
+    const stageData = {
+      1: {
+        name: 'SELECTION',
+        color: '#00ff88',
+        body: 'The principal identifies a candidate with a specific combination of capability, ambition, and exploitable vulnerability. Selection is rarely random — it is calculated. The ideal candidate has demonstrated competence in a relevant domain, harbors a desire for proximity to power, and carries enough personal exposure to make compliance rational.',
+        signals: ['Competence in target domain', 'Proximity ambition visible', 'Personal vulnerability present', 'Loyalty signaling active', 'Background vetting complete'],
+        examples: 'Historical examples: Every major cabinet appointment follows this pattern. The vetting process is not merely about qualification — it is about the creation of the Vulnerability Reserve that will govern the relationship going forward.'
+      },
+      2: {
+        name: 'EMPOWERMENT',
+        color: '#44dd88',
+        body: 'Full license is granted. The official is given visible authority, public backing, and institutional resources. This stage serves two purposes: it generates the performance the principal needs, and it creates the paper trail that will define the official\'s legacy — which the principal now controls. The empowered official believes they have genuine authority.',
+        signals: ['Public endorsements issued', 'Broad mandate granted', 'Media access enabled', 'Budget/resource allocation', 'Principal proximity visible'],
+        examples: 'Historical examples: "You\'re a killer, I need you" (paraphrased entry language). The empowerment stage is when the official accumulates the most institutional capital — and the most exposure.'
+      },
+      3: {
+        name: 'EXECUTION',
+        color: '#ffaa00',
+        body: 'The official executes the principal\'s agenda visibly and aggressively. This is maximum utility phase. The official takes ownership of decisions — publicly, on the record — that serve the principal\'s interests. Each public act deepens the official\'s exposure while the principal maintains distance. The official\'s name becomes attached to contested outcomes.',
+        signals: ['High public profile', 'Decision ownership claimed', 'Principal distancing begins', 'Narrative liability accumulating', 'Congressional attention starting'],
+        examples: 'Historical examples: Rumsfeld/Iraq WMD press conferences. Comey/Clinton email announcement. Each execution act deepens the official\'s liability while the principal preserves optionality.'
+      },
+      4: {
+        name: 'OVEREXPOSURE',
+        color: '#ffcc44',
+        body: 'The official becomes the story. Coverage shifts from their role to their person. Congressional investigations, media scrutiny, or public controversy attach directly to the official rather than the institution. Maintenance cost begins to exceed utility value. The principal begins quiet reassessment. Internal signals emerge — changed meeting cadence, reduced briefing access, subtle shifts in public language.',
+        signals: ['Official becomes the story', 'Congressional inquiry proximity', 'Principal language shifts', 'Reduced inner circle access', 'Independent media brand forming'],
+        examples: 'Historical examples: Rumsfeld post-Abu Ghraib. Comey post-Clinton announcement. The overexposure stage is the Framework\'s clearest predictive signal — once visible, Stage 7 is a question of timing, not occurrence.'
+      },
+      5: {
+        name: 'PUBLIC FLOAT',
+        color: '#ff8844',
+        body: 'The principal begins testing public reaction to the official\'s potential removal. This takes the form of jokes, off-the-cuff comments, hypothetical framings, or allies floating criticism. The official cannot respond effectively — any reaction confirms the frame. The float is a no-win scenario by design. It transfers discomfort entirely onto the official while the principal appears loose and in control.',
+        signals: ['Principal "jokes" about removal', 'Ally criticism emerges', 'Media trial balloon visible', 'Official defensiveness noted', 'Replacement candidates surfacing'],
+        examples: 'Historical examples: Multiple documented instances of principals publicly testing removal narratives before acting. The joke that isn\'t a joke. The comment that gets walked back. These are not accidents — they are signals.'
+      },
+      6: {
+        name: 'SEPARATION',
+        color: '#ff5533',
+        body: 'Quiet institutional distancing. The official is excluded from key meetings, briefings, or decisions without formal announcement. Their public role continues but their actual access contracts. Staff begin signaling availability to successors. The official\'s statements no longer receive principal amplification. The separation stage can last days or months depending on institutional need and replacement availability.',
+        signals: ['Meeting exclusion begins', 'Public amplification stops', 'Staff lateral movement', 'Successor positioning visible', 'Final assignment framing'],
+        examples: 'Historical examples: The week before a firing almost always shows a measurable reduction in principal-official public proximity. Calendars, press appearances, and travel schedules are primary source records of the separation stage.'
+      },
+      7: {
+        name: 'SACRIFICE',
+        color: '#ff3333',
+        body: 'The removal. The official is separated from their position through a mechanism that serves the principal\'s narrative needs at that moment. The justification offered is rarely the actual reason — it is selected for its utility in the specific political context. The official\'s Vulnerability Reserve is available for deployment if the separation is contested. Most officials do not contest. The sacrifice completes the lifecycle and resets the position for a new Stage 1 candidate.',
+        signals: ['Public removal mechanism', 'Narrative justification deployed', 'Vulnerability reserve available', 'Successor named promptly', 'Principal distance confirmed'],
+        examples: 'Historical examples: The timing of Stage 7 almost always correlates with a political need external to the official\'s performance. Election cycles, news cycles, congressional calendars, and international events are the actual drivers. The stated reason is the maintenance document.'
+      }
+    };
+
+    function showStage(num) {
+      const detail = document.getElementById('stage-detail');
+      const data = stageData[num];
+
+      // Remove active from all cards
+      document.querySelectorAll('.stage-card').forEach(c => c.classList.remove('active'));
+      document.querySelectorAll('.stage-card')[num - 1].classList.add('active');
+
+      const signalTags = data.signals.map(s =>
+        `<div class="signal-tag">${s}</div>`
+      ).join('');
+
+      detail.innerHTML = `
+        <div class="detail-header">
+          <span class="detail-stage-num">STAGE 0${num}</span>
+          <div class="detail-title" style="color:${data.color}">${data.name}</div>
+        </div>
+        <div class="detail-body">${data.body}</div>
+        <div class="detail-signals">${signalTags}</div>
+        <div class="detail-examples">
+          <strong>PRIMARY SOURCE ANCHOR</strong>
+          ${data.examples}
+        </div>
+      `;
+
+      detail.classList.add('visible');
+      detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // Auto-show Stage 1 on load
+    setTimeout(() => showStage(1), 500);
+  </script>
+
+</body>
+</html>
